@@ -1,0 +1,144 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PostCategory {
+  NEWS
+  PROMPT
+  SKILL
+  WORKFLOW
+}
+
+model User {
+  id           String        @id @default(cuid())
+  name         String?       @db.VarChar(100)
+  email        String        @unique @db.VarChar(150)
+  passwordHash String?       @db.VarChar(255)
+  image        String?       @db.VarChar(500)
+  role         Role          @default(USER)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  orders       Order[]
+  library      UserLibrary[]
+  leads        Lead[]
+
+  @@map("users")
+}
+
+model Post {
+  id          String       @id @default(cuid())
+  slug        String       @unique @db.VarChar(255)
+  title       String       @db.VarChar(255)
+  summary     String?      @db.Text
+  content     String       @db.LongText
+  category    PostCategory @default(NEWS)
+  tags        String?      @db.VarChar(255)
+  thumbnail   String?      @db.VarChar(500)
+  isFeatured  Boolean      @default(false)
+  isPublished Boolean      @default(true)
+  views       Int          @default(0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("posts")
+}
+
+model Product {
+  id            String        @id @default(cuid())
+  pid           String        @unique @db.VarChar(50)
+  name          String        @db.VarChar(255)
+  slug          String        @unique @db.VarChar(255)
+  description   String?       @db.Text
+  content       String?       @db.LongText
+  price         Int           @default(0)
+  originalPrice Int?          @default(0)
+  thumbnail     String?       @db.VarChar(500)
+  previewUrl    String?       @db.VarChar(500)
+  downloadUrl   String?       @db.VarChar(1000)
+  category      String        @default("workflow") @db.VarChar(50)
+  isActive      Boolean       @default(true)
+  salesCount    Int           @default(0)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  orders        Order[]
+  library       UserLibrary[]
+
+  @@map("products")
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  orderCode       String        @unique @db.VarChar(50)
+  userId          String?
+  customerName    String        @db.VarChar(100)
+  customerEmail   String        @db.VarChar(150)
+  customerPhone   String?       @db.VarChar(30)
+  productId       String
+  productName     String        @db.VarChar(255)
+  price           Int
+  receiptImageUrl String?       @db.VarChar(1000)
+  paymentStatus   OrderStatus   @default(PENDING)
+  paymentMethod   String        @default("VIETQR") @db.VarChar(30)
+  approvedAt      DateTime?
+  approvedBy      String?       @db.VarChar(100)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  user            User?         @relation(fields: [userId], references: [id])
+  product         Product       @relation(fields: [productId], references: [id])
+  libraryItems    UserLibrary[]
+
+  @@index([customerEmail])
+  @@index([paymentStatus])
+  @@map("orders")
+}
+
+model UserLibrary {
+  id         String   @id @default(cuid())
+  userId     String
+  productId  String
+  orderId    String?
+  unlockedAt DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  order      Order?   @relation(fields: [orderId], references: [id])
+
+  @@unique([userId, productId])
+  @@map("user_library")
+}
+
+model Lead {
+  id           String   @id @default(cuid())
+  userId       String?
+  name         String   @db.VarChar(100)
+  email        String   @db.VarChar(150)
+  phone        String?  @db.VarChar(30)
+  resourceId   String?  @db.VarChar(50)
+  resourceName String?  @db.VarChar(255)
+  source       String   @default("free_download") @db.VarChar(50)
+  createdAt    DateTime @default(now())
+
+  user         User?    @relation(fields: [userId], references: [id])
+
+  @@index([email])
+  @@map("leads")
+}

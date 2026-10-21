@@ -1,0 +1,85 @@
+<!-- ========================================================
+     TEMPLATE 1: BÀI VIẾT BÁN HÀNG (DÙNG TÀI KHOẢN VIETQR TOÀN CỤC)
+     Nhãn (Labels): Cửa hàng, Sản phẩm n8n
+     GHI CHÚ: Số tài khoản, Ngân hàng và Zalo sẽ TỰ ĐỘNG lấy từ cấu hình
+     chung của Blog, bạn KHÔNG CẦN phải nhập lại số tài khoản ở bài viết!
+     ======================================================== -->
+
+<!-- 1. HỘP SẢN PHẨM & THANH TOÁN -->
+<div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; margin: 20px 0 32px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); font-family: 'Be Vietnam Pro', sans-serif;">
+  <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: center;">
+    
+    <!-- Ảnh sản phẩm Mockup -->
+    <div style="flex: 1 1 280px; text-align: center;">
+      <img src="https://workflowfree.com/wp-content/uploads/2026/08/anh-bia-1024x574.png" alt="Tên sản phẩm" style="max-width: 100%; border-radius: 12px; box-shadow: 0 4px 14px rgba(0,0,0,0.08);" />
+    </div>
+
+    <!-- Thông tin & Bảng giá -->
+    <div style="flex: 1 1 340px;">
+      <span style="background: #fef2f2; color: #ef4444; font-weight: 700; font-size: 12px; padding: 4px 12px; border-radius: 20px; border: 1px solid #fecaca; text-transform: uppercase;">
+        🔥 BÁN CHẠY NHẤT
+      </span>
+      <h2 style="font-size: 22px; font-weight: 800; color: #0f172a; margin: 12px 0 14px; line-height: 1.4;">
+        Ứng dụng FLOW & Quy trình n8n Tạo Video AI Đa Góc Quay Chuyên Nghiệp
+      </h2>
+      <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 18px;">
+        <span style="font-size: 28px; font-weight: 800; color: #4f46e5;">199.000 đ</span>
+        <del style="font-size: 16px; color: #94a3b8; font-weight: 500;">350.000 đ</del>
+        <span style="background: #e0e7ff; color: #4338ca; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 6px;">Giảm 43%</span>
+      </div>
+
+      <!-- Hộp quyền lợi -->
+      <div style="background: #f8fafc; border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; border: 1px dashed #cbd5e1; font-size: 13.5px; line-height: 1.8;">
+        <div style="color: #1e293b; font-weight: 700; margin-bottom: 4px;">🎁 Quyền lợi khi sở hữu kịch bản:</div>
+        <div>✅ Tải trọn bộ file JSON workflow n8n gốc (Import dùng ngay)</div>
+        <div>✅ Video hướng dẫn cài đặt từng node từ A-Z chi tiết</div>
+        <div>✅ Hỗ trợ kích hoạt và giải đáp kỹ thuật 1-1 qua Zalo</div>
+        <div>✅ Cập nhật trọn đời miễn phí khi n8n / AI Model đổi version</div>
+      </div>
+
+      <!-- Nút hành động -->
+      <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+        <a href="#thanh-toan-vietqr" style="flex: 1 1 180px; text-align: center; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: #ffffff; padding: 13px 18px; border-radius: 10px; font-weight: 700; font-size: 14.5px; text-decoration: none; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);">
+          ⚡ QUÉT MÃ VIETQR (199.000 đ)
+        </a>
+        <a href="https://zalo.me/0987654321" class="btn-zalo" target="_blank" rel="noopener" style="flex: 1 1 130px; text-align: center; background: #0068ff; color: #ffffff; padding: 13px 16px; border-radius: 10px; font-weight: 700; font-size: 14px; text-decoration: none;">
+          💬 Chat Zalo
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Khung Quét Mã VietQR (Tự Động Đồng Bộ Số Tài Khoản Toàn Cục) -->
+  <div id="thanh-toan-vietqr" style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #f1f5f9; text-align: center;">
+    <div style="font-size: 13.5px; color: #475569; font-weight: 600; margin-bottom: 10px;">
+      📲 Mở App Ngân hàng hoặc MoMo quét mã nhận link tải tức thì:
+    </div>
+
+    <!-- Ảnh VietQR: data-amount là số tiền, data-memo là mã đơn hàng -->
+    <img class="vietqr-img" data-amount="199000" data-memo="WF11538" src="https://img.vietqr.io/image/MB-0987654321-compact2.png?amount=199000&addInfo=WF11538&accountName=NGUYEN%20DANG" alt="Mã VietQR Thanh Toán" style="max-width: 220px; border-radius: 8px; border: 1px solid #e2e8f0; margin: 0 auto 10px;" />
+
+    <div style="font-size: 14px; color: #0f172a; line-height: 1.7;">
+      <div>Số tiền: <strong style="color: #ef4444; font-size: 16px;">199.000 đ</strong></div>
+      <div>Nội dung CK: <strong style="color: #4f46e5; background: #e0e7ff; padding: 2px 8px; border-radius: 4px;">WF11538</strong> <em>(Ghi đúng cú pháp để hệ thống gửi file tự động)</em></div>
+      <div style="color: #64748b; font-size: 12.5px; margin-top: 4px;">
+        Ngân hàng: <strong class="js-vietqr-bank">MB</strong> • STK: <strong class="js-vietqr-stk">0987654321</strong> • Chủ TK: <strong class="js-vietqr-name">NGUYEN DANG</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 2. NỘI DUNG GIỚI THIỆU SẢN PHẨM -->
+<h3>1. Giới thiệu tổng quan giải pháp</h3>
+<p>Mô tả ngắn gọn công cụ hoặc kịch bản này giải quyết bài toán gì cho người dùng, giúp tiết kiệm bao nhiêu giờ làm việc thủ công và tăng hiệu suất ra sao.</p>
+
+<h3>2. Các tính năng nổi bật</h3>
+<ul>
+  <li><strong>Tính năng 1:</strong> Tự động tạo ảnh hoặc video chuẩn tỉ lệ khung hình (16:9 hoặc 9:16 cho Reels/TikTok).</li>
+  <li><strong>Tính năng 2:</strong> Đồng nhất khuôn mặt người mẫu và bối cảnh qua công nghệ AI mới nhất.</li>
+  <li><strong>Tính năng 3:</strong> Vượt qua các lớp xác thực Captcha tự động, không lo bị gián đoạn tiến trình.</li>
+</ul>
+
+<!-- 3. CÂU HỎI THƯỜNG GẶP -->
+<h3>3. Câu hỏi thường gặp (FAQ)</h3>
+<p><strong>Hỏi:</strong> Tôi chưa biết dùng n8n có cài đặt được không?<br/>
+<strong>Đáp:</strong> Hoàn toàn được. Kịch bản có kèm video hướng dẫn từng bước và chúng tôi hỗ trợ 1-1 trực tiếp qua Zalo nếu gặp khó khăn.</p>

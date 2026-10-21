@@ -1,0 +1,10 @@
+pid,name,price,driveId,active,category,description
+WF-N8N-001,Workflow n8n Auto Đăng Bài Facebook,199000,1REPLACE_WITH_REAL_DRIVE_ID,TRUE,Workflow - n8n,Tự động đăng bài Facebook hàng ngày
+WF-N8N-002,Workflow n8n Gửi Email Marketing,149000,1REPLACE_WITH_REAL_DRIVE_ID,TRUE,Workflow - n8n,Tự động gửi email hàng loạt
+WF-FLOW-001,App Flow Google - Auto Báo Cáo Sheets,0,1REPLACE_WITH_REAL_DRIVE_ID,TRUE,Workflow - Flow,Tự động tạo báo cáo Google Sheets
+PROMPT-VIDEO-001,Bộ Prompt Tạo Video TikTok Viral,99000,1REPLACE_WITH_REAL_DRIVE_ID,TRUE,Prompt - Video,50 prompt tạo script video TikTok
+PROMPT-IMG-001,Bộ Prompt Midjourney Thương Mại,0,1REPLACE_WITH_REAL_DRIVE_ID,TRUE,Prompt - Image,100 prompt miễn phí cho Midjourney/FLUX
+SKILL-CLAUDE-001,Skill Claude - Viết Content Marketing,0,1REPLACE_WITH_REAL_DRIVE_ID,TRUE,Skill - Claude,Hướng dẫn dùng Claude viết content
+SKILL-GPT-001,Skill ChatGPT - Lập trình không cần code,149000,1REPLACE_WITH_REAL_DRIVE_ID,TRUE,Skill - ChatGPT,Kỹ năng prompt ChatGPT cho người không biết code
+SKILL-GEMINI-001,Skill Gemini - Phân tích dữ liệu,0,1REPLACE_WITH_REAL_DRIVE_ID,TRUE,Skill - Gemini,Dùng Gemini phân tích Google Sheets
+SKILL-CODEX-001,Skill Codex - Tạo App không cần code,199000,1REPLACE_WITH_REAL_DRIVE_ID,TRUE,Skill - Codex,Xây dựng app web bằng GitHub Copilot

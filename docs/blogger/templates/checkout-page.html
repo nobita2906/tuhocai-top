@@ -1,0 +1,703 @@
+<!--
+  CHECKOUT & TẢI XUỐNG TỰ ĐỘNG — TỰ HỌC AI (tuhocai.top)
+  Tích hợp:
+    1. Sản phẩm 0đ -> Gửi email kèm link tải tức thì
+    2. Sản phẩm trả phí -> VietQR + Upload biên lai trực tiếp -> Gửi Telegram Bot Admin duyệt (Yes/No)
+-->
+<style>
+  :root {
+    --co-primary: #6366f1;
+    --co-primary-dark: #4f46e5;
+    --co-accent: #ec4899;
+    --co-green: #22c55e;
+    --co-green-dark: #16a34a;
+    --co-red: #ef4444;
+    --co-bg: #f8fafc;
+    --co-surface: #ffffff;
+    --co-text: #0f172a;
+    --co-text-muted: #64748b;
+    --co-border: #e2e8f0;
+    --co-radius: 16px;
+  }
+
+  .co-wrap {
+    font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--co-text);
+    max-width: 580px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+  }
+
+  .co-brand {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .co-brand a {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--co-primary);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .co-brand a span { color: var(--co-text); }
+
+  .co-card {
+    background: var(--co-surface);
+    border-radius: var(--co-radius);
+    border: 1px solid var(--co-border);
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.06), 0 8px 10px -6px rgba(0,0,0,0.03);
+    overflow: hidden;
+  }
+
+  .co-header {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: #ffffff;
+    padding: 24px 28px;
+    text-align: center;
+  }
+  .co-header-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.9;
+    margin-bottom: 6px;
+  }
+  .co-product-name {
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.35;
+    margin: 0;
+  }
+
+  .co-body { padding: 28px; }
+
+  /* Price tag */
+  .co-price-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--co-border);
+  }
+  .co-price-badge {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: #dcfce7;
+    color: var(--co-green-dark);
+    text-transform: uppercase;
+  }
+  .co-price-badge.paid {
+    background: #fef2f2;
+    color: var(--co-red);
+  }
+  .co-price-amount {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--co-text);
+  }
+  .co-price-amount.free { color: var(--co-green-dark); }
+  .co-price-amount.paid { color: var(--co-primary); }
+
+  /* Steps */
+  .co-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .co-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 13.5px;
+    color: var(--co-text);
+  }
+  .co-step-num {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--co-primary);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+  }
+  .co-step-text strong { display: block; font-weight: 600; color: var(--co-text); }
+  .co-step-text span { font-size: 12px; color: var(--co-text-muted); }
+
+  /* Forms */
+  .co-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .co-form-group input, .co-free-form input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid var(--co-border);
+    border-radius: 10px;
+    font-size: 14.5px;
+    font-family: inherit;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.15s;
+  }
+  .co-form-group input:focus, .co-free-form input:focus {
+    border-color: var(--co-primary);
+  }
+
+  /* Upload box */
+  .co-upload-zone {
+    border: 2px dashed #6366f1;
+    background: #f5f7ff;
+    border-radius: 12px;
+    padding: 22px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .co-upload-zone:hover {
+    background: #eef2ff;
+    border-color: #4f46e5;
+  }
+  .co-upload-icon { font-size: 32px; margin-bottom: 6px; }
+  .co-upload-title { font-weight: 700; color: #4338ca; font-size: 14.5px; }
+  .co-upload-subtitle { font-size: 12px; color: var(--co-text-muted); margin-top: 4px; }
+
+  .co-preview-wrap {
+    display: none;
+    text-align: center;
+  }
+  .co-preview-wrap img {
+    max-height: 160px;
+    max-width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom: 8px;
+  }
+  .co-preview-btn {
+    font-size: 12.5px;
+    color: var(--co-primary);
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  /* Notice */
+  .co-fallback-notice {
+    background: #fffbeb;
+    border: 1px solid #fef3c7;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: #92400e;
+    line-height: 1.55;
+    margin-top: 8px;
+  }
+  .co-fallback-notice a {
+    color: #0068ff;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  /* VietQR section */
+  .co-qr-section {
+    background: #f8fafc;
+    border: 1px solid var(--co-border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .co-qr-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--co-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+  .co-qr-img {
+    max-width: 200px;
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    border: 1px solid var(--co-border);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin: 0 auto 12px;
+    display: block;
+  }
+  .co-qr-info {
+    font-size: 13.5px;
+    color: var(--co-text-muted);
+    line-height: 1.6;
+  }
+  .co-memo {
+    display: inline-block;
+    background: #e0e7ff;
+    color: #4338ca;
+    font-weight: 800;
+    font-family: monospace;
+    font-size: 15px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    margin-top: 6px;
+    cursor: pointer;
+    border: 1px dashed #6366f1;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 14px 20px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 800;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(79,70,229,0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(79,70,229,0.45);
+  }
+  .btn-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .btn-primary.green {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    box-shadow: 0 4px 14px rgba(22,163,74,0.35);
+  }
+  .btn-primary.green:hover {
+    box-shadow: 0 6px 18px rgba(22,163,74,0.45);
+  }
+
+  /* Success Card */
+  .co-success {
+    display: none;
+    text-align: center;
+    padding: 20px 10px;
+  }
+  .co-success-icon {
+    font-size: 56px;
+    margin-bottom: 12px;
+  }
+  .co-success h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: #15803d;
+    margin: 0 0 10px;
+  }
+  .co-success p {
+    font-size: 14.5px;
+    color: var(--co-text-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .co-footer-note {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12.5px;
+    color: var(--co-text-muted);
+    line-height: 1.6;
+  }
+  .co-footer-note a { color: var(--co-primary); text-decoration: none; font-weight: 600; }
+
+  @media (max-width: 480px) {
+    .co-wrap { padding: 12px 8px 30px; }
+    .co-body { padding: 20px 16px; }
+    .co-product-name { font-size: 18px; }
+  }
+</style>
+
+<link href='https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap' rel='stylesheet'/>
+
+<div class='co-wrap'>
+  <div class='co-brand'>
+    <a href='/'>Tự Học<span> AI</span></a>
+  </div>
+
+  <div class='co-card' id='checkoutCard'>
+    <div class='co-header'>
+      <div class='co-header-label'>🛒 Thanh toán &amp; Tải xuống</div>
+      <div class='co-product-name' id='coProductName'>Đang tải...</div>
+    </div>
+    <div class='co-body'>
+
+      <!-- Price Row -->
+      <div class='co-price-row'>
+        <span class='co-price-badge' id='coPriceBadge'>MIỄN PHÍ</span>
+        <span class='co-price-amount' id='coPriceAmount'>0đ</span>
+      </div>
+
+      <!-- FREE FLOW (0đ) -->
+      <div id='freeFlow' style='display:none;'>
+        <div class='co-steps'>
+          <div class='co-step'>
+            <div class='co-step-num'>1</div>
+            <div class='co-step-text'>
+              <strong>Nhập email nhận link tải</strong>
+              <span>Link tải sẽ được gửi ngay đến email của bạn</span>
+            </div>
+          </div>
+          <div class='co-step'>
+            <div class='co-step-num'>2</div>
+            <div class='co-step-text'>
+              <strong>Xác nhận &amp; Tải ngay</strong>
+              <span>Không cần chờ duyệt — tải xuống tức thì</span>
+            </div>
+          </div>
+        </div>
+
+        <div class='co-form-group'>
+          <input type='text' id='freeName' placeholder='Họ và tên của bạn' required/>
+          <input type='email' id='freeEmail' placeholder='Email nhận link tải (bắt buộc)' required/>
+          <button class='btn-primary green' id='btnFreeSubmit' onclick='handleFreeDownload()'>
+            ⬇️ Gửi link tải đến email của tôi
+          </button>
+        </div>
+      </div>
+
+      <!-- PAID FLOW (> 0đ) -->
+      <div id='paidFlow' style='display:none;'>
+        <div class='co-steps'>
+          <div class='co-step'>
+            <div class='co-step-num'>1</div>
+            <div class='co-step-text'>
+              <strong>Chuyển khoản theo mã QR bên dưới</strong>
+              <span>Quét mã bằng app ngân hàng hoặc MoMo</span>
+            </div>
+          </div>
+          <div class='co-step'>
+            <div class='co-step-num'>2</div>
+            <div class='co-step-text'>
+              <strong>Tải ảnh biên lai &amp; xác nhận</strong>
+              <span>Hệ thống gửi trực tiếp cho Admin duyệt qua Telegram</span>
+            </div>
+          </div>
+          <div class='co-step'>
+            <div class='co-step-num'>3</div>
+            <div class='co-step-text'>
+              <strong>Nhận link tải qua email (tự động)</strong>
+              <span>Email chứa file Google Drive gửi trong 1-3 phút</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- VietQR Box -->
+        <div class='co-qr-section'>
+          <div class='co-qr-label'>📱 Quét mã QR để thanh toán</div>
+          <img class='co-qr-img' id='coQrImg' src='' alt='QR VietQR thanh toán'/>
+          <div class='co-qr-info'>
+            Nội dung chuyển khoản (bắt buộc):
+            <br/>
+            <span class='co-memo' id='coMemo' onclick='copyMemo()' title='Bấm để sao chép'>THAI-WF001</span>
+          </div>
+        </div>
+
+        <!-- Form Tải Ảnh Biên Lai Trực Tiếp Tại Chỗ -->
+        <div class='co-form-group'>
+          <div style='font-size: 14.5px; font-weight: 700; color: #0f172a; margin-bottom: 2px;'>
+            📸 Xác nhận chuyển khoản &amp; Nhận link tải:
+          </div>
+
+          <input type='text' id='paidName' placeholder='Họ và tên của bạn (tùy chọn)'/>
+          <input type='email' id='paidEmail' placeholder='Email nhận link tải tài liệu (bắt buộc)' required/>
+
+          <!-- Upload Drop Zone -->
+          <div class='co-upload-zone' id='uploadZone' onclick='document.getElementById("receiptFile").click()'>
+            <input type='file' id='receiptFile' accept='image/*' style='display:none;' onchange='handleReceiptSelected(event)'/>
+            
+            <div id='uploadPlaceholder'>
+              <div class='co-upload-icon'>📤</div>
+              <div class='co-upload-title'>Bấm để chọn ảnh chuyển khoản / biên lai</div>
+              <div class='co-upload-subtitle'>Hoặc kéo thả ảnh vào đây (Hỗ trợ JPG, PNG, WebP)</div>
+            </div>
+
+            <div class='co-preview-wrap' id='uploadPreview'>
+              <img id='previewImg' src='' alt='Xem trước biên lai'/>
+              <div><span class='co-preview-btn'>🔄 Bấm vào đây để chọn lại ảnh khác</span></div>
+            </div>
+          </div>
+
+          <!-- Fallback Notice -->
+          <div class='co-fallback-notice'>
+            💡 <em>Không chụp được ảnh biên lai hoặc gặp sự cố? Bạn có thể liên hệ trực tiếp <a href='https://zalo.me/0938494303' target='_blank'>Zalo: 0938494303</a> để được hỗ trợ nhận file ngay!</em>
+          </div>
+
+          <button class='btn-primary' id='btnPaidSubmit' onclick='handlePaidUploadSubmit()'>
+            🚀 Gửi biên lai &amp; Nhận link tải
+          </button>
+        </div>
+      </div>
+
+      <!-- SUCCESS SCREEN -->
+      <div class='co-success' id='coSuccess'>
+        <div class='co-success-icon' id='successIcon'>🎉</div>
+        <h2 id='successTitle'>Đã gửi thành công!</h2>
+        <p id='successMessage'>Vui lòng kiểm tra hộp thư email (kể cả thư mục Spam).</p>
+        <br/>
+        <a href='/' class='btn-primary' style='display:inline-flex;width:auto;padding:12px 28px;'>← Về trang chủ</a>
+      </div>
+
+    </div>
+  </div>
+
+  <div class='co-footer-note'>
+    🔒 Thanh toán an toàn qua VietQR · Hỗ trợ: <a href='https://zalo.me/0938494303' target='_blank'>Zalo: 0938494303</a><br/>
+    Gặp vấn đề? Liên hệ <a href='https://zalo.me/0938494303' target='_blank'>Zalo hỗ trợ trực tiếp</a>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CHECKOUT ENGINE — TỰ HỌC AI (tuhocai.top)
+// ============================================================
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var pid    = params.get('pid')   || 'THAI-001';
+  var name   = params.get('name')  || 'Tài nguyên Tự Học AI';
+  var price  = parseInt(params.get('price') || '0', 10);
+  var drive  = params.get('drive') || '';
+
+  var cfg = window.VIETQR_CONFIG || {
+    bankId: 'VPB',
+    accountNo: '0934434101',
+    accountName: 'NGUYEN VAN DANG',
+    zaloPhone: '0938494303'
+  };
+
+  var memo = 'THAI-' + pid;
+  document.getElementById('coProductName').textContent = decodeURIComponent(name);
+  document.getElementById('coMemo').textContent = memo;
+
+  if (price === 0) {
+    // 0Đ FREE FLOW
+    document.getElementById('coPriceBadge').textContent = 'MIỄN PHÍ';
+    document.getElementById('coPriceBadge').className = 'co-price-badge';
+    document.getElementById('coPriceAmount').textContent = '0đ';
+    document.getElementById('coPriceAmount').className = 'co-price-amount free';
+    document.getElementById('freeFlow').style.display = 'block';
+    document.getElementById('paidFlow').style.display = 'none';
+  } else {
+    // PAID FLOW
+    var formatted = price.toLocaleString('vi-VN') + 'đ';
+    document.getElementById('coPriceBadge').textContent = 'TRẢ PHÍ';
+    document.getElementById('coPriceBadge').className = 'co-price-badge paid';
+    document.getElementById('coPriceAmount').textContent = formatted;
+    document.getElementById('coPriceAmount').className = 'co-price-amount paid';
+    document.getElementById('freeFlow').style.display = 'none';
+    document.getElementById('paidFlow').style.display = 'block';
+
+    var qrUrl = 'https://img.vietqr.io/image/'
+      + cfg.bankId + '-' + cfg.accountNo + '-compact2.png'
+      + '?amount=' + price
+      + '&addInfo=' + encodeURIComponent(memo)
+      + '&accountName=' + encodeURIComponent(cfg.accountName);
+    document.getElementById('coQrImg').src = qrUrl;
+  }
+})();
+
+// Copy memo to clipboard
+function copyMemo() {
+  var memo = document.getElementById('coMemo').textContent;
+  navigator.clipboard.writeText(memo).then(function() {
+    var el = document.getElementById('coMemo');
+    var orig = el.textContent;
+    el.textContent = '✅ Đã sao chép!';
+    setTimeout(function() { el.textContent = orig; }, 1500);
+  });
+}
+
+// Google Apps Script Web App Endpoint
+var GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxEFiTb3JO611CQLAhA8hvtkV0UygU40AKMXR3KmHDt2R-cHcGpwZALc-_3nk2OhZ0lkQ/exec';
+
+// ------------------------------------------------------------
+// 1. FREE DOWNLOAD HANDLER (0đ)
+// ------------------------------------------------------------
+function handleFreeDownload() {
+  var nameVal  = document.getElementById('freeName').value.trim();
+  var emailVal = document.getElementById('freeEmail').value.trim();
+
+  if (!emailVal || !emailVal.includes('@')) {
+    alert('Vui lòng nhập địa chỉ email hợp lệ để nhận link tải!');
+    return;
+  }
+
+  var params = new URLSearchParams(window.location.search);
+  var pid    = params.get('pid') || 'THAI-FREE';
+  var name   = params.get('name') || 'Tài nguyên 0đ';
+  var drive  = params.get('drive') || '';
+
+  var btn = document.getElementById('btnFreeSubmit');
+  btn.textContent = '⏳ Đang gửi link tải...';
+  btn.disabled = true;
+
+  var requestUrl = GAS_ENDPOINT + '?action=free'
+    + '&name=' + encodeURIComponent(nameVal)
+    + '&email=' + encodeURIComponent(emailVal)
+    + '&pid=' + encodeURIComponent(pid)
+    + '&productName=' + encodeURIComponent(name)
+    + '&drive=' + encodeURIComponent(drive);
+
+  fetch(requestUrl, { method: 'GET', mode: 'no-cors' })
+  .then(function() {
+    showSuccessScreen(
+      '🎉',
+      'Đã gửi link tải thành công!',
+      'Hệ thống đã tự động gửi file về hộp thư <strong>' + emailVal + '</strong>.<br/>Vui lòng kiểm tra hộp thư đến (kể cả mục Spam).'
+    );
+  })
+  .catch(function() {
+    var img = new Image();
+    img.src = requestUrl;
+    showSuccessScreen(
+      '🎉',
+      'Đã gửi link tải thành công!',
+      'Hệ thống đã tự động gửi file về hộp thư <strong>' + emailVal + '</strong>.<br/>Vui lòng kiểm tra hộp thư đến (kể cả mục Spam).'
+    );
+  });
+}
+
+// ------------------------------------------------------------
+// 2. PAID ORDER UPLOAD HANDLER (Gửi ảnh biên lai -> Telegram Bot)
+// ------------------------------------------------------------
+var selectedReceiptBase64 = '';
+var selectedReceiptMime = 'image/jpeg';
+
+function handleReceiptSelected(e) {
+  var file = e.target.files && e.target.files[0];
+  if (!file) return;
+
+  var reader = new FileReader();
+  reader.onload = function(event) {
+    var rawDataUrl = event.target.result;
+    var img = new Image();
+    img.onload = function() {
+      try {
+        var canvas = document.createElement('canvas');
+        var maxW = 1000;
+        var scale = maxW / img.width;
+        if (scale > 1) scale = 1;
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        selectedReceiptBase64 = canvas.toDataURL('image/jpeg', 0.82);
+        selectedReceiptMime = 'image/jpeg';
+      } catch (errCanvas) {
+        selectedReceiptBase64 = rawDataUrl;
+        selectedReceiptMime = file.type || 'image/jpeg';
+      }
+
+      document.getElementById('uploadPlaceholder').style.display = 'none';
+      document.getElementById('uploadPreview').style.display = 'block';
+      document.getElementById('previewImg').src = selectedReceiptBase64;
+    };
+    img.onerror = function() {
+      selectedReceiptBase64 = rawDataUrl;
+      selectedReceiptMime = file.type || 'image/jpeg';
+      document.getElementById('uploadPlaceholder').style.display = 'none';
+      document.getElementById('uploadPreview').style.display = 'block';
+      document.getElementById('previewImg').src = selectedReceiptBase64;
+    };
+    img.src = rawDataUrl;
+  };
+  reader.readAsDataURL(file);
+}
+
+function handlePaidUploadSubmit() {
+  var emailVal = document.getElementById('paidEmail').value.trim();
+  var nameVal  = document.getElementById('paidName').value.trim();
+
+  if (!emailVal || !emailVal.includes('@')) {
+    alert('Vui lòng nhập địa chỉ email hợp lệ để nhận link tải tài liệu sau khi duyệt!');
+    return;
+  }
+
+  if (!selectedReceiptBase64) {
+    alert('Vui lòng chọn hoặc chụp ảnh biên lai chuyển khoản trước khi bấm gửi!');
+    return;
+  }
+
+  var params = new URLSearchParams(window.location.search);
+  var pid    = params.get('pid') || 'THAI-PROD';
+  var name   = params.get('name') || 'Sản phẩm Tự Học AI';
+  var price  = parseInt(params.get('price') || '0', 10);
+
+  var btn = document.getElementById('btnPaidSubmit');
+  btn.textContent = '⏳ Đang gửi biên lai đến hệ thống...';
+  btn.disabled = true;
+
+  var payload = {
+    action: 'paid_order_upload',
+    email: emailVal,
+    name: nameVal || 'Khách hàng Tự Học AI',
+    pid: pid,
+    productName: name,
+    price: price,
+    imageBase64: selectedReceiptBase64,
+    mimeType: selectedReceiptMime
+  };
+
+  fetch(GAS_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    var orderId = data.orderId || ('THAI-' + Date.now().toString().slice(-6));
+    showSuccessScreen(
+      '📨',
+      'Đã gửi biên lai chuyển khoản thành công!',
+      'Mã đơn hàng: <strong style="color:#4f46e5;">#' + orderId + '</strong>.<br/>'
+      + 'Biên lai đã được chuyển thẳng tới Admin duyệt.<br/>'
+      + 'Sau khi duyệt, link tải sẽ tự động gửi vào email: <strong>' + emailVal + '</strong> (trong 3 - 5 phút).<br/><br/>'
+      + '<em>Nếu cần gấp, vui lòng liên hệ Zalo: <a href="https://zalo.me/0938494303" target="_blank" style="color:#0068ff;font-weight:700;">0938494303</a></em>'
+    );
+  })
+  .catch(function(err) {
+    // Trường hợp CORS không trả json, nhưng dữ liệu vẫn đã gửi tới GAS
+    showSuccessScreen(
+      '📨',
+      'Đã tiếp nhận thông tin chuyển khoản!',
+      'Biên lai của bạn đã được chuyển tới Admin duyệt.<br/>'
+      + 'Link tải Google Drive sẽ được tự động gửi vào email <strong>' + emailVal + '</strong> ngay khi đối soát xong.<br/><br/>'
+      + '<em>Hỗ trợ nhanh qua Zalo: <a href="https://zalo.me/0938494303" target="_blank" style="color:#0068ff;font-weight:700;">0938494303</a></em>'
+    );
+  });
+}
+
+function showSuccessScreen(icon, title, messageHtml) {
+  document.getElementById('freeFlow').style.display = 'none';
+  document.getElementById('paidFlow').style.display = 'none';
+  document.getElementById('successIcon').textContent = icon;
+  document.getElementById('successTitle').textContent = title;
+  document.getElementById('successMessage').innerHTML = messageHtml;
+  document.getElementById('coSuccess').style.display = 'block';
+}
+</script>

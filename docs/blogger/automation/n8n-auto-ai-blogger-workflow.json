@@ -1,0 +1,220 @@
+{
+  "name": "Nguyen Dang AI - 100% Auto AI Blogger Publisher (Auto-Pilot)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "id": "cron-daily-8am",
+      "name": "⏰ Hẹn Giờ 8h Sáng Mỗi Ngày",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "tg-manual-trigger",
+      "name": "📱 Lệnh Telegram (/auto_post)",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        540
+      ],
+      "webhookId": "auto-blogger-tg-trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Hãy đóng vai chuyên gia hàng đầu về AI Automation và Prompt Engineering cho thương hiệu 'Nguyen Dang AI' (blog nguyendangai.blogspot.com).\n\nNhiệm vụ: Hãy tự động sáng tạo 1 bài viết chất lượng cao về MỘT trong hai chủ đề sau:\n1. 'Prompt AI': Một câu lệnh prompt tạo ảnh AI (Flux 1.1 Pro / Midjourney v6) siêu đẹp, kèm phân tích từ khóa và phong cách.\n2. 'Hướng dẫn': Một mẹo thực chiến ứng dụng AI / n8n / tự động hóa giúp tiết kiệm thời gian.\n\nBẮT BUỘC TRẢ VỀ DẠNG JSON HỢP LỆ THEO ĐÚNG CẤU TRÚC SAU (không giải thích thêm ngoài JSON):\n{\n  \"type\": \"Prompt AI\",\n  \"title\": \"Tiêu đề bài viết hấp dẫn, chuẩn SEO (khoảng 60-80 ký tự)\",\n  \"labels\": [\"Image Prompt\", \"Công cụ hình ảnh Ai\"],\n  \"image_prompt\": \"Hyper-realistic cinematic 8k detailed english prompt for generating photo with flux\",\n  \"prompt_english\": \"Full positive prompt in English with camera parameters like 85mm f/1.4, golden hour, 8k, photorealistic --ar 16:9 --v 6.1\",\n  \"model_name\": \"Flux 1.1 Pro / Midjourney v6\",\n  \"aspect_ratio\": \"16:9 (Cinematic)\",\n  \"style_name\": \"Cinematic Photorealistic\",\n  \"keywords_breakdown\": [\n    {\"keyword\": \"từ khóa 1\", \"explanation\": \"giải thích tác dụng...\"},\n    {\"keyword\": \"từ khóa 2\", \"explanation\": \"giải thích tác dụng...\"},\n    {\"keyword\": \"từ khóa 3\", \"explanation\": \"giải thích tác dụng...\"}\n  ],\n  \"tutorial_steps\": [\n    {\"step\": 1, \"title\": \"Tiêu đề bước 1\", \"content\": \"Nội dung chi tiết bước 1...\"},\n    {\"step\": 2, \"title\": \"Tiêu đề bước 2\", \"content\": \"Nội dung chi tiết bước 2...\"}\n  ],\n  \"tip_box\": \"Mẹo tối ưu hoặc lưu ý quan trọng cho độc giả\",\n  \"summary\": \"Tóm tắt 2-3 câu giới thiệu bài viết ấn tượng\"\n}",
+        "options": {
+          "systemMessage": "Bạn là chuyên gia AI thực chiến cho blog Nguyen Dang AI. Bạn chỉ xuất ra định dạng JSON hợp lệ thuần túy, không có thẻ markdown ```json bao quanh."
+        }
+      },
+      "id": "ai-content-generator",
+      "name": "🧠 AI Sáng Tạo Nội Dung Chuẩn SEO",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        420,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-exp",
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "id": "gemini-model-node",
+      "name": "Google Gemini 2.0 Flash (Miễn Phí)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        420,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ========================================================\n// XỬ LÝ DỮ LIỆU TỪ AI & TẠO ẢNH BÌA TỰ ĐỘNG (POLLINATIONS FLUX)\n// ========================================================\nconst rawResponse = $input.item.json.text || $input.item.json.response || '';\nlet data = {};\n\ntry {\n  // Làm sạch các thẻ bọc nếu AI lỡ xuất ra ```json\n  const cleanJson = rawResponse.replace(/```json/g, '').replace(/```/g, '').trim();\n  data = JSON.parse(cleanJson);\n} catch (e) {\n  data = {\n    type: 'Prompt AI',\n    title: 'Prompt Chân Dung Nghệ Thuật Ánh Sáng Tự Nhiên Đỉnh Cao',\n    labels: ['Image Prompt', 'Công cụ hình ảnh Ai'],\n    prompt_english: 'Cinematic portrait of a Vietnamese female model in traditional modern silk dress at golden hour 8k --ar 16:9',\n    model_name: 'Flux 1.1 Pro',\n    aspect_ratio: '16:9',\n    style_name: 'Photorealistic',\n    keywords_breakdown: [\n      {keyword: 'golden hour', explanation: 'Tạo ánh sáng vàng hoàng hôn ấm áp.'},\n      {keyword: '85mm lens', explanation: 'Tạo độ sâu trường ảnh và xóa phông mịn màng.'}\n    ],\n    tip_box: 'Hãy thử đổi tỷ lệ thành 9:16 nếu bạn muốn đăng ảnh lên story TikTok hoặc Facebook.',\n    summary: 'Khám phá câu lệnh prompt độc đáo giúp bạn tạo ra những bức ảnh nghệ thuật đầy cảm xúc.'\n  };\n}\n\n// Tạo link ảnh AI chuẩn độ phân giải cao miễn phí qua Pollinations FLUX API\nconst imgPromptEncoded = encodeURIComponent(data.image_prompt || data.prompt_english || 'futuristic ai automation technology');\nconst autoImageUrl = `https://image.pollinations.ai/prompt/${imgPromptEncoded}?width=1280&height=720&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;\n\n// Ráp vào khung HTML Template chuẩn của Nguyen Dang AI\nlet htmlBody = '';\n\nif (data.type === 'Prompt AI') {\n  // --- TEMPLATE 4: IMAGE PROMPT AI ---\n  let keywordsHtml = '';\n  if (data.keywords_breakdown && Array.isArray(data.keywords_breakdown)) {\n    keywordsHtml = data.keywords_breakdown.map(k => `<li><strong>${k.keyword}:</strong> ${k.explanation}</li>`).join('');\n  }\n\n  htmlBody = `\n<div class=\"separator\" style=\"clear: both; text-align: center; margin: 20px 0 26px;\">\n  <img border=\"0\" src=\"${autoImageUrl}\" alt=\"${data.title}\" style=\"max-width: 100%; border-radius: 14px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);\" />\n  <div style=\"font-size: 13px; color: #64748b; margin-top: 8px; font-style: italic;\">\n    Hình ảnh được sinh tự động theo Prompt bên dưới (Model: ${data.model_name || 'Flux 1.1 Pro'})\n  </div>\n</div>\n\n<div style=\"background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 18px 22px; margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); font-family: 'Be Vietnam Pro', sans-serif;\">\n  <div style=\"display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px; font-size: 13.5px;\">\n    <div><span style=\"color: #64748b; font-size: 12px; display: block;\">Mô hình AI:</span><strong style=\"color: #4f46e5;\">${data.model_name || 'Flux 1.1 Pro'}</strong></div>\n    <div><span style=\"color: #64748b; font-size: 12px; display: block;\">Tỷ lệ khung hình:</span><strong style=\"color: #0f172a;\">${data.aspect_ratio || '16:9'}</strong></div>\n    <div><span style=\"color: #64748b; font-size: 12px; display: block;\">Phong cách:</span><strong style=\"color: #ec4899;\">${data.style_name || 'Cinematic'}</strong></div>\n    <div><span style=\"color: #64748b; font-size: 12px; display: block;\">Độ phân giải:</span><strong style=\"color: #10b981;\">4K Ultra HD</strong></div>\n  </div>\n</div>\n\n<h3>🎨 Câu Lệnh Prompt Chính Thức (Positive Prompt)</h3>\n<div style=\"position: relative; margin-bottom: 24px;\">\n  <button onclick=\"navigator.clipboard.writeText(document.getElementById('aiPromptText').innerText); alert('Đã sao chép prompt!');\" style=\"position: absolute; right: 14px; top: 14px; background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); color: #ffffff; border: none; padding: 7px 16px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(236, 72, 153, 0.3);\">\n    📋 Sao Chép Prompt\n  </button>\n  <div id=\"aiPromptText\" style=\"background: #0f172a; color: #f8fafc; border-radius: 14px; padding: 24px; font-family: monospace; font-size: 14px; line-height: 1.7; border: 1px solid #1e293b; padding-right: 140px;\">\n    ${data.prompt_english}\n  </div>\n</div>\n\n<h3>Phân tích từ khóa cốt lõi trong Prompt</h3>\n<ul>\n  ${keywordsHtml}\n</ul>\n\n<div style=\"background: #fdf4ff; border: 1px solid #f0abfc; border-left: 4px solid #c026d3; padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 24px 0; font-size: 14px; color: #701a75;\">\n  <strong>💡 Gợi ý tùy biến:</strong> ${data.tip_box || 'Bạn có thể thay đổi bối cảnh hoặc ánh sáng để tạo ra phong cách riêng.'}\n</div>`;\n\n} else {\n  // --- TEMPLATE 3: HƯỚNG DẪN THỦ THUẬT ---\n  let stepsHtml = '';\n  if (data.tutorial_steps && Array.isArray(data.tutorial_steps)) {\n    stepsHtml = data.tutorial_steps.map(s => `\n<div style=\"display: flex; gap: 18px; margin-bottom: 24px;\">\n  <div style=\"flex-shrink: 0; width: 38px; height: 38px; border-radius: 50%; background: #4f46e5; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px;\">\n    ${s.step}\n  </div>\n  <div>\n    <h4 style=\"margin-top: 2px; margin-bottom: 8px; font-size: 17px; color: #0f172a;\">${s.title}</h4>\n    <p style=\"color: #475569; font-size: 14.5px; line-height: 1.7;\">${s.content}</p>\n  </div>\n</div>`).join('');\n  }\n\n  htmlBody = `\n<div style=\"background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; margin: 20px 0 28px; font-family: 'Be Vietnam Pro', sans-serif;\">\n  <span style=\"background: #ecfdf5; color: #059669; font-weight: 700; font-size: 12px; padding: 3px 10px; border-radius: 20px;\">📚 BÀI HƯỚNG DẪN</span>\n  <p style=\"font-size: 15px; color: #334155; line-height: 1.6; margin-top: 10px;\">${data.summary}</p>\n</div>\n\n<div class=\"separator\" style=\"clear: both; text-align: center; margin: 20px 0;\">\n  <img border=\"0\" src=\"${autoImageUrl}\" alt=\"${data.title}\" style=\"max-width: 100%; border-radius: 12px;\" />\n</div>\n\n<h3>Các bước thực hiện chi tiết:</h3>\n<div style=\"margin: 24px 0;\">\n  ${stepsHtml}\n</div>\n\n<div style=\"background: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #16a34a; padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 24px 0; font-size: 14.5px; color: #166534;\">\n  <strong>💡 Mẹo thực chiến:</strong> ${data.tip_box || 'Kiểm tra kỹ kết nối trước khi bật chạy chính thức.'}\n</div>`;\n}\n\nreturn {\n  json: {\n    title: data.title,\n    content: htmlBody,\n    labels: data.labels || ['Tin tức Ai', 'Hướng dẫn'],\n    summary: data.summary,\n    imageUrl: autoImageUrl,\n    blogId: '2562876275428955705'\n  }\n};"
+      },
+      "id": "code-template-assembler",
+      "name": "⚙️ Ráp Template & Tạo Ảnh FLUX",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        680,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://www.googleapis.com/blogger/v3/blogs/{{ $json.blogId }}/posts/",
+        "authentication": "oAuth2",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "kind",
+              "value": "blogger#post"
+            },
+            {
+              "name": "title",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "name": "content",
+              "value": "={{ $json.content }}"
+            },
+            {
+              "name": "labels",
+              "value": "={{ $json.labels }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "publish-blogger-post",
+      "name": "🚀 Tự Động Đăng Lên Blogger",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        920,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "=🤖 *HỆ THỐNG AUTO-AI VỪA ĐĂNG BÀI MỚI!*\n\n📌 *Tiêu đề:* {{ $('⚙️ Ráp Template & Tạo Ảnh FLUX').item.json.title }}\n🏷 *Chuyên mục:* {{ $('⚙️ Ráp Template & Tạo Ảnh FLUX').item.json.labels.join(', ') }}\n💡 *Tóm tắt:* {{ $('⚙️ Ráp Template & Tạo Ảnh FLUX').item.json.summary }}\n\n🔗 *Link bài viết:* {{ $json.url }}",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "reply_markup": {
+            "inline_keyboard": [
+              [
+                {
+                  "text": "🌐 Mở Xem Bài Viết Trực Tuyến",
+                  "url": "={{ $json.url }}"
+                }
+              ]
+            ]
+          }
+        }
+      },
+      "id": "telegram-bot-notify",
+      "name": "📱 Báo Cáo Telegram Kèm Link",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1160,
+        440
+      ]
+    }
+  ],
+  "connections": {
+    "⏰ Hẹn Giờ 8h Sáng Mỗi Ngày": {
+      "main": [
+        [
+          {
+            "node": "🧠 AI Sáng Tạo Nội Dung Chuẩn SEO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📱 Lệnh Telegram (/auto_post)": {
+      "main": [
+        [
+          {
+            "node": "🧠 AI Sáng Tạo Nội Dung Chuẩn SEO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini 2.0 Flash (Miễn Phí)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "🧠 AI Sáng Tạo Nội Dung Chuẩn SEO",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🧠 AI Sáng Tạo Nội Dung Chuẩn SEO": {
+      "main": [
+        [
+          {
+            "node": "⚙️ Ráp Template & Tạo Ảnh FLUX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚙️ Ráp Template & Tạo Ảnh FLUX": {
+      "main": [
+        [
+          {
+            "node": "🚀 Tự Động Đăng Lên Blogger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🚀 Tự Động Đăng Lên Blogger": {
+      "main": [
+        [
+          {
+            "node": "📱 Báo Cáo Telegram Kèm Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,99 @@
+<!-- ========================================================
+     TEMPLATE 2: BÀI VIẾT CHIA SẺ WORKFLOW N8N MIỄN PHÍ
+     Nhãn (Labels): Template n8n, Workflow n8n, Tự động hóa
+     ======================================================== -->
+
+<!-- 1. HỘP THÔNG TIN TỔNG QUAN WORKFLOW -->
+<div style="background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%); border: 1px solid #c7d2fe; border-radius: 16px; padding: 24px; margin: 20px 0 30px; font-family: 'Be Vietnam Pro', sans-serif;">
+  <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px;">
+    <div>
+      <span style="background: #6366f1; color: #ffffff; font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase;">
+        ⚡ FREE WORKFLOW TEMPLATE
+      </span>
+      <h2 style="font-size: 20px; font-weight: 800; color: #1e1b4b; margin: 10px 0 4px;">
+        Quy trình Tự động lấy Cookie từ FLOW lưu vào Google Sheets
+      </h2>
+      <div style="font-size: 13.5px; color: #475569;">Chia sẻ bởi Nguyen Dang AI • Cập nhật mới nhất</div>
+    </div>
+    
+    <!-- Nút Tải Về Nhanh -->
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <a href="https://drive.google.com/file/d/YOUR_DRIVE_ID/view" target="_blank" rel="noopener" style="background: #4f46e5; color: #ffffff; padding: 12px 20px; border-radius: 10px; font-weight: 700; font-size: 14px; text-decoration: none; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25); display: inline-flex; align-items: center; gap: 8px;">
+        📥 Tải File JSON (.json)
+      </a>
+    </div>
+  </div>
+
+  <!-- Thông số Workflow -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; background: #ffffff; border-radius: 12px; padding: 14px 18px; border: 1px solid #e2e8f0; font-size: 13px;">
+    <div>
+      <div style="color: #64748b;">Độ khó:</div>
+      <strong style="color: #10b981;">Dễ cài đặt (★☆☆)</strong>
+    </div>
+    <div>
+      <div style="color: #64748b;">Số Node:</div>
+      <strong style="color: #0f172a;">8 Nodes</strong>
+    </div>
+    <div>
+      <div style="color: #64748b;">Ứng dụng tích hợp:</div>
+      <strong style="color: #4f46e5;">n8n, Google Sheets, Chrome</strong>
+    </div>
+    <div>
+      <div style="color: #64748b;">Thời gian chạy:</div>
+      <strong style="color: #0f172a;">Tức thì (~2 giây)</strong>
+    </div>
+  </div>
+</div>
+
+<!-- 2. NỘI DUNG CHI TIẾT -->
+<h3>1. Vấn đề quy trình này giải quyết</h3>
+<p>Trước khi áp dụng workflow, việc thao tác thủ công mất nhiều thời gian và dễ xảy ra sai sót. Quy trình này giúp bạn tự động hóa hoàn toàn từ khâu nhận dữ liệu, xử lý thông tin cho đến lưu trữ trên bảng tính Google Sheets.</p>
+
+<h3>2. Sơ đồ cấu trúc các Node trong n8n</h3>
+<div class="separator" style="clear: both; text-align: center; margin: 20px 0;">
+  <img border="0" src="https://workflowfree.com/wp-content/uploads/2026/09/Extension-get-cookie-Flow-Google-1.webp" alt="Sơ đồ workflow n8n" style="max-width: 100%; border-radius: 12px; box-shadow: 0 4px 14px rgba(0,0,0,0.06);" />
+</div>
+
+<ul>
+  <li><strong>Webhook:</strong> Tiếp nhận dữ liệu kích hoạt từ trình duyệt hoặc ứng dụng.</li>
+  <li><strong>Code Node (JavaScript):</strong> Trích xuất và định dạng lại các trường thông tin cần thiết.</li>
+  <li><strong>Google Sheets Node:</strong> Tự động thêm dòng mới hoặc cập nhật hàng tương ứng.</li>
+</ul>
+
+<h3>3. Hướng dẫn từng bước nhập vào n8n</h3>
+<ol>
+  <li>Mở ứng dụng <strong>n8n</strong> của bạn (Self-hosted hoặc n8n Cloud).</li>
+  <li>Tạo một Workflow mới, chọn menu <code>Workflows > Import from File</code> hoặc nhấn phím tắt <code>Ctrl + V</code> dán mã JSON dưới đây.</li>
+  <li>Kết nối tài khoản <strong>Google Sheets Credential</strong> của bạn.</li>
+  <li>Bấm nút <strong>Test workflow</strong> để kiểm tra dữ liệu mẫu trước khi bật <strong>Active</strong>.</li>
+</ol>
+
+<!-- 4. KHUNG MÃ NGUỒN JSON TIỆN LỢI CÓ NÚT COPY -->
+<h3>4. Mã nguồn Workflow JSON (Copy để Import trực tiếp)</h3>
+<div style="position: relative; margin: 20px 0;">
+  <button onclick="navigator.clipboard.writeText(document.getElementById('n8nJsonCode').innerText); alert('Đã sao chép mã JSON vào bộ nhớ tạm! Bạn có thể mở n8n và bấm Ctrl+V để dán.');" style="position: absolute; right: 14px; top: 14px; background: #6366f1; color: #ffffff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; z-index: 10;">
+    📋 Sao Chép JSON
+  </button>
+  <pre style="background: #0f172a; color: #e2e8f0; border-radius: 12px; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; overflow-x: auto; max-height: 320px; border: 1px solid #1e293b;"><code id="n8nJsonCode">{
+  "name": "Quy trinh Tu dong FLOW to Google Sheets",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "webhook-flow",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300]
+    }
+  ],
+  "connections": {}
+}</code></pre>
+</div>
+
+<!-- 5. GHI CHÚ QUAN TRỌNG -->
+<div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 16px 20px; border-radius: 0 10px 10px 0; margin: 24px 0; font-size: 14px; color: #78350f;">
+  <strong>⚠️ Lưu ý quan trọng:</strong> Luôn kiểm tra lại quyền truy cập (Share permission) của file Google Sheets để n8n Service Account có quyền chỉnh sửa (Editor).
+</div>

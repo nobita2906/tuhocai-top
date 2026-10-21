@@ -1,0 +1,259 @@
+{
+  "name": "Nguyen Dang AI - Auto Blogger Publisher (Sheets + Telegram)",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "node-telegram-trigger",
+      "name": "Telegram Trigger (Lệnh Chat)",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        200,
+        300
+      ],
+      "webhookId": "blogger-telegram-trigger"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24
+            }
+          ]
+        }
+      },
+      "id": "node-schedule-trigger",
+      "name": "Hẹn Giờ Tự Động (Mỗi Ngày)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        200,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "sheetId": "YOUR_GOOGLE_SHEET_ID",
+        "range": "Sheet1!A2:M",
+        "options": {}
+      },
+      "id": "node-read-sheets",
+      "name": "Đọc Bài Viết từ Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        460,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.Trang_Thai }}",
+              "value2": "Sẵn sàng đăng"
+            }
+          ]
+        }
+      },
+      "id": "node-filter-ready",
+      "name": "Lọc Bài 'Sẵn Sàng Đăng'",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        680,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ========================================================\n// SMART TEMPLATE HTML GENERATOR CHO BLOGGER NGUYEN DANG AI\n// ========================================================\nconst item = $input.item.json;\n\nconst templateType = (item.Template || 'Hướng dẫn').trim();\nconst title = item.Tieu_De || 'Bài viết mới';\nconst img = item.Anh_Dai_Dien || 'https://workflowfree.com/wp-content/uploads/2026/08/anh-bia-1024x574.png';\nconst priceSale = item.Gia_Sale ? parseInt(item.Gia_Sale).toLocaleString('vi-VN') + ' đ' : '199.000 đ';\nconst priceRegular = item.Gia_Goc ? parseInt(item.Gia_Goc).toLocaleString('vi-VN') + ' đ' : '350.000 đ';\nconst amountClean = item.Gia_Sale || '199000';\nconst codeOrder = item.Link_Tai_Code || ('WF' + (item.ID || '101'));\nconst description = item.Mo_Ta_Chi_Tiet || 'Nội dung chia sẻ từ Nguyen Dang AI.';\nconst promptAI = item.Prompt_AI || '';\nconst rawLabels = item.Nhan_Labels || 'Template n8n';\nconst labels = rawLabels.split(',').map(s => s.trim()).filter(Boolean);\n\nlet htmlContent = '';\n\nif (templateType.includes('Bán hàng') || templateType.includes('Cửa hàng')) {\n  // --- TEMPLATE 1: BÀI BÁN HÀNG VIETQR ---\n  htmlContent = `\n<div style=\"background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; margin: 20px 0 32px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); font-family: 'Be Vietnam Pro', sans-serif;\">\n  <div style=\"display: flex; flex-wrap: wrap; gap: 24px; align-items: center;\">\n    <div style=\"flex: 1 1 280px; text-align: center;\">\n      <img src=\"${img}\" alt=\"${title}\" style=\"max-width: 100%; border-radius: 12px; box-shadow: 0 4px 14px rgba(0,0,0,0.08);\" />\n    </div>\n    <div style=\"flex: 1 1 340px;\">\n      <span style=\"background: #fef2f2; color: #ef4444; font-weight: 700; font-size: 12px; padding: 4px 12px; border-radius: 20px;\">🔥 SẢN PHẨM CAO CẤP</span>\n      <h2 style=\"font-size: 21px; font-weight: 800; color: #0f172a; margin: 12px 0 14px; line-height: 1.4;\">${title}</h2>\n      <div style=\"display: flex; align-items: baseline; gap: 12px; margin-bottom: 18px;\">\n        <span style=\"font-size: 28px; font-weight: 800; color: #4f46e5;\">${priceSale}</span>\n        <del style=\"font-size: 16px; color: #94a3b8;\">${priceRegular}</del>\n        <span style=\"background: #e0e7ff; color: #4338ca; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 6px;\">Ưu đãi</span>\n      </div>\n      <div style=\"background: #f8fafc; border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; border: 1px dashed #cbd5e1; font-size: 13.5px; line-height: 1.8;\">\n        <div>✅ Tải trọn bộ file JSON workflow n8n gốc</div>\n        <div>✅ Video hướng dẫn cài đặt từng node chi tiết</div>\n        <div>✅ Hỗ trợ kích hoạt và giải đáp 1-1 qua Zalo</div>\n      </div>\n      <div style=\"display: flex; flex-wrap: wrap; gap: 10px;\">\n        <a href=\"#thanh-toan-vietqr\" style=\"flex: 1 1 180px; text-align: center; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: #ffffff; padding: 13px 18px; border-radius: 10px; font-weight: 700; text-decoration: none;\">⚡ QUÉT MÃ VIETQR (${priceSale})</a>\n        <a href=\"https://zalo.me/0987654321\" class=\"btn-zalo\" target=\"_blank\" style=\"flex: 1 1 130px; text-align: center; background: #0068ff; color: #ffffff; padding: 13px 16px; border-radius: 10px; font-weight: 700; text-decoration: none;\">💬 Chat Zalo</a>\n      </div>\n    </div>\n  </div>\n  <div id=\"thanh-toan-vietqr\" style=\"margin-top: 24px; padding-top: 20px; border-top: 1px solid #f1f5f9; text-align: center;\">\n    <div style=\"font-size: 13.5px; color: #475569; font-weight: 600; margin-bottom: 10px;\">Mở App Ngân hàng hoặc MoMo quét mã nhận link ngay:</div>\n    <img class=\"vietqr-img\" data-amount=\"${amountClean}\" data-memo=\"${codeOrder}\" src=\"https://img.vietqr.io/image/MB-0987654321-compact2.png?amount=${amountClean}&addInfo=${codeOrder}&accountName=NGUYEN%20DANG\" style=\"max-width: 220px; border-radius: 8px; border: 1px solid #e2e8f0; margin: 0 auto 10px;\" />\n    <div style=\"font-size: 14px;\">Số tiền: <strong style=\"color: #ef4444;\">${priceSale}</strong> | Cú pháp: <strong style=\"color: #4f46e5; background: #e0e7ff; padding: 2px 8px; border-radius: 4px;\">${codeOrder}</strong></div>\n  </div>\n</div>\n<h3>Giới thiệu chi tiết sản phẩm:</h3>\n<p>${description}</p>`;\n\n} else if (templateType.includes('Workflow')) {\n  // --- TEMPLATE 2: WORKFLOW FREE ---\n  htmlContent = `\n<div style=\"background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%); border: 1px solid #c7d2fe; border-radius: 16px; padding: 24px; margin: 20px 0 30px;\">\n  <span style=\"background: #6366f1; color: #ffffff; font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 20px;\">⚡ FREE WORKFLOW</span>\n  <h2 style=\"font-size: 21px; font-weight: 800; color: #1e1b4b; margin: 10px 0;\">${title}</h2>\n  <div style=\"margin: 16px 0;\">\n    <a href=\"${codeOrder}\" target=\"_blank\" style=\"background: #4f46e5; color: #ffffff; padding: 12px 20px; border-radius: 10px; font-weight: 700; text-decoration: none; display: inline-block;\">📥 Tải File JSON (.json)</a>\n  </div>\n</div>\n<div style=\"text-align: center; margin: 20px 0;\">\n  <img src=\"${img}\" alt=\"${title}\" style=\"max-width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06);\" />\n</div>\n<h3>Mô tả quy trình:</h3>\n<p>${description}</p>`;\n\n} else if (templateType.includes('Prompt')) {\n  // --- TEMPLATE 4: IMAGE PROMPT AI ---\n  htmlContent = `\n<div style=\"text-align: center; margin: 20px 0;\">\n  <img src=\"${img}\" alt=\"${title}\" style=\"max-width: 100%; border-radius: 14px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);\" />\n</div>\n<h3>🎨 Câu Lệnh Prompt Chính Thức (Positive Prompt)</h3>\n<div style=\"background: #0f172a; color: #f8fafc; border-radius: 12px; padding: 20px; font-family: monospace; font-size: 14px; line-height: 1.6; margin: 16px 0;\">\n  ${promptAI || description}\n</div>\n<h3>Phân tích & Hướng dẫn:</h3>\n<p>${description}</p>`;\n\n} else {\n  // --- TEMPLATE 3: HƯỚNG DẪN TỪNG BƯỚC ---\n  htmlContent = `\n<div style=\"background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; margin: 20px 0;\">\n  <span style=\"background: #ecfdf5; color: #059669; font-weight: 700; font-size: 12px; padding: 3px 10px; border-radius: 20px;\">📚 BÀI HƯỚNG DẪN</span>\n  <h2 style=\"font-size: 21px; font-weight: 800; color: #0f172a; margin: 10px 0;\">${title}</h2>\n</div>\n<div style=\"text-align: center; margin: 20px 0;\">\n  <img src=\"${img}\" alt=\"${title}\" style=\"max-width: 100%; border-radius: 12px;\" />\n</div>\n<div style=\"font-size: 15.5px; line-height: 1.8;\">\n  ${description}\n</div>`;\n}\n\nreturn {\n  json: {\n    sheetRowId: item.ID,\n    title: title,\n    content: htmlContent,\n    labels: labels,\n    blogId: '2562876275428955705'\n  }\n};"
+      },
+      "id": "node-template-formatter",
+      "name": "Ráp Dữ Liệu vào Template HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://www.googleapis.com/blogger/v3/blogs/{{ $json.blogId }}/posts/",
+        "authentication": "oAuth2",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "kind",
+              "value": "blogger#post"
+            },
+            {
+              "name": "title",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "name": "content",
+              "value": "={{ $json.content }}"
+            },
+            {
+              "name": "labels",
+              "value": "={{ $json.labels }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-publish-blogger",
+      "name": "Đăng Bài lên Blogger API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1120,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "sheetId": "YOUR_GOOGLE_SHEET_ID",
+        "range": "=Sheet1!K{{ $('Ráp Dữ Liệu vào Template HTML').item.json.sheetRowId + 1 }}:M{{ $('Ráp Dữ Liệu vào Template HTML').item.json.sheetRowId + 1 }}",
+        "options": {},
+        "values": {
+          "values": [
+            [
+              "Đã đăng",
+              "={{ $json.url }}",
+              "={{ $now.format('YYYY-MM-DD HH:mm:ss') }}"
+            ]
+          ]
+        }
+      },
+      "id": "node-update-sheets",
+      "name": "Cập Nhật Google Sheets 'Đã Đăng'",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1340,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "=🎉 *ĐÃ XUẤT BẢN THÀNH CÔNG BÀI VIẾT!*\n\n📌 *Tiêu đề:* {{ $('Ráp Dữ Liệu vào Template HTML').item.json.title }}\n🏷 *Nhãn:* {{ $('Ráp Dữ Liệu vào Template HTML').item.json.labels.join(', ') }}\n🔗 *Xem bài:* {{ $json.url }}",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "reply_markup": {
+            "inline_keyboard": [
+              [
+                {
+                  "text": "🌐 Mở Xem Bài Viết Ngay",
+                  "url": "={{ $json.url }}"
+                }
+              ]
+            ]
+          }
+        }
+      },
+      "id": "node-telegram-report",
+      "name": "Báo Cáo về Telegram Bot",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1560,
+        400
+      ]
+    }
+  ],
+  "connections": {
+    "Telegram Trigger (Lệnh Chat)": {
+      "main": [
+        [
+          {
+            "node": "Đọc Bài Viết từ Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hẹn Giờ Tự Động (Mỗi Ngày)": {
+      "main": [
+        [
+          {
+            "node": "Đọc Bài Viết từ Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Đọc Bài Viết từ Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Lọc Bài 'Sẵn Sàng Đăng'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lọc Bài 'Sẵn Sàng Đăng'": {
+      "main": [
+        [
+          {
+            "node": "Ráp Dữ Liệu vào Template HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ráp Dữ Liệu vào Template HTML": {
+      "main": [
+        [
+          {
+            "node": "Đăng Bài lên Blogger API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Đăng Bài lên Blogger API": {
+      "main": [
+        [
+          {
+            "node": "Cập Nhật Google Sheets 'Đã Đăng'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cập Nhật Google Sheets 'Đã Đăng'": {
+      "main": [
+        [
+          {
+            "node": "Báo Cáo về Telegram Bot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
