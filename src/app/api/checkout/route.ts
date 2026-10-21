@@ -77,6 +77,42 @@ export async function POST(req: Request) {
     const encodedName = encodeURIComponent(ACCOUNT_NAME);
     const vietQrUrl = `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-compact2.png?amount=${product.price}&addInfo=${orderCode}&accountName=${encodedName}`;
 
+    // Immediately notify Telegram Bot Admin
+    const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8781006384:AAHDfcnSsIiwDpycoY9G-fd7ug5-Ne2Oq0Y';
+    const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '6580812076';
+    const priceFormatted = new Intl.NumberFormat('vi-VN').format(product.price) + ' đ';
+
+    const caption = `🛒 *CÓ ĐƠN HÀNG MỚI KHỞI TẠO!*
+
+📦 *Mã đơn:* \`${orderCode}\`
+👤 *Khách hàng:* ${cleanName}
+📧 *Email:* ${cleanEmail}
+📞 *SĐT:* ${customerPhone || 'Không có'}
+💎 *Sản phẩm:* ${product.name}
+💰 *Số tiền:* ${priceFormatted}
+
+👉 *Khách hàng đang xem mã VietQR. Bạn có thể bấm DUYỆT ngay nếu tài khoản VPBank đã nhận được tiền:*`;
+
+    const inlineKeyboard = {
+      inline_keyboard: [
+        [
+          { text: '✅ DUYỆT (Gửi Link)', callback_data: `APPROVE:${orderId}` },
+          { text: '❌ TỪ CHỐI', callback_data: `REJECT:${orderId}` },
+        ]
+      ]
+    };
+
+    fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        text: caption,
+        parse_mode: 'Markdown',
+        reply_markup: inlineKeyboard,
+      }),
+    }).catch((e) => console.error('Error sending Telegram notification on checkout:', e));
+
     return NextResponse.json({
       success: true,
       isFree: false,
