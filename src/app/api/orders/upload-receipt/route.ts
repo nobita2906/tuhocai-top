@@ -7,7 +7,7 @@ const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '6580812076';
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
-    const orderId = formData.get('orderId') as string;
+    const orderId = (formData.get('orderId') || formData.get('orderCode')) as string;
     const file = formData.get('receipt') as File | null;
     const receiptUrlParam = formData.get('receiptUrl') as string | null;
 
