@@ -91,15 +91,25 @@ export async function POST(req: Request) {
 Link tài liệu: ${downloadLink}`);
           }
 
-          // Tự động gửi email bàn giao link tải cho khách qua Resend
+          // Tự động gửi email bàn giao link tải cho khách qua Resend (phải await để Vercel serverless không ngắt kết nối giữa chừng)
           if (order.customer_email) {
-            sendOrderApprovedEmail({
+            console.log(`[Telegram Webhook] Gửi email bàn giao đơn ${order.order_code} tới ${order.customer_email}...`);
+            const mailRes = await sendOrderApprovedEmail({
               customerName: order.customer_name,
               customerEmail: order.customer_email,
               orderCode: order.order_code,
               productName: order.product_name,
               downloadUrl: downloadLink,
-            }).catch((err) => console.error('Lỗi gửi email Resend sau duyệt:', err));
+            });
+            console.log('[Telegram Webhook] Kết quả gửi email:', mailRes);
+
+            if (chatId) {
+              if (mailRes.success) {
+                await sendTelegramMessage(chatId, `📧 *Email bàn giao:* Đã gửi link tải tới \`${order.customer_email}\``);
+              } else {
+                await sendTelegramMessage(chatId, `⚠️ *Lỗi gửi email:* ${mailRes.error || mailRes.reason || 'Chưa gửi được'}`);
+              }
+            }
           }
         } else {
           // Reject order

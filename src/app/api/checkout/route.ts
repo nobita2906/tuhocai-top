@@ -58,7 +58,7 @@ export async function POST(req: Request) {
       const freeDownloadUrl = product.download_url || 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing';
 
       // Send email confirmation with download link via Resend
-      sendFreeResourceEmail({
+      await sendFreeResourceEmail({
         customerName: cleanName,
         customerEmail: cleanEmail,
         orderCode,

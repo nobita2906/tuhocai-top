@@ -1,7 +1,10 @@
 import { Resend } from 'resend';
 
-const resendApiKey = process.env.RESEND_API_KEY;
-export const resend = resendApiKey ? new Resend(resendApiKey) : null;
+export function getResendClient(): Resend | null {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return null;
+  return new Resend(apiKey);
+}
 
 export const SENDER_EMAIL = process.env.EMAIL_FROM || 'Tự Học AI <hotro@tuhocai.top>';
 
@@ -31,11 +34,11 @@ export async function sendOrderApprovedEmail({
   productName,
   downloadUrl,
 }: SendOrderApprovalParams) {
-  if (!resend) {
-    console.warn('[Resend] RESEND_API_KEY chưa được cấu hình. Bỏ qua gửi email bàn giao.');
+  const client = getResendClient();
+  if (!client) {
+    console.warn('[Resend] RESEND_API_KEY chưa được cấu hình trong biến môi trường.');
     return { success: false, reason: 'MISSING_API_KEY' };
   }
-
   try {
     const zaloSupport = process.env.NEXT_PUBLIC_ZALO_SUPPORT || '0938494303';
     const zaloGroup = process.env.NEXT_PUBLIC_ZALO_GROUP || 'https://zalo.me/g/tuhocai';
@@ -115,7 +118,7 @@ export async function sendOrderApprovedEmail({
     </html>
     `;
 
-    const result = await resend.emails.send({
+    const result = await client.emails.send({
       from: SENDER_EMAIL,
       to: [customerEmail],
       subject: `[Tự Học AI] Kích hoạt thành công đơn hàng #${orderCode} - ${productName}`,
@@ -140,11 +143,11 @@ export async function sendFreeResourceEmail({
   productName,
   downloadUrl,
 }: SendFreeResourceParams) {
-  if (!resend) {
-    console.warn('[Resend] RESEND_API_KEY chưa được cấu hình. Bỏ qua gửi email miễn phí.');
+  const client = getResendClient();
+  if (!client) {
+    console.warn('[Resend] RESEND_API_KEY chưa được cấu hình trong biến môi trường.');
     return { success: false, reason: 'MISSING_API_KEY' };
   }
-
   try {
     const zaloSupport = process.env.NEXT_PUBLIC_ZALO_SUPPORT || '0938494303';
     const zaloGroup = process.env.NEXT_PUBLIC_ZALO_GROUP || 'https://zalo.me/g/tuhocai';
@@ -199,7 +202,7 @@ export async function sendFreeResourceEmail({
     </html>
     `;
 
-    const result = await resend.emails.send({
+    const result = await client.emails.send({
       from: SENDER_EMAIL,
       to: [customerEmail],
       subject: `[Tự Học AI] Link tải miễn phí: ${productName}`,
