@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { execute, query } from '@/lib/db';
 import { randomUUID } from 'crypto';
+import { sendOrderApprovedEmail } from '@/lib/email';
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8781006384:AAHDfcnSsIiwDpycoY9G-fd7ug5-Ne2Oq0Y';
 
@@ -88,6 +89,17 @@ export async function POST(req: Request) {
             await sendTelegramMessage(chatId, `🚀 *THÔNG BÁO TỰ HỌC AI:*
 Đã duyệt thành công đơn *${order.order_code}* cho khách hàng *${order.customer_name}*!
 Link tài liệu: ${downloadLink}`);
+          }
+
+          // Tự động gửi email bàn giao link tải cho khách qua Resend
+          if (order.customer_email) {
+            sendOrderApprovedEmail({
+              customerName: order.customer_name,
+              customerEmail: order.customer_email,
+              orderCode: order.order_code,
+              productName: order.product_name,
+              downloadUrl: downloadLink,
+            }).catch((err) => console.error('Lỗi gửi email Resend sau duyệt:', err));
           }
         } else {
           // Reject order

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
 import { execute, query } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth';
+import { sendFreeResourceEmail } from '@/lib/email';
 
 const BANK_ID = 'VPB';
 const ACCOUNT_NO = '0934434101';
@@ -54,11 +55,22 @@ export async function POST(req: Request) {
         );
       }
 
+      const freeDownloadUrl = product.download_url || 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing';
+
+      // Send email confirmation with download link via Resend
+      sendFreeResourceEmail({
+        customerName: cleanName,
+        customerEmail: cleanEmail,
+        orderCode,
+        productName: product.name,
+        downloadUrl: freeDownloadUrl,
+      }).catch((err) => console.error('Lỗi gửi email tài nguyên miễn phí qua Resend:', err));
+
       return NextResponse.json({
         success: true,
         isFree: true,
         orderCode,
-        downloadUrl: product.download_url || 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing',
+        downloadUrl: freeDownloadUrl,
         message: 'Kích hoạt tài nguyên miễn phí thành công!'
       });
     }
