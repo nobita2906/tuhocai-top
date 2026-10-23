@@ -12,6 +12,8 @@ export interface SiteSettings {
   banner_enabled: boolean;
   banner_text: string;
   banner_url: string;
+  gemini_api_key?: string;
+  openai_api_key?: string;
 }
 
 export const DEFAULT_SETTINGS: SiteSettings = {
@@ -26,6 +28,8 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   banner_enabled: false,
   banner_text: '🔥 Ưu đãi đặc biệt: Giảm 50% trọn bộ Prompt & Workflow AI Automation!',
   banner_url: '/san-pham',
+  gemini_api_key: process.env.GEMINI_API_KEY || '',
+  openai_api_key: process.env.OPENAI_API_KEY || '',
 };
 
 let tableChecked = false;
@@ -71,6 +75,8 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       banner_enabled: map.banner_enabled !== undefined ? map.banner_enabled === 'true' || map.banner_enabled === '1' : DEFAULT_SETTINGS.banner_enabled,
       banner_text: map.banner_text || DEFAULT_SETTINGS.banner_text,
       banner_url: map.banner_url || DEFAULT_SETTINGS.banner_url,
+      gemini_api_key: map.gemini_api_key || DEFAULT_SETTINGS.gemini_api_key || '',
+      openai_api_key: map.openai_api_key || DEFAULT_SETTINGS.openai_api_key || '',
     };
   } catch (err) {
     console.error('Error reading site_settings:', err);

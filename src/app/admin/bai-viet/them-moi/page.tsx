@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -21,6 +21,10 @@ import {
   List,
   Code2,
   Quote,
+  Wand2,
+  Upload,
+  X,
+  UploadCloud,
 } from 'lucide-react';
 import { slugifyVietnamese } from '@/lib/slugify';
 
@@ -41,6 +45,8 @@ const SAMPLE_THUMBNAILS = [
 
 export default function NewPostPage() {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const inlineFileInputRef = useRef<HTMLInputElement>(null);
 
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
@@ -57,6 +63,16 @@ export default function NewPostPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  // AI Generator Modal State
+  const [aiModalOpen, setAiModalOpen] = useState(false);
+  const [aiTopic, setAiTopic] = useState('');
+  const [aiTone, setAiTone] = useState('Chuyên gia, thực chiến, truyền cảm hứng');
+  const [aiGenerating, setAiGenerating] = useState(false);
+
+  // Image Upload State
+  const [uploadingThumb, setUploadingThumb] = useState(false);
+  const [uploadingInline, setUploadingInline] = useState(false);
 
   const handleTitleChange = (val: string) => {
     setTitle(val);
@@ -81,6 +97,101 @@ export default function NewPostPage() {
       textarea.focus();
       textarea.setSelectionRange(start + prefix.length, start + prefix.length + (selected || 'nội dung').length);
     }, 50);
+  };
+
+  // Upload Thumbnail
+  const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploadingThumb(true);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Lỗi khi tải ảnh lên');
+      }
+
+      setThumbnail(data.url);
+    } catch (err: any) {
+      alert(err.message || 'Lỗi tải ảnh');
+    } finally {
+      setUploadingThumb(false);
+    }
+  };
+
+  // Upload Inline Image to Content
+  const handleInlineImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploadingInline(true);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Lỗi khi tải ảnh lên');
+      }
+
+      insertSnippet(`\n\n![${file.name.replace(/\.[^/.]+$/, '')}](${data.url})\n\n`, '');
+    } catch (err: any) {
+      alert(err.message || 'Lỗi tải ảnh vào bài viết');
+    } finally {
+      setUploadingInline(false);
+    }
+  };
+
+  // AI Generator Submit
+  const handleGenerateAI = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!aiTopic.trim()) return;
+
+    try {
+      setAiGenerating(true);
+      const res = await fetch('/api/admin/ai-generate-post', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic: aiTopic.trim(),
+          category,
+          tone: aiTone,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Lỗi khi tạo bài bằng AI');
+      }
+
+      const generated = data.data;
+      setTitle(generated.title);
+      setSlug(generated.slug);
+      setSummary(generated.summary);
+      setTags(generated.tags);
+      setContent(generated.content);
+      setCategory(generated.category || category);
+
+      setAiModalOpen(false);
+      setSuccess(`AI đã tạo bài viết thành công! (Nguồn: ${generated.source})`);
+    } catch (err: any) {
+      alert(err.message || 'Lỗi tạo bài viết');
+    } finally {
+      setAiGenerating(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -151,15 +262,30 @@ export default function NewPostPage() {
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={handleSubmit}
-          disabled={saving}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 text-white font-medium shadow-lg shadow-indigo-500/20 disabled:opacity-50 transition"
-        >
-          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-          {saving ? 'Đang lưu...' : 'Lưu bài viết'}
-        </button>
+        <div className="flex items-center gap-3">
+          {/* AI Generate Button */}
+          <button
+            type="button"
+            onClick={() => {
+              setAiTopic(title || '');
+              setAiModalOpen(true);
+            }}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium text-sm shadow-lg shadow-purple-500/20 transition hover:scale-105"
+          >
+            <Wand2 className="w-4 h-4 animate-pulse" />
+            AI Viết Bài Tự Động
+          </button>
+
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={saving}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 text-white font-medium text-sm shadow-lg shadow-indigo-500/20 disabled:opacity-50 transition"
+          >
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            {saving ? 'Đang lưu...' : 'Lưu bài viết'}
+          </button>
+        </div>
       </div>
 
       {/* Notifications */}
@@ -232,7 +358,7 @@ export default function NewPostPage() {
 
           {/* Content Editor */}
           <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3 flex-wrap gap-2">
               <div className="flex items-center gap-2">
                 <button
                   type="button"
@@ -261,7 +387,7 @@ export default function NewPostPage() {
               </div>
 
               {activeTab === 'edit' && (
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 flex-wrap">
                   <button
                     type="button"
                     onClick={() => insertSnippet('## ', '')}
@@ -326,6 +452,25 @@ export default function NewPostPage() {
                   >
                     <Link2 className="w-4 h-4" />
                   </button>
+
+                  {/* Inline Image Upload */}
+                  <input
+                    type="file"
+                    ref={inlineFileInputRef}
+                    onChange={handleInlineImageUpload}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => inlineFileInputRef.current?.click()}
+                    disabled={uploadingInline}
+                    className="flex items-center gap-1 px-2 py-1 rounded text-xs bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 transition disabled:opacity-50 ml-1"
+                    title="Tải ảnh từ máy tính chèn vào bài"
+                  >
+                    {uploadingInline ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <UploadCloud className="w-3.5 h-3.5" />}
+                    <span>Chèn ảnh máy tính</span>
+                  </button>
                 </div>
               )}
             </div>
@@ -340,9 +485,6 @@ export default function NewPostPage() {
                   placeholder="Nhập nội dung bài viết bằng Markdown hoặc HTML thuần..."
                   className="w-full px-4 py-3 rounded-xl bg-slate-950/70 border border-slate-800 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 font-mono text-sm leading-relaxed"
                 />
-                <p className="text-xs text-slate-500 mt-2">
-                  Hỗ trợ định dạng Markdown tiêu chuẩn: **in đậm**, *nghiêng*, ## Tiêu đề, ```code, [link](url), v.v.
-                </p>
               </div>
             ) : (
               <div className="min-h-[420px] p-6 rounded-xl bg-slate-950/70 border border-slate-800 text-slate-300 prose prose-invert max-w-none">
@@ -422,15 +564,35 @@ export default function NewPostPage() {
               placeholder="AI, Prompt, Cursor, NextJS..."
               className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 text-sm"
             />
-            <p className="text-xs text-slate-500">Phân cách các thẻ bằng dấu phẩy</p>
           </div>
 
           {/* Thumbnail */}
           <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
-            <label className="block text-sm font-semibold text-white flex items-center gap-1.5">
-              <ImageIcon className="w-4 h-4 text-cyan-400" />
-              Ảnh đại diện (Thumbnail)
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-semibold text-white flex items-center gap-1.5">
+                <ImageIcon className="w-4 h-4 text-cyan-400" />
+                Ảnh đại diện (Thumbnail)
+              </label>
+
+              {/* Upload Button */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleThumbnailUpload}
+                accept="image/*"
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingThumb}
+                className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+              >
+                {uploadingThumb ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                Tải ảnh từ máy
+              </button>
+            </div>
+
             <input
               type="url"
               value={thumbnail}
@@ -465,6 +627,93 @@ export default function NewPostPage() {
           </div>
         </div>
       </form>
+
+      {/* AI Post Generator Modal */}
+      {aiModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
+          <div className="w-full max-w-lg p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2 text-white font-bold text-lg">
+                <Wand2 className="w-5 h-5 text-purple-400" />
+                Trợ lý AI Viết Bài Tự Động
+              </div>
+              <button
+                type="button"
+                onClick={() => setAiModalOpen(false)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleGenerateAI} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Chủ đề hoặc ý tưởng bài viết <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={aiTopic}
+                  onChange={(e) => setAiTopic(e.target.value)}
+                  placeholder="Ví dụ: Cách tự động hóa đăng bài mạng xã hội bằng n8n và AI..."
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 text-sm"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Chuyên mục</label>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:border-indigo-500"
+                  >
+                    {CATEGORIES.map((cat) => (
+                      <option key={cat.value} value={cat.value}>
+                        {cat.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Phong cách hành văn</label>
+                  <input
+                    type="text"
+                    value={aiTone}
+                    onChange={(e) => setAiTone(e.target.value)}
+                    placeholder="Chuyên gia, thực chiến..."
+                    className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs">
+                💡 AI sẽ tự động sinh tiêu đề chuẩn SEO, tóm tắt bài viết, thẻ tags và toàn bộ nội dung Markdown chi tiết.
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setAiModalOpen(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-sm"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  disabled={aiGenerating}
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 text-white text-sm font-medium hover:opacity-90 shadow-lg shadow-purple-500/20 disabled:opacity-50 flex items-center gap-2"
+                >
+                  {aiGenerating && <Loader2 className="w-4 h-4 animate-spin" />}
+                  {aiGenerating ? 'AI đang viết bài...' : '🪄 Bắt đầu sinh bài viết'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import TopBanner from '@/components/TopBanner';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin', 'vietnamese'],
@@ -38,6 +39,7 @@ export default function RootLayout({
   return (
     <html lang="vi" className={`${plusJakartaSans.variable} ${jetBrainsMono.variable} h-full dark`}>
       <body className="min-h-full flex flex-col bg-[#09090b] text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white">
+        <TopBanner />
         <Navbar />
         <main className="flex-1 relative overflow-hidden">{children}</main>
         <Footer />

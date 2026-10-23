@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -22,6 +22,8 @@ import {
   Code2,
   Quote,
   Trash2,
+  Upload,
+  UploadCloud,
 } from 'lucide-react';
 import { slugifyVietnamese } from '@/lib/slugify';
 
@@ -62,6 +64,47 @@ export default function EditPostPage() {
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const inlineFileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadingThumb, setUploadingThumb] = useState(false);
+  const [uploadingInline, setUploadingInline] = useState(false);
+
+  const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setUploadingThumb(true);
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Lỗi khi tải ảnh lên');
+      setThumbnail(data.url);
+    } catch (err: any) {
+      alert(err.message || 'Lỗi tải ảnh');
+    } finally {
+      setUploadingThumb(false);
+    }
+  };
+
+  const handleInlineImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setUploadingInline(true);
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Lỗi khi tải ảnh lên');
+      insertSnippet(`\n\n![${file.name.replace(/\.[^/.]+$/, '')}](${data.url})\n\n`, '');
+    } catch (err: any) {
+      alert(err.message || 'Lỗi tải ảnh vào bài viết');
+    } finally {
+      setUploadingInline(false);
+    }
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -387,6 +430,25 @@ export default function EditPostPage() {
                   >
                     <Link2 className="w-4 h-4" />
                   </button>
+
+                  {/* Inline Image Upload */}
+                  <input
+                    type="file"
+                    ref={inlineFileInputRef}
+                    onChange={handleInlineImageUpload}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => inlineFileInputRef.current?.click()}
+                    disabled={uploadingInline}
+                    className="flex items-center gap-1 px-2 py-1 rounded text-xs bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 transition disabled:opacity-50 ml-1"
+                    title="Tải ảnh từ máy tính chèn vào bài"
+                  >
+                    {uploadingInline ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <UploadCloud className="w-3.5 h-3.5" />}
+                    <span>Chèn ảnh máy tính</span>
+                  </button>
                 </div>
               )}
             </div>
@@ -484,10 +546,30 @@ export default function EditPostPage() {
 
           {/* Thumbnail */}
           <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
-            <label className="block text-sm font-semibold text-white flex items-center gap-1.5">
-              <ImageIcon className="w-4 h-4 text-cyan-400" />
-              Ảnh đại diện (Thumbnail)
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-semibold text-white flex items-center gap-1.5">
+                <ImageIcon className="w-4 h-4 text-cyan-400" />
+                Ảnh đại diện (Thumbnail)
+              </label>
+
+              {/* Upload Button */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleThumbnailUpload}
+                accept="image/*"
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingThumb}
+                className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+              >
+                {uploadingThumb ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                Tải ảnh từ máy
+              </button>
+            </div>
             <input
               type="url"
               value={thumbnail}

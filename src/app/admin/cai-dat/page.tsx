@@ -17,6 +17,7 @@ import {
   ExternalLink,
   HelpCircle,
   QrCode,
+  Wand2,
 } from 'lucide-react';
 
 const POPULAR_BANKS = [
@@ -50,6 +51,8 @@ export default function AdminSettingsPage() {
   const [bannerEnabled, setBannerEnabled] = useState(false);
   const [bannerText, setBannerText] = useState('🔥 Ưu đãi đặc biệt: Giảm 50% trọn bộ Prompt & Workflow AI Automation!');
   const [bannerUrl, setBannerUrl] = useState('/san-pham');
+  const [geminiApiKey, setGeminiApiKey] = useState('');
+  const [openaiApiKey, setOpenaiApiKey] = useState('');
 
   const loadSettings = async () => {
     try {
@@ -69,6 +72,8 @@ export default function AdminSettingsPage() {
         setBannerEnabled(Boolean(s.banner_enabled));
         setBannerText(s.banner_text || '');
         setBannerUrl(s.banner_url || '/san-pham');
+        setGeminiApiKey(s.gemini_api_key || '');
+        setOpenaiApiKey(s.openai_api_key || '');
       }
     } catch (err) {
       console.error(err);
@@ -102,6 +107,8 @@ export default function AdminSettingsPage() {
           banner_enabled: bannerEnabled,
           banner_text: bannerText.trim(),
           banner_url: bannerUrl.trim(),
+          gemini_api_key: geminiApiKey.trim(),
+          openai_api_key: openaiApiKey.trim(),
         }),
       });
 
@@ -426,6 +433,51 @@ export default function AdminSettingsPage() {
                 placeholder="/san-pham"
                 className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-white focus:outline-none focus:border-indigo-500 text-sm font-mono"
               />
+            </div>
+          </div>
+        </div>
+
+        {/* Section 5: AI Assistant API Keys */}
+        <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
+          <div className="border-b border-slate-800 pb-3">
+            <h3 className="font-bold text-white text-base flex items-center gap-2">
+              <Wand2 className="w-4 h-4 text-purple-400" />
+              Khóa API Trợ lý AI Viết bài (Google Gemini / OpenAI)
+            </h3>
+            <p className="text-xs text-slate-400">
+              Dùng để kích hoạt tính năng tự động sinh bài viết và prompt chuẩn SEO theo yêu cầu
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                Google Gemini API Key (Khuyên dùng - Có gói miễn phí rất nhanh)
+              </label>
+              <input
+                type="password"
+                value={geminiApiKey}
+                onChange={(e) => setGeminiApiKey(e.target.value)}
+                placeholder="AIzaSy..."
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-white focus:outline-none focus:border-indigo-500 text-sm font-mono"
+              />
+              <p className="text-[11px] text-slate-500 mt-1">
+                Lấy miễn phí tại <a href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer" className="text-indigo-400 hover:underline">Google AI Studio</a>
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                OpenAI API Key (Tùy chọn)
+              </label>
+              <input
+                type="password"
+                value={openaiApiKey}
+                onChange={(e) => setOpenaiApiKey(e.target.value)}
+                placeholder="sk-proj-..."
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-white focus:outline-none focus:border-indigo-500 text-sm font-mono"
+              />
+              <p className="text-[11px] text-slate-500 mt-1">Dùng model gpt-4o-mini</p>
             </div>
           </div>
         </div>
