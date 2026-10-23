@@ -16,6 +16,7 @@ import {
   ShieldCheck,
   TrendingUp,
   Loader2,
+  Settings,
 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
@@ -76,6 +77,14 @@ export default function AdminDashboardPage() {
             className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-200 border border-white/[0.08] text-xs font-semibold transition-colors"
           >
             Duyệt đơn ({stats?.orders?.pending || 0})
+          </Link>
+          <Link
+            href="/admin/cai-dat"
+            className="inline-flex items-center gap-2 px-3 py-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-200 border border-white/[0.08] text-xs font-semibold transition-colors"
+            title="Cấu hình VietQR & Telegram"
+          >
+            <Settings className="w-4 h-4 text-indigo-400" />
+            Cài đặt
           </Link>
         </div>
       </div>

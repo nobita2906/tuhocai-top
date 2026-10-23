@@ -19,6 +19,7 @@ import {
   X,
   Cpu,
   Sparkles,
+  Settings,
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -70,6 +71,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: 'Kho sản phẩm', href: '/admin/san-pham', icon: Package },
     { label: 'Đơn hàng & VietQR', href: '/admin/don-hang', icon: CreditCard },
     { label: 'Danh sách Leads 0đ', href: '/admin/leads', icon: Mail },
+    { label: 'Cài đặt Website & QR', href: '/admin/cai-dat', icon: Settings },
   ];
 
   return (

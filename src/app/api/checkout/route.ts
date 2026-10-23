@@ -3,10 +3,7 @@ import { randomUUID } from 'crypto';
 import { execute, query } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth';
 import { sendFreeResourceEmail } from '@/lib/email';
-
-const BANK_ID = 'VPB';
-const ACCOUNT_NO = '0934434101';
-const ACCOUNT_NAME = 'NGUYEN VAN DANG';
+import { getSiteSettings } from '@/lib/settings';
 
 export async function POST(req: Request) {
   try {
@@ -28,15 +25,12 @@ export async function POST(req: Request) {
 
     // Check logged in user
     const session = await getCurrentUser();
-    let userId = session?.id || null;
-    if (!userId) {
-      const users = await query<any>('SELECT id FROM users WHERE email = ? LIMIT 1', [cleanEmail]);
-      if (users.length > 0) {
-        userId = users[0].id;
-      }
-    }
+    const userId = session?.id || null;
 
-    // If product is 0đ (Free)
+    // Load dynamic site settings
+    const siteSettings = await getSiteSettings();
+
+    // Free Product
     if (product.price === 0) {
       const orderId = randomUUID();
       const orderCode = `FREE-${Math.floor(100000 + Math.random() * 900000)}`;
@@ -85,13 +79,17 @@ export async function POST(req: Request) {
       [orderId, orderCode, userId, cleanName, cleanEmail, customerPhone || null, product.id, product.name, product.price]
     );
 
-    // Generate VietQR URL
-    const encodedName = encodeURIComponent(ACCOUNT_NAME);
-    const vietQrUrl = `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-compact2.png?amount=${product.price}&addInfo=${orderCode}&accountName=${encodedName}`;
+    // Generate VietQR URL with dynamic settings
+    const bankId = siteSettings.bank_id || 'VPB';
+    const accountNo = siteSettings.account_no || '0934434101';
+    const accountName = siteSettings.account_name || 'NGUYEN VAN DANG';
+
+    const encodedName = encodeURIComponent(accountName);
+    const vietQrUrl = `https://img.vietqr.io/image/${bankId}-${accountNo}-compact2.png?amount=${product.price}&addInfo=${orderCode}&accountName=${encodedName}`;
 
     // Immediately notify Telegram Bot Admin
-    const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8781006384:AAHDfcnSsIiwDpycoY9G-fd7ug5-Ne2Oq0Y';
-    const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '6580812076';
+    const telegramToken = siteSettings.telegram_bot_token;
+    const telegramChatId = siteSettings.telegram_chat_id;
     const priceFormatted = new Intl.NumberFormat('vi-VN').format(product.price) + ' đ';
 
     const caption = `🛒 *CÓ ĐƠN HÀNG MỚI KHỞI TẠO!*
@@ -103,7 +101,7 @@ export async function POST(req: Request) {
 💎 *Sản phẩm:* ${product.name}
 💰 *Số tiền:* ${priceFormatted}
 
-👉 *Khách hàng đang xem mã VietQR. Bạn có thể bấm DUYỆT ngay nếu tài khoản VPBank đã nhận được tiền:*`;
+👉 *Khách hàng đang xem mã VietQR. Bạn có thể bấm DUYỆT ngay nếu tài khoản ${bankId} đã nhận được tiền:*`;
 
     const inlineKeyboard = {
       inline_keyboard: [
@@ -114,16 +112,18 @@ export async function POST(req: Request) {
       ]
     };
 
-    fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: TELEGRAM_CHAT_ID,
-        text: caption,
-        parse_mode: 'Markdown',
-        reply_markup: inlineKeyboard,
-      }),
-    }).catch((e) => console.error('Error sending Telegram notification on checkout:', e));
+    if (telegramToken && telegramChatId) {
+      fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: telegramChatId,
+          text: caption,
+          parse_mode: 'Markdown',
+          reply_markup: inlineKeyboard,
+        }),
+      }).catch((e) => console.error('Error sending Telegram notification on checkout:', e));
+    }
 
     return NextResponse.json({
       success: true,
@@ -136,9 +136,9 @@ export async function POST(req: Request) {
         price: product.price,
       },
       bankInfo: {
-        bankName: 'VPBank (Ngân hàng Việt Nam Thịnh Vượng)',
-        accountNo: ACCOUNT_NO,
-        accountName: ACCOUNT_NAME,
+        bankName: `${bankId} (Ngân hàng thụ hưởng)`,
+        accountNo,
+        accountName,
         amount: product.price,
         content: orderCode,
       },

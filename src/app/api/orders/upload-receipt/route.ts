@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { execute, query } from '@/lib/db';
-
-const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8781006384:AAHDfcnSsIiwDpycoY9G-fd7ug5-Ne2Oq0Y';
-const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '6580812076';
+import { getSiteSettings } from '@/lib/settings';
 
 export async function POST(req: Request) {
   try {
@@ -37,6 +35,12 @@ export async function POST(req: Request) {
     // Update order with receipt marker
     await execute('UPDATE orders SET receipt_image_url = ? WHERE id = ?', [receiptUrl, order.id]);
 
+    // Load dynamic site settings
+    const siteSettings = await getSiteSettings();
+    const botToken = siteSettings.telegram_bot_token;
+    const chatId = siteSettings.telegram_chat_id;
+    const bankId = siteSettings.bank_id || 'VPBank';
+
     // Send Telegram Notification with Inline Buttons
     const priceFormatted = new Intl.NumberFormat('vi-VN').format(order.price) + ' đ';
     const caption = `🔥 *ĐÃ CÓ BIÊN LAI THANH TOÁN MỚI!*
@@ -48,7 +52,7 @@ export async function POST(req: Request) {
 💎 *Sản phẩm:* ${order.product_name}
 💰 *Số tiền:* ${priceFormatted}
 
-👉 *Vui lòng kiểm tra tài khoản VPBank và bấm DUYỆT để gửi link:*`;
+👉 *Vui lòng kiểm tra tài khoản ${bankId} và bấm DUYỆT để gửi link:*`;
 
     const inlineKeyboard = {
       inline_keyboard: [
@@ -59,49 +63,51 @@ export async function POST(req: Request) {
       ]
     };
 
-    if (fileBuffer) {
-      // Send Photo with Multipart Form directly to Telegram
-      const tgFormData = new FormData();
-      tgFormData.append('chat_id', TELEGRAM_CHAT_ID);
-      tgFormData.append('caption', caption);
-      tgFormData.append('parse_mode', 'Markdown');
-      tgFormData.append('reply_markup', JSON.stringify(inlineKeyboard));
-      
-      const blob = new Blob([new Uint8Array(fileBuffer)], { type: file?.type || 'image/jpeg' });
-      tgFormData.append('photo', blob, fileName);
+    if (botToken && chatId) {
+      if (fileBuffer) {
+        // Send Photo with Multipart Form directly to Telegram
+        const tgFormData = new FormData();
+        tgFormData.append('chat_id', chatId);
+        tgFormData.append('caption', caption);
+        tgFormData.append('parse_mode', 'Markdown');
+        tgFormData.append('reply_markup', JSON.stringify(inlineKeyboard));
+        
+        const blob = new Blob([new Uint8Array(fileBuffer)], { type: file?.type || 'image/jpeg' });
+        tgFormData.append('photo', blob, fileName);
 
-      const tgRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
-        method: 'POST',
-        body: tgFormData,
-      });
+        const tgRes = await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
+          method: 'POST',
+          body: tgFormData,
+        });
 
-      const tgJson = await tgRes.json();
-      if (!tgJson.ok) {
-        console.error('Telegram sendPhoto failed, falling back to sendMessage:', tgJson);
-        // Fallback to text message if photo format wasn't accepted
-        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        const tgJson = await tgRes.json();
+        if (!tgJson.ok) {
+          console.error('Telegram sendPhoto failed, falling back to sendMessage:', tgJson);
+          // Fallback to text message if photo format wasn't accepted
+          await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: chatId,
+              text: caption,
+              parse_mode: 'Markdown',
+              reply_markup: inlineKeyboard,
+            }),
+          });
+        }
+      } else {
+        // Send Text Message
+        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
+            chat_id: chatId,
             text: caption,
             parse_mode: 'Markdown',
             reply_markup: inlineKeyboard,
           }),
         });
       }
-    } else {
-      // Send Text Message
-      await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: TELEGRAM_CHAT_ID,
-          text: caption,
-          parse_mode: 'Markdown',
-          reply_markup: inlineKeyboard,
-        }),
-      });
     }
 
     return NextResponse.json({
