@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 375" width="100%" height="100%">
+    <defs>
+      <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#180e0e"/>
+        <stop offset="50%" stop-color="#100a0a"/>
+        <stop offset="100%" stop-color="#080505"/>
+      </linearGradient>
+      <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#10b981"/>
+        <stop offset="100%" stop-color="#059669"/>
+      </linearGradient>
+      <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+        <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(255, 255, 255, 0.04)" stroke-width="1"/>
+      </pattern>
+      <radialGradient id="glow" cx="50%" cy="40%" r="50%">
+        <stop offset="0%" stop-color="#10b981" stop-opacity="0.25"/>
+        <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+
+    <!-- Background Base -->
+    <rect width="600" height="375" fill="url(#bg)"/>
+    <rect width="600" height="375" fill="url(#grid)"/>
+    <circle cx="300" cy="140" r="180" fill="url(#glow)"/>
+
+    <!-- Outer Frame & Border Glow -->
+    <rect x="12" y="12" width="576" height="351" rx="20" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+
+    <!-- Central Tech Diagram / Mockup -->
+    
+      <rect x="250" y="65" width="100" height="110" rx="18" fill="#140d0d" stroke="#10b981" stroke-width="2"/>
+      <path d="M250 100h100M250 135h100M285 65v110M320 65v110" stroke="#10b981" stroke-opacity="0.3" stroke-width="1.5"/>
+      <rect x="270" y="80" width="60" height="60" rx="14" fill="url(#grad)" opacity="0.95"/>
+      <path d="M290 105l20 20M290 125l20-20" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="180" cy="120" r="24" fill="#1e1313" stroke="#f59e0b" stroke-width="2"/>
+      <path d="M172 120h16M180 112v16" stroke="#f59e0b" stroke-width="2"/>
+      <circle cx="420" cy="120" r="24" fill="#1e1313" stroke="#00f2fe" stroke-width="2"/>
+      <circle cx="420" cy="120" r="8" fill="#00f2fe"/>
+      <path d="M204 120h46M350 120h46" stroke="rgba(255,255,255,0.3)" stroke-dasharray="4 4" stroke-width="2"/>
+    
+
+    <!-- Bottom Gradient Overlay for text contrast -->
+    <rect y="210" width="600" height="165" fill="url(#bg)" opacity="0.92"/>
+    <path d="M 30 220 L 570 220" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+
+    <!-- Top Badge -->
+    <g transform="translate(30, 30)">
+      <rect width="130" height="26" rx="6" fill="#10b981" fill-opacity="0.15" stroke="#10b981" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="12" cy="13" r="3.5" fill="#10b981"/>
+      <text x="24" y="17" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700" fill="#10b981" letter-spacing="1">APP FLOW</text>
+    </g>
+
+    <!-- Top Right Brand Watermark -->
+    <text x="565" y="48" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600" fill="rgba(255,255,255,0.3)" text-anchor="end">TUHOCAI.TOP</text>
+
+    <!-- Bottom Content Information -->
+    <text x="30" y="270" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="22" font-weight="800" fill="#ffffff" letter-spacing="-0.5">App Flow Google - Auto Báo Cáo Sheets</text>
+    <text x="30" y="305" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="14" font-weight="500" fill="#9ca3af">Tự động trích xuất dữ liệu và xuất báo cáo biểu đồ trực quan</text>
+
+    <!-- Bottom Feature Tag -->
+    <g transform="translate(30, 325)">
+      <rect width="115" height="22" rx="4" fill="rgba(255,255,255,0.06)"/>
+      <text x="57" y="15" font-family="'JetBrains Mono', monospace" font-size="9.5" fill="#f59e0b" font-weight="600" text-anchor="middle">⚡ INSTANT DEPLOY</text>
+    </g>
+    <g transform="translate(155, 325)">
+      <rect width="130" height="22" rx="4" fill="rgba(255,255,255,0.06)"/>
+      <text x="65" y="15" font-family="'JetBrains Mono', monospace" font-size="9.5" fill="#10b981" font-weight="600" text-anchor="middle">✓ BẢO HÀNH 100%</text>
+    </g>
+  </svg>

@@ -1,14 +1,14 @@
 import Link from 'next/link';
-import { Sparkles, MessageCircle, Phone, Mail, ShieldCheck, Heart } from 'lucide-react';
+import { Sparkles, MessageCircle, Phone, Mail, ShieldCheck, Heart, Cpu } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="w-full border-t border-slate-800 bg-slate-950 text-slate-400">
-      {/* Top CTA Banner */}
-      <div className="border-b border-slate-800/80 bg-gradient-to-r from-indigo-950/40 via-purple-950/30 to-slate-950 py-12">
+    <footer className="w-full border-t border-white/[0.08] bg-[#09090b] text-slate-400">
+      {/* Top CTA Banner with subtle tech glow */}
+      <div className="border-b border-white/[0.06] bg-gradient-to-r from-indigo-950/20 via-slate-900/60 to-slate-950 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-semibold mb-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono text-xs font-semibold mb-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
               Cộng đồng 10.000+ thành viên
             </span>
@@ -16,7 +16,7 @@ export default function Footer() {
               Tham gia Group Zalo Tự Học AI & Tự Động Hóa Thực Chiến
             </h3>
             <p className="text-sm text-slate-400 mt-1">
-              Nhận thông báo cập nhật workflow n8n mới nhất, hỏi đáp kỹ thuật và tài liệu miễn phí mỗi ngày.
+              Nhận thông báo cập nhật workflow n8n mới nhất, hỏi đáp kỹ thuật và nhận tài liệu miễn phí mỗi ngày.
             </p>
           </div>
           <a
@@ -36,8 +36,8 @@ export default function Footer() {
         {/* Brand */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white">
-              <Sparkles className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-lg bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+              <Cpu className="w-4 h-4" />
             </div>
             <span className="font-extrabold text-lg text-white">TỰ HỌC AI</span>
           </div>
@@ -52,48 +52,45 @@ export default function Footer() {
 
         {/* Quick links */}
         <div>
-          <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-3">Tài nguyên AI</h4>
+          <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-3 font-mono">Tài nguyên AI</h4>
           <ul className="space-y-2 text-xs">
-            <li><Link href="/san-pham" className="hover:text-white transition-colors">Workflow n8n Tự Động Hóa</Link></li>
-            <li><Link href="/san-pham?cat=skill" className="hover:text-white transition-colors">Kỹ Năng Sử Dụng AI (Skills)</Link></li>
-            <li><Link href="/san-pham?cat=prompt" className="hover:text-white transition-colors">Bộ Prompt AI Chuẩn Thương Mại</Link></li>
-            <li><Link href="/#tai-lieu-free" className="hover:text-white transition-colors">Tải Tài Liệu Miễn Phí (Free Leads)</Link></li>
+            <li><Link href="/san-pham" className="hover:text-cyan-400 transition-colors">Workflow n8n Tự Động Hóa</Link></li>
+            <li><Link href="/san-pham?cat=skill" className="hover:text-cyan-400 transition-colors">Kỹ Năng Sử Dụng AI (Skills)</Link></li>
+            <li><Link href="/san-pham?cat=prompt" className="hover:text-cyan-400 transition-colors">Bộ Prompt AI Chuẩn Thương Mại</Link></li>
+            <li><Link href="/#tai-lieu-free" className="hover:text-cyan-400 transition-colors">Tải Tài Liệu Miễn Phí (Free Leads)</Link></li>
           </ul>
         </div>
 
-        {/* Knowledge & News */}
         <div>
-          <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-3">Kiến thức</h4>
+          <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-3 font-mono">Kiến thức</h4>
           <ul className="space-y-2 text-xs">
-            <li><Link href="/bai-viet" className="hover:text-white transition-colors">Tin Tức Công Nghệ AI Mới Nhất</Link></li>
-            <li><Link href="/bai-viet?cat=workflow" className="hover:text-white transition-colors">Hướng Dẫn Setup n8n Từ A-Z</Link></li>
-            <li><Link href="/bai-viet?cat=prompt" className="hover:text-white transition-colors">Kỹ Thuật Viết Prompt Chuyên Sâu</Link></li>
-            <li><Link href="/dashboard" className="hover:text-white transition-colors">Kho Tài Liệu Đã Lưu Của Tôi</Link></li>
+            <li><Link href="/bai-viet" className="hover:text-cyan-400 transition-colors">Tin Tức Công Nghệ AI Mới Nhất</Link></li>
+            <li><Link href="/bai-viet?cat=workflow" className="hover:text-cyan-400 transition-colors">Hướng Dẫn Setup n8n Từ A-Z</Link></li>
+            <li><Link href="/bai-viet?cat=prompt" className="hover:text-cyan-400 transition-colors">Kỹ Thuật Viết Prompt Chuyên Sâu</Link></li>
+            <li><Link href="/dashboard" className="hover:text-cyan-400 transition-colors">Kho Tài Liệu Đã Lưu Của Tôi</Link></li>
           </ul>
         </div>
 
-        {/* Contact info */}
         <div>
-          <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-3">Hỗ trợ & Liên hệ</h4>
+          <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-3 font-mono">Hỗ trợ & Liên hệ</h4>
           <ul className="space-y-2.5 text-xs">
             <li className="flex items-center gap-2">
               <Phone className="w-4 h-4 text-indigo-400" />
-              <span>Hotline / Zalo: <strong className="text-white">0938.494.303</strong> (Đăng)</span>
+              <span>Hotline / Zalo: <strong className="text-white font-mono">0938.494.303</strong> (Đăng)</span>
             </li>
             <li className="flex items-center gap-2">
               <Mail className="w-4 h-4 text-indigo-400" />
-              <span>Email: <strong className="text-white">dang@tuhocai.top</strong></span>
+              <span>Email: <strong className="text-white font-mono">dang@tuhocai.top</strong></span>
             </li>
             <li className="flex items-center gap-2">
               <MessageCircle className="w-4 h-4 text-emerald-400" />
-              <span>Zalo Admin: <a href="https://zalo.me/0938494303" target="_blank" className="text-emerald-400 hover:underline">0938 494 303</a></span>
+              <span>Zalo Admin: <a href="https://zalo.me/0938494303" target="_blank" className="text-emerald-400 hover:underline font-mono">0938 494 303</a></span>
             </li>
           </ul>
         </div>
       </div>
 
-      {/* Bottom bar */}
-      <div className="border-t border-slate-900 py-6 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 gap-4">
+      <div className="border-t border-white/[0.06] py-6 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 gap-4">
         <p>© 2026 Tự Học AI (tuhocai.top). Bản quyền nội dung thuộc về Nguyễn Văn Đăng.</p>
         <p className="flex items-center gap-1">
           Xây dựng với <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" /> cho cộng đồng AI Việt Nam

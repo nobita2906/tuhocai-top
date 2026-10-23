@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Sparkles, CheckCircle2, Download, MessageCircle, ArrowRight, Loader2 } from 'lucide-react';
+import { X, CheckCircle2, Download, MessageCircle, ArrowRight, Loader2, ShieldCheck, Sparkles } from 'lucide-react';
 
 interface LeadMagnetModalProps {
   isOpen: boolean;
@@ -62,12 +62,12 @@ export default function LeadMagnetModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-700/80 shadow-2xl p-6 sm:p-8 overflow-hidden text-left">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="relative w-full max-w-lg rounded-2xl bg-[#111116] border border-indigo-500/25 shadow-2xl p-6 sm:p-8 overflow-hidden text-left">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+          className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-lg hover:bg-white/[0.06] transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
@@ -75,14 +75,14 @@ export default function LeadMagnetModal({
         {result ? (
           /* Success Screen */
           <div className="text-center py-4 space-y-5">
-            <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
+            <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-10 h-10" />
             </div>
 
             <div className="space-y-2">
               <h3 className="text-xl sm:text-2xl font-bold text-white">Đăng ký thành công!</h3>
               <p className="text-sm text-slate-300">
-                Tài liệu <strong className="text-emerald-400">{resourceName}</strong> đã sẵn sàng để tải xuống.
+                Tài liệu <strong className="text-indigo-400 font-mono">{resourceName}</strong> đã sẵn sàng để tải xuống.
               </p>
             </div>
 
@@ -91,7 +91,7 @@ export default function LeadMagnetModal({
                 href={result.downloadUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 transition-all hover:scale-[1.02]"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-bold text-sm shadow-lg shadow-indigo-500/25 transition-all hover:scale-[1.02]"
               >
                 <Download className="w-4 h-4" />
                 Mở Link Tải Trực Tiếp (Google Drive)
@@ -108,16 +108,16 @@ export default function LeadMagnetModal({
               </a>
             </div>
 
-            <p className="text-xs text-slate-400 pt-2">
-              💡 Link tài liệu cũng đã được tự động lưu vào hệ thống của Tự Học AI.
+            <p className="text-xs text-slate-400 pt-2 font-mono">
+              Link tài liệu cũng đã được tự động lưu vào hệ thống của Tự Học AI.
             </p>
           </div>
         ) : (
           /* Form Screen */
           <div className="space-y-6">
             <div className="space-y-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-semibold">
-                <Sparkles className="w-3.5 h-3.5" />
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/25 text-xs font-mono font-semibold">
+                <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
                 Tài liệu Miễn Phí (100% Free)
               </div>
               <h3 className="text-xl sm:text-2xl font-bold text-white leading-tight">
@@ -129,7 +129,7 @@ export default function LeadMagnetModal({
             </div>
 
             {error && (
-              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+              <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs">
                 {error}
               </div>
             )}
@@ -137,7 +137,7 @@ export default function LeadMagnetModal({
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Họ và tên của bạn <span className="text-red-400">*</span>
+                  Họ và tên của bạn <span className="text-cyan-400">*</span>
                 </label>
                 <input
                   type="text"
@@ -145,13 +145,13 @@ export default function LeadMagnetModal({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Ví dụ: Nguyễn Văn Đăng"
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#09090b] border border-white/[0.1] text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Địa chỉ Email <span className="text-red-400">*</span>
+                  Địa chỉ Email <span className="text-cyan-400">*</span>
                 </label>
                 <input
                   type="email"
@@ -159,7 +159,7 @@ export default function LeadMagnetModal({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@gmail.com"
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#09090b] border border-white/[0.1] text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"
                 />
               </div>
 
@@ -172,14 +172,14 @@ export default function LeadMagnetModal({
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="0938..."
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#09090b] border border-white/[0.1] text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 transition-all hover:scale-[1.01]"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 disabled:opacity-50 text-white font-bold text-sm shadow-lg shadow-indigo-500/25 transition-all hover:scale-[1.01]"
               >
                 {loading ? (
                   <>
@@ -194,8 +194,9 @@ export default function LeadMagnetModal({
                 )}
               </button>
 
-              <p className="text-[11px] text-slate-500 text-center">
-                🔒 Cam kết bảo mật thông tin. Không spam.
+              <p className="text-[11px] text-slate-500 text-center flex items-center justify-center gap-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                Cam kết bảo mật thông tin. Không spam.
               </p>
             </form>
           </div>
