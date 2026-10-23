@@ -3,12 +3,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Layers, MessageCircle, LogOut, ChevronDown, Menu, X, Cpu } from 'lucide-react';
+import { Layers, MessageCircle, LogOut, ChevronDown, Menu, X, Cpu, ShieldAlert } from 'lucide-react';
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [user, setUser] = useState<{ id: string; name: string; email: string; libraryCount?: number } | null>(null);
+  const [user, setUser] = useState<{ id: string; name: string; email: string; role?: string; libraryCount?: number } | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
@@ -115,6 +115,16 @@ export default function Navbar() {
                     <p className="text-xs text-slate-400">Đã đăng nhập với</p>
                     <p className="text-sm font-semibold text-white truncate">{user.email}</p>
                   </div>
+                  {user.role === 'ADMIN' && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setUserDropdownOpen(false)}
+                      className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-amber-400 hover:bg-amber-500/10 border-b border-white/[0.06]"
+                    >
+                      <ShieldAlert className="w-4 h-4 text-amber-400" />
+                      Trang Quản Trị (Admin)
+                    </Link>
+                  )}
                   <Link
                     href="/dashboard"
                     onClick={() => setUserDropdownOpen(false)}
@@ -184,22 +194,59 @@ export default function Navbar() {
             <MessageCircle className="w-4 h-4" />
             Nhóm Zalo VIP
           </a>
-          <div className="pt-3 border-t border-white/[0.08] flex items-center gap-2">
-            <Link
-              href="/login"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex-1 py-2 text-center text-sm font-medium text-slate-300 bg-white/[0.05] rounded-xl"
-            >
-              Đăng nhập
-            </Link>
-            <Link
-              href="/register"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex-1 py-2 text-center text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-cyan-600 rounded-xl"
-            >
-              Tạo tài khoản
-            </Link>
-          </div>
+
+          {user ? (
+            <div className="pt-3 border-t border-white/[0.08] space-y-2">
+              <div className="px-3 py-1 text-xs text-slate-400 truncate">
+                Xin chào, <strong className="text-white">{user.name}</strong>
+              </div>
+              {user.role === 'ADMIN' && (
+                <Link
+                  href="/admin"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-bold text-amber-400 bg-amber-500/10 border border-amber-500/25"
+                >
+                  <ShieldAlert className="w-4 h-4" />
+                  Trang Quản Trị (Admin)
+                </Link>
+              )}
+              <Link
+                href="/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-300 bg-white/[0.05]"
+              >
+                <Layers className="w-4 h-4" />
+                Kho tài liệu của tôi
+              </Link>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  handleLogout();
+                }}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-rose-400 bg-rose-500/10 text-left"
+              >
+                <LogOut className="w-4 h-4" />
+                Đăng xuất
+              </button>
+            </div>
+          ) : (
+            <div className="pt-3 border-t border-white/[0.08] flex items-center gap-2">
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex-1 py-2 text-center text-sm font-medium text-slate-300 bg-white/[0.05] rounded-xl"
+              >
+                Đăng nhập
+              </Link>
+              <Link
+                href="/register"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex-1 py-2 text-center text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-cyan-600 rounded-xl"
+              >
+                Tạo tài khoản
+              </Link>
+            </div>
+          )}
         </div>
       )}
     </header>
