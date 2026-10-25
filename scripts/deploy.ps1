@@ -1,19 +1,18 @@
 # ==============================================================================
-# SCRIPT DEPLOY TỰ ĐỘNG LÊN VERCEL CHO DOMAIN TUHOCAI.TOP
-# Tác giả: Thùy Linh (Tự Học AI TOP)
+# SCRIPT DEPLOY TU DONG LEN VERCEL CHO DOMAIN TUHOCAI.TOP
 # ==============================================================================
 
-Write-Host "🚀 [1/4] Kiểm tra kiểu dữ liệu (TypeScript Typecheck)..." -ForegroundColor Cyan
+Write-Host ">>> [1/4] Kiem tra kieu du lieu (TypeScript Typecheck)..." -ForegroundColor Cyan
 npm run typecheck
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "❌ Lỗi Typecheck! Vui lòng sửa lỗi trước khi deploy." -ForegroundColor Red
+    Write-Host "Loi Typecheck! Vui long sua loi truoc khi deploy." -ForegroundColor Red
     exit 1
 }
 
-Write-Host "📦 [2/4] Kiểm tra biên dịch hệ thống (Next.js Build)..." -ForegroundColor Cyan
+Write-Host ">>> [2/4] Kiem tra bien dich he thong (Next.js Build)..." -ForegroundColor Cyan
 npm run build
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "❌ Lỗi Biên dịch (Build Failed)! Không thể deploy." -ForegroundColor Red
+    Write-Host "Loi Bien dich (Build Failed)! Khong the deploy." -ForegroundColor Red
     exit 1
 }
 
@@ -23,20 +22,20 @@ if (-not $commitMsg) {
     $commitMsg = "deploy(release): update tuhocai.top ($dateStr)"
 }
 
-Write-Host "📝 [3/4] Gom và commit mã nguồn: $commitMsg..." -ForegroundColor Cyan
+Write-Host ">>> [3/4] Gom va commit ma nguon: $commitMsg..." -ForegroundColor Cyan
 git add .
 $status = git status --porcelain
 if ($status) {
     git commit -m "$commitMsg"
 } else {
-    Write-Host "ℹ️ Không có file nào thay đổi cần commit mới." -ForegroundColor Yellow
+    Write-Host "Khong co file nao thay doi can commit moi." -ForegroundColor Yellow
 }
 
-Write-Host "🌐 [4/4] Đẩy code lên GitHub để Vercel tự động build & deploy lên domain tuhocai.top..." -ForegroundColor Cyan
+Write-Host ">>> [4/4] Day code len GitHub de Vercel tu dong build va deploy len domain tuhocai.top..." -ForegroundColor Cyan
 git push origin main
 git push nvdang main
 
 Write-Host ""
-Write-Host "🎉 THÀNH CÔNG! Mã nguồn đã được đẩy lên GitHub." -ForegroundColor Green
-Write-Host "👉 Vercel đang tự động kích hoạt tiến trình Build & Deploy lên https://tuhocai.top" -ForegroundColor Green
-Write-Host "👉 Bạn có thể theo dõi tiến độ deploy tại: https://vercel.com/dashboard" -ForegroundColor Cyan
+Write-Host "THANH CONG! Ma nguon da duoc day len GitHub." -ForegroundColor Green
+Write-Host "Vercel dang tu dong kich hoat tien trinh Build va Deploy len https://tuhocai.top" -ForegroundColor Green
+Write-Host "Ban co the theo doi tien do deploy tai: https://vercel.com/dashboard" -ForegroundColor Cyan
