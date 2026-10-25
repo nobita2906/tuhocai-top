@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import { verifyAdminSession, unauthorizedAdminResponse } from '@/lib/adminAuth';
 import { query, execute } from '@/lib/db';
 import { sendOrderApprovedEmail } from '@/lib/email';
+import { approveAffiliateCommission, cancelAffiliateCommission } from '@/lib/affiliate';
 
 export async function GET(req: Request) {
   const admin = await verifyAdminSession();
@@ -85,7 +86,18 @@ export async function PUT(req: Request) {
           downloadUrl,
         }).catch((err) => console.error('Lỗi gửi email duyệt đơn:', err));
       }
+
+      // Tự động duyệt hoa hồng Affiliate nếu có
+      await approveAffiliateCommission(order.id).catch((err) =>
+        console.error('Lỗi duyệt hoa hồng Affiliate:', err)
+      );
+    } else if (status === 'CANCELLED' || status === 'REJECTED') {
+      // Hủy hoa hồng nếu đơn bị hủy hoặc từ chối
+      await cancelAffiliateCommission(order.id).catch((err) =>
+        console.error('Lỗi hủy hoa hồng Affiliate:', err)
+      );
     }
+
 
     return NextResponse.json({
       success: true,

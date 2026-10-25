@@ -41,6 +41,7 @@ export default function Navbar() {
     { label: 'Kho Workflow & Skill', href: '/san-pham' },
     { label: 'Tài liệu Miễn Phí', href: '/#tai-lieu-free' },
     { label: 'Tin tức & Hướng dẫn', href: '/bai-viet' },
+    { label: 'Affiliate', href: '/affiliate' },
   ];
 
   return (
@@ -110,6 +111,17 @@ export default function Navbar() {
             >
               <span className="hidden xl:inline">Tin tức & Hướng dẫn</span>
               <span className="xl:hidden">Tin tức</span>
+            </Link>
+
+            <Link
+              href="/affiliate"
+              className={`whitespace-nowrap shrink-0 px-2.5 py-1.5 rounded-lg text-xs xl:text-sm font-bold transition-all ${
+                pathname.startsWith('/affiliate')
+                  ? 'text-indigo-900 dark:text-indigo-400 bg-indigo-100/90 dark:bg-indigo-500/10 border border-indigo-300 dark:border-indigo-500/30'
+                  : 'text-slate-800 dark:text-slate-200 hover:opacity-75 hover:bg-slate-100 dark:hover:bg-white/[0.04]'
+              }`}
+            >
+              Affiliate
             </Link>
 
             {/* Kho Của Tôi button - Đậm đà mặc định, hover mờ lại */}

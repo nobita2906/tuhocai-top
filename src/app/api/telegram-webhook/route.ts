@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { execute, query } from '@/lib/db';
 import { randomUUID } from 'crypto';
 import { sendOrderApprovedEmail } from '@/lib/email';
+import { approveAffiliateCommission, cancelAffiliateCommission } from '@/lib/affiliate';
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8781006384:AAHDfcnSsIiwDpycoY9G-fd7ug5-Ne2Oq0Y';
 
@@ -84,11 +85,21 @@ export async function POST(req: Request) {
             await editMessageText(chatId, messageId, approvedText);
           }
 
+          // Duyệt hoa hồng Affiliate nếu có
+          const affComm = await approveAffiliateCommission(orderId).catch((e) => {
+            console.error('Lỗi duyệt hoa hồng Affiliate từ Telegram:', e);
+            return null;
+          });
+
           // Send confirmation message to admin chat
           if (chatId) {
+            const affMsg = affComm
+              ? `\n🎁 *Hoa hồng Affiliate:* Đã cộng ${new Intl.NumberFormat('vi-VN').format(affComm.commission_amount)} đ vào ví đối tác!`
+              : '';
+
             await sendTelegramMessage(chatId, `🚀 *THÔNG BÁO TỰ HỌC AI:*
 Đã duyệt thành công đơn *${order.order_code}* cho khách hàng *${order.customer_name}*!
-Link tài liệu: ${downloadLink}`);
+Link tài liệu: ${downloadLink}${affMsg}`);
           }
 
           // Tự động gửi email bàn giao link tải cho khách qua Resend (phải await để Vercel serverless không ngắt kết nối giữa chừng)
@@ -118,6 +129,11 @@ Link tài liệu: ${downloadLink}`);
              SET payment_status = 'REJECTED', approved_at = NOW(), approved_by = 'Telegram Admin' 
              WHERE id = ?`,
             [orderId]
+          );
+
+          // Hủy hoa hồng nếu có
+          await cancelAffiliateCommission(orderId).catch((e) =>
+            console.error('Lỗi hủy hoa hồng Telegram:', e)
           );
 
           await answerCallback(callbackId, '❌ Đã từ chối đơn hàng.', true);

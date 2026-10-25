@@ -58,6 +58,7 @@ export default function Footer() {
             <li><Link href="/san-pham?cat=skill" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors">Kỹ Năng Sử Dụng AI (Skills)</Link></li>
             <li><Link href="/san-pham?cat=prompt" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors">Bộ Prompt AI Chuẩn Thương Mại</Link></li>
             <li><Link href="/#tai-lieu-free" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors">Tải Tài Liệu Miễn Phí (Free Leads)</Link></li>
+            <li><Link href="/affiliate" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors font-bold text-amber-600 dark:text-amber-400">🤝 Kiếm Tiền Cùng Affiliate (30%-50%)</Link></li>
           </ul>
         </div>
 

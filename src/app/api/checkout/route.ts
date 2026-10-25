@@ -4,13 +4,24 @@ import { execute, query } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth';
 import { sendFreeResourceEmail } from '@/lib/email';
 import { getSiteSettings } from '@/lib/settings';
+import { attachAffiliateToOrder } from '@/lib/affiliate';
 
 export async function POST(req: Request) {
   try {
-    const { productId, customerName, customerEmail, customerPhone } = await req.json();
+    const { productId, customerName, customerEmail, customerPhone, affiliateRef } = await req.json();
 
     if (!productId || !customerName || !customerEmail) {
       return NextResponse.json({ error: 'Vui lòng cung cấp đầy đủ thông tin đặt hàng' }, { status: 400 });
+    }
+
+    // Determine affiliate referral code (from body or fallback to cookie)
+    let finalAffiliateCode = (typeof affiliateRef === 'string' && affiliateRef.trim()) ? affiliateRef.trim() : null;
+    if (!finalAffiliateCode) {
+      const cookieHeader = req.headers.get('cookie') || '';
+      const match = cookieHeader.match(/tuhocai_aff_ref=([^;]+)/);
+      if (match) {
+        finalAffiliateCode = decodeURIComponent(match[1].trim());
+      }
     }
 
     // Lookup product
@@ -79,6 +90,17 @@ export async function POST(req: Request) {
       [orderId, orderCode, userId, cleanName, cleanEmail, customerPhone || null, product.id, product.name, product.price]
     );
 
+    // Gắn Affiliate và tạo hoa hồng PENDING nếu có mã giới thiệu
+    let affResult: any = null;
+    if (finalAffiliateCode) {
+      affResult = await attachAffiliateToOrder({
+        orderId,
+        orderCode,
+        orderAmount: product.price,
+        affiliateCode: finalAffiliateCode,
+      });
+    }
+
     // Generate VietQR URL with dynamic settings
     const bankId = siteSettings.bank_id || 'VPB';
     const accountNo = siteSettings.account_no || '0934434101';
@@ -92,6 +114,12 @@ export async function POST(req: Request) {
     const telegramChatId = siteSettings.telegram_chat_id;
     const priceFormatted = new Intl.NumberFormat('vi-VN').format(product.price) + ' đ';
 
+    let affText = '';
+    if (affResult?.partner) {
+      const commFormatted = new Intl.NumberFormat('vi-VN').format(affResult.commissionAmount) + ' đ';
+      affText = `\n🤝 *Affiliate:* ${affResult.partner.name} (\`${affResult.partner.code}\`)\n🎁 *Hoa hồng:* ${commFormatted} (${affResult.rate}%)`;
+    }
+
     const caption = `🛒 *CÓ ĐƠN HÀNG MỚI KHỞI TẠO!*
 
 📦 *Mã đơn:* \`${orderCode}\`
@@ -99,7 +127,7 @@ export async function POST(req: Request) {
 📧 *Email:* ${cleanEmail}
 📞 *SĐT:* ${customerPhone || 'Không có'}
 💎 *Sản phẩm:* ${product.name}
-💰 *Số tiền:* ${priceFormatted}
+💰 *Số tiền:* ${priceFormatted}${affText}
 
 👉 *Khách hàng đang xem mã VietQR. Bạn có thể bấm DUYỆT ngay nếu tài khoản ${bankId} đã nhận được tiền:*`;
 
@@ -130,6 +158,7 @@ export async function POST(req: Request) {
       isFree: false,
       orderId,
       orderCode,
+      affiliate: affResult ? { code: affResult.partner.code, name: affResult.partner.name } : null,
       product: {
         id: product.id,
         name: product.name,
@@ -144,6 +173,7 @@ export async function POST(req: Request) {
       },
       vietQrUrl,
     });
+
   } catch (err: any) {
     console.error('Checkout error:', err);
     return NextResponse.json({ error: 'Lỗi tạo đơn hàng: ' + (err.message || 'Lỗi máy chủ') }, { status: 500 });

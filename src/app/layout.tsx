@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import TopBanner from '@/components/TopBanner';
 import SocialProofToast from '@/components/SocialProofToast';
 import FloatingAssistant from '@/components/FloatingAssistant';
+import AffiliateTracker from '@/components/AffiliateTracker';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin', 'vietnamese'],
@@ -114,6 +115,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-slate-50 dark:bg-[#09090b] text-slate-900 dark:text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white transition-colors duration-200">
         <TopBanner />
         <Navbar />
+        <AffiliateTracker />
         <main className="flex-1 relative overflow-hidden">{children}</main>
         <Footer />
         <SocialProofToast />

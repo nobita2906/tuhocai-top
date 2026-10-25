@@ -54,6 +54,8 @@ export interface Order {
   id: string;
   order_code: string;
   user_id?: string | null;
+  affiliate_code?: string | null;
+  affiliate_id?: string | null;
   customer_name: string;
   customer_email: string;
   customer_phone?: string | null;
@@ -94,3 +96,66 @@ export interface Lead {
   source: string;
   created_at: string;
 }
+
+export type AffiliateStatus = 'ACTIVE' | 'PENDING' | 'BANNED';
+
+export interface AffiliatePartner {
+  id: string;
+  user_id?: string | null;
+  code: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  commission_rate: number;
+  balance: number;
+  total_earned: number;
+  bank_name?: string | null;
+  bank_account_no?: string | null;
+  bank_account_name?: string | null;
+  status: AffiliateStatus;
+  notes?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AffiliateClick {
+  id: string;
+  affiliate_id: string;
+  code: string;
+  ip_address?: string | null;
+  user_agent?: string | null;
+  landing_path?: string | null;
+  referrer?: string | null;
+  created_at: string;
+}
+
+export type CommissionStatus = 'PENDING' | 'APPROVED' | 'CANCELLED' | 'PAID';
+
+export interface AffiliateCommission {
+  id: string;
+  affiliate_id: string;
+  order_id: string;
+  order_code: string;
+  order_amount: number;
+  rate: number;
+  commission_amount: number;
+  status: CommissionStatus;
+  approved_at?: string | null;
+  created_at: string;
+}
+
+export type PayoutStatus = 'REQUESTED' | 'TRANSFERRED' | 'REJECTED';
+
+export interface AffiliatePayout {
+  id: string;
+  affiliate_id: string;
+  amount: number;
+  bank_info?: string | null;
+  status: PayoutStatus;
+  proof_image?: string | null;
+  transferred_at?: string | null;
+  transferred_by?: string | null;
+  notes?: string | null;
+  created_at: string;
+}
+
