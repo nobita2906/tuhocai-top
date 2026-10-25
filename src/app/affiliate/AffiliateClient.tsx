@@ -19,11 +19,15 @@ import {
   CheckCircle2,
   AlertCircle,
   HelpCircle,
-  ChevronRight
+  ChevronRight,
+  BookOpen,
+  Download,
+  FileText,
+  MessageSquare,
 } from 'lucide-react';
 
 export default function AffiliateClient() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'register'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'register' | 'toolkit'>('dashboard');
 
   // Search/Lookup state
   const [searchCode, setSearchCode] = useState('');
@@ -34,6 +38,11 @@ export default function AffiliateClient() {
   // Dashboard Data
   const [statsData, setStatsData] = useState<any>(null);
   const [copiedLink, setCopiedLink] = useState(false);
+
+  // Marketing Toolkit State
+  const [customPath, setCustomPath] = useState('/san-pham');
+  const [copiedDeepLink, setCopiedDeepLink] = useState(false);
+  const [copiedTemplateIdx, setCopiedTemplateIdx] = useState<number | null>(null);
 
   // Registration Form State
   const [regForm, setRegForm] = useState({
@@ -224,6 +233,20 @@ export default function AffiliateClient() {
             <Users className="w-5 h-5" />
             Đăng Ký Tham Gia Mới
             {activeTab === 'register' && (
+              <span className="absolute bottom-0 left-0 right-0 h-1 bg-indigo-600 dark:bg-indigo-400 rounded-full" />
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('toolkit')}
+            className={`pb-4 px-4 font-bold text-base sm:text-lg transition-all relative flex items-center gap-2 ${
+              activeTab === 'toolkit'
+                ? 'text-indigo-600 dark:text-indigo-400'
+                : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+            }`}
+          >
+            <Sparkles className="w-5 h-5 text-amber-500" />
+            Tài Nguyên Tiếp Thị (Media Kit)
+            {activeTab === 'toolkit' && (
               <span className="absolute bottom-0 left-0 right-0 h-1 bg-indigo-600 dark:bg-indigo-400 rounded-full" />
             )}
           </button>
@@ -650,6 +673,323 @@ export default function AffiliateClient() {
             </form>
           </div>
         )}
+
+        {/* Tab 3: Marketing Media Kit & Toolkit */}
+        {activeTab === 'toolkit' && (
+          <div className="space-y-8 animate-in fade-in duration-300">
+            {/* Header intro */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-indigo-900 via-slate-900 to-indigo-950 text-white border border-indigo-700/40 shadow-xl space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 font-mono text-xs font-bold border border-amber-400/30">
+                <Sparkles className="w-3.5 h-3.5" />
+                VŨ KHÍ TIẾP THỊ CHO ANH EM AFFILIATE
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                Kho Tài Nguyên Tiếp Thị & Mẫu Content Thực Chiến
+              </h2>
+              <p className="text-slate-300 text-sm sm:text-base max-w-3xl leading-relaxed">
+                Được chuẩn bị sẵn từ kịch bản đăng bài Facebook, tin nhắn Zalo, hook video ngắn TikTok đến bộ banner mockup. Anh em chỉ cần sao chép, gắn link ref của mình và bắt đầu tạo thu nhập thụ động ngay hôm nay.
+              </p>
+            </div>
+
+            {/* Section 1: Deep Link Generator */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                <div>
+                  <h3 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                    <ExternalLink className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                    Trình Tạo Link Giới Thiệu Tùy Biến (Deep Link Generator)
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                    Dẫn khách trực tiếp vào trang sản phẩm cụ thể để tăng tỷ lệ chốt đơn x3 lần so với trang chủ
+                  </p>
+                </div>
+                <div className="px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 text-xs font-mono font-bold text-indigo-700 dark:text-indigo-300">
+                  Mã ref của bạn: <strong className="text-indigo-600 dark:text-indigo-400">{statsData?.partner?.code || searchCode || 'dangai'}</strong>
+                </div>
+              </div>
+
+              {/* Quick Preset Buttons */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                  Chọn trang đích muốn tiếp thị:
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: 'Kho Sản Phẩm & Skill', path: '/san-pham' },
+                    { label: 'Workflow n8n Tự Động Hóa', path: '/san-pham?cat=workflow' },
+                    { label: 'Bộ Skill & Trợ Lý AI', path: '/san-pham?cat=skill' },
+                    { label: 'Quà Tặng Miễn Phí (Free Leads)', path: '/#tai-lieu-free' },
+                    { label: 'Bài Viết Chia Sẻ Kiến Thức', path: '/bai-viet' },
+                  ].map((preset) => (
+                    <button
+                      key={preset.path}
+                      type="button"
+                      onClick={() => setCustomPath(preset.path)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                        customPath === preset.path
+                          ? 'bg-indigo-600 text-white shadow-xs'
+                          : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Path Input */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">
+                    Đường dẫn trang đích (Path)
+                  </label>
+                  <input
+                    type="text"
+                    value={customPath}
+                    onChange={(e) => setCustomPath(e.target.value)}
+                    placeholder="/san-pham/n8n-auto-crm"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono text-xs sm:text-sm focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">
+                    Mã đối tác (Ref code)
+                  </label>
+                  <input
+                    type="text"
+                    readOnly
+                    value={statsData?.partner?.code || searchCode || 'dangai'}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/60 font-mono text-xs sm:text-sm text-indigo-600 dark:text-indigo-400 font-bold cursor-not-allowed"
+                  />
+                </div>
+              </div>
+
+              {/* Result Link Box */}
+              <div className="p-4 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/60 space-y-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-indigo-900 dark:text-indigo-300">
+                  Link tiếp thị trực tiếp của bạn:
+                </span>
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                  <div className="flex-1 px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-700 font-mono text-xs sm:text-sm text-slate-800 dark:text-slate-200 select-all truncate">
+                    https://www.tuhocai.top{customPath.startsWith('/') ? customPath : '/' + customPath}{customPath.includes('?') ? '&' : '?'}ref={statsData?.partner?.code || searchCode || 'dangai'}
+                  </div>
+                  <button
+                    onClick={() => {
+                      const link = `https://www.tuhocai.top${customPath.startsWith('/') ? customPath : '/' + customPath}${customPath.includes('?') ? '&' : '?'}ref=${statsData?.partner?.code || searchCode || 'dangai'}`;
+                      navigator.clipboard.writeText(link);
+                      setCopiedDeepLink(true);
+                      setTimeout(() => setCopiedDeepLink(false), 2500);
+                    }}
+                    className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shrink-0 shadow-md shadow-indigo-600/20"
+                  >
+                    {copiedDeepLink ? (
+                      <>
+                        <Check className="w-4 h-4 text-emerald-300" />
+                        Đã sao chép!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4" />
+                        Sao chép Link này
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 2: Copywriting Templates */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+              <div>
+                <h3 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                  Mẫu Content Bán Hàng & Đăng Bài Mạng Xã Hội (Sẵn Dùng)
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                  Bấm nút sao chép để lấy nội dung đã tự động chèn sẵn link giới thiệu cá nhân của bạn
+                </p>
+              </div>
+
+              {/* 3 Copywriting Cards */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Template 1: Facebook / Threads */}
+                <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 flex flex-col justify-between space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300">
+                        Facebook & Threads
+                      </span>
+                      <span className="text-xs text-slate-400">Bài viết chia sẻ</span>
+                    </div>
+                    <h4 className="font-bold text-sm text-slate-900 dark:text-white">
+                      Bí quyết x3 hiệu suất làm nội dung với n8n & AI
+                    </h4>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-mono whitespace-pre-wrap bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800 max-h-56 overflow-y-auto">
+{`Nếu mỗi ngày bạn vẫn mất 3-4 tiếng để nghĩ kịch bản, viết bài và lên lịch đăng thủ công thì bạn đang đi sau đối thủ rất xa rồi!
+
+Mình vừa tìm thấy kho workflow n8n tự động hóa thực chiến của Tự Học AI. Tự động cào tin tức, viết kịch bản đa kênh và đẩy bài tự động lên Blogger / Fanpage.
+
+👉 Tải dùng thử và xem demo tại đây:
+https://www.tuhocai.top/san-pham?ref=${statsData?.partner?.code || searchCode || 'dangai'}
+
+Mua xong dùng ngay, không cần biết code vẫn setup được trong 15 phút!`}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const text = `Nếu mỗi ngày bạn vẫn mất 3-4 tiếng để nghĩ kịch bản, viết bài và lên lịch đăng thủ công thì bạn đang đi sau đối thủ rất xa rồi!\n\nMình vừa tìm thấy kho workflow n8n tự động hóa thực chiến của Tự Học AI. Tự động cào tin tức, viết kịch bản đa kênh và đẩy bài tự động lên Blogger / Fanpage.\n\n👉 Tải dùng thử và xem demo tại đây:\nhttps://www.tuhocai.top/san-pham?ref=${statsData?.partner?.code || searchCode || 'dangai'}\n\nMua xong dùng ngay, không cần biết code vẫn setup được trong 15 phút!`;
+                      navigator.clipboard.writeText(text);
+                      setCopiedTemplateIdx(1);
+                      setTimeout(() => setCopiedTemplateIdx(null), 2500);
+                    }}
+                    className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition"
+                  >
+                    {copiedTemplateIdx === 1 ? (
+                      <>
+                        <Check className="w-4 h-4 text-emerald-300" />
+                        Đã sao chép kịch bản!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4" />
+                        Sao chép kịch bản Facebook
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Template 2: Zalo Direct Chat */}
+                <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 flex flex-col justify-between space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                        Zalo / Nhóm Kín
+                      </span>
+                      <span className="text-xs text-slate-400">Tin nhắn ngắn</span>
+                    </div>
+                    <h4 className="font-bold text-sm text-slate-900 dark:text-white">
+                      Gửi tin nhắn 1-1 hoặc tặng quà trong Group
+                    </h4>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-mono whitespace-pre-wrap bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800 max-h-56 overflow-y-auto">
+{`Chào bạn! Bên Tự Học AI đang mở tặng miễn phí bộ tài liệu Prompt thương mại và kịch bản video AI thực chiến cực hay.
+
+Bạn bấm vào link này để tải ngay miễn phí nhé (hoàn toàn 0đ):
+https://www.tuhocai.top/#tai-lieu-free?ref=${statsData?.partner?.code || searchCode || 'dangai'}
+
+Nếu cần setup hệ thống tự động hóa n8n bán hàng thì bên đó cũng có sẵn template dùng luôn rất tiện ạ!`}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const text = `Chào bạn! Bên Tự Học AI đang mở tặng miễn phí bộ tài liệu Prompt thương mại và kịch bản video AI thực chiến cực hay.\n\nBạn bấm vào link này để tải ngay miễn phí nhé (hoàn toàn 0đ):\nhttps://www.tuhocai.top/#tai-lieu-free?ref=${statsData?.partner?.code || searchCode || 'dangai'}\n\nNếu cần setup hệ thống tự động hóa n8n bán hàng thì bên đó cũng có sẵn template dùng luôn rất tiện ạ!`;
+                      navigator.clipboard.writeText(text);
+                      setCopiedTemplateIdx(2);
+                      setTimeout(() => setCopiedTemplateIdx(null), 2500);
+                    }}
+                    className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition"
+                  >
+                    {copiedTemplateIdx === 2 ? (
+                      <>
+                        <Check className="w-4 h-4 text-emerald-300" />
+                        Đã sao chép tin nhắn!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4" />
+                        Sao chép tin nhắn Zalo
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Template 3: TikTok / Reels Script */}
+                <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 flex flex-col justify-between space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">
+                        TikTok / Reels Video
+                      </span>
+                      <span className="text-xs text-slate-400">Hook 3s đầu</span>
+                    </div>
+                    <h4 className="font-bold text-sm text-slate-900 dark:text-white">
+                      Kịch bản video ngắn 30s giữ chân người xem
+                    </h4>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-mono whitespace-pre-wrap bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800 max-h-56 overflow-y-auto">
+{`[0-3s Hook]: Dừng lại! Đừng thuê người viết bài 50k/bài nữa nếu bạn chưa biết workflow này.
+
+[3-15s Body]: Đây là hệ thống n8n tự động hóa kết hợp ChatGPT. Chỉ cần nhập 1 chủ đề, AI tự lên dàn ý, viết 10 bài chuẩn SEO và tự đăng bài luôn trong lúc bạn đang ngủ.
+
+[15-30s CTA]: Mình để trọn bộ template và link hướng dẫn ở đầu trang Bio:
+https://www.tuhocai.top/?ref=${statsData?.partner?.code || searchCode || 'dangai'}
+Tải về dùng ngay, không cần biết kỹ thuật nha!`}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const text = `[0-3s Hook]: Dừng lại! Đừng thuê người viết bài 50k/bài nữa nếu bạn chưa biết workflow này.\n\n[3-15s Body]: Đây là hệ thống n8n tự động hóa kết hợp ChatGPT. Chỉ cần nhập 1 chủ đề, AI tự lên dàn ý, viết 10 bài chuẩn SEO và tự đăng bài luôn trong lúc bạn đang ngủ.\n\n[15-30s CTA]: Mình để trọn bộ template và link hướng dẫn ở đầu trang Bio:\nhttps://www.tuhocai.top/?ref=${statsData?.partner?.code || searchCode || 'dangai'}\nTải về dùng ngay, không cần biết kỹ thuật nha!`;
+                      navigator.clipboard.writeText(text);
+                      setCopiedTemplateIdx(3);
+                      setTimeout(() => setCopiedTemplateIdx(null), 2500);
+                    }}
+                    className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition"
+                  >
+                    {copiedTemplateIdx === 3 ? (
+                      <>
+                        <Check className="w-4 h-4 text-emerald-300" />
+                        Đã sao chép kịch bản!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4" />
+                        Sao chép kịch bản TikTok
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 3: Banners & Graphic Assets */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-xs font-bold">
+                  <Download className="w-3.5 h-3.5" />
+                  ĐỒ HOẠ & BANNER CHẤT LƯỢNG CAO
+                </div>
+                <h3 className="text-xl font-black text-slate-900 dark:text-white">
+                  Tải Trọn Bộ Banner & Ảnh Mockup Thiết Kế Sẵn
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-xl">
+                  Gồm đầy đủ kích thước vuông (1:1), story (9:16) và ảnh bìa bài viết (16:9), ảnh chụp màn hình workflow n8n thực tế để bạn đăng kèm bài viết mà không mất công tự thiết kế.
+                </p>
+              </div>
+
+              <a
+                href="https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:opacity-90 text-white font-bold text-sm shadow-lg shadow-emerald-600/25 flex items-center gap-2 shrink-0 transition"
+              >
+                <Download className="w-4 h-4" />
+                Mở Thư Mục Ảnh Drive
+                <ExternalLink className="w-4 h-4 ml-1" />
+              </a>
+            </div>
+
+            {/* Section 4: Rules & Support */}
+            <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 text-xs text-slate-600 dark:text-slate-400 space-y-2">
+              <h4 className="font-bold text-slate-800 dark:text-slate-200 text-sm flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                Quy Tắc & Cam Kết Quyền Lợi Dành Cho Đối Tác Affiliate
+              </h4>
+              <p>• <strong>Thời hạn Cookie 30 ngày:</strong> Áp dụng mô hình Last-Click. Khách bấm link ref của bạn và mua hàng trong vòng 30 ngày đều được tính hoa hồng đầy đủ.</p>
+              <p>• <strong>Duyệt thanh toán VietQR trong 24h:</strong> Rút tiền tối thiểu từ 200.000đ, không giam vốn, chuyển khoản thẳng về số tài khoản ngân hàng của bạn.</p>
+              <p>• <strong>Nghiêm cấm:</strong> Không chạy quảng cáo Google Search từ khóa thương hiệu "Tự Học AI", không spam link rác vào các hội nhóm làm ảnh hưởng uy tín thương hiệu.</p>
+              <p>• <strong>Hỗ trợ kỹ thuật 1-1:</strong> Cần hỗ trợ riêng hoặc deal tỷ lệ hoa hồng cao hơn cho Team/KOL, liên hệ Zalo: <strong className="text-indigo-600 dark:text-indigo-400">0934.434.101 (Đăng)</strong>.</p>
+            </div>
+          </div>
+        )}
+
 
         {/* Withdrawal Modal */}
         {showPayoutModal && statsData?.partner && (
