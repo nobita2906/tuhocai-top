@@ -4,6 +4,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Newspaper, ArrowRight, Clock, Eye, Sparkles } from 'lucide-react';
 
+import Pagination from '@/components/ui/Pagination';
+
 export const metadata = {
   title: 'Tin Tức & Hướng Dẫn AI Thực Chiến - Tự Học AI (tuhocai.top)',
   description: 'Cập nhật tin tức mô hình AI mới nhất, hướng dẫn kỹ thuật prompt và xây dựng quy trình tự động hóa n8n.',
@@ -24,21 +26,35 @@ function getPostCover(post: Post): string {
 export default async function BaiVietPage({
   searchParams,
 }: {
-  searchParams: Promise<{ cat?: string }>;
+  searchParams: Promise<{ cat?: string; page?: string }>;
 }) {
-  const { cat } = await searchParams;
+  const { cat, page: pageParam } = await searchParams;
+  const page = Math.max(1, parseInt(pageParam || '1', 10) || 1);
+  const limit = 8;
+  const offset = (page - 1) * limit;
 
+  let countSql = 'SELECT COUNT(*) as total FROM posts WHERE is_published = TRUE';
   let sql = 'SELECT id, slug, title, summary, category, tags, thumbnail, is_featured, views, created_at FROM posts WHERE is_published = TRUE';
+  const countParams: any[] = [];
   const params: any[] = [];
 
   if (cat && cat !== 'ALL') {
+    countSql += ' AND category = ?';
+    countParams.push(cat.toUpperCase());
     sql += ' AND category = ?';
     params.push(cat.toUpperCase());
   }
 
-  sql += ' ORDER BY created_at DESC';
+  sql += ` ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`;
 
-  const posts = await query<Post>(sql, params);
+  const [countResult, posts] = await Promise.all([
+    query<{ total: number }>(countSql, countParams),
+    query<Post>(sql, params),
+  ]);
+
+  const total = Number(countResult[0]?.total || 0);
+  const totalPages = Math.ceil(total / limit) || 1;
+  const baseUrl = cat && cat !== 'ALL' ? `/bai-viet?cat=${cat}` : '/bai-viet';
 
   const categories = [
     { key: 'ALL', label: 'Tất cả bài viết' },
@@ -151,6 +167,20 @@ export default async function BaiVietPage({
               </article>
             );
           })}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="pt-6 border-t border-white/[0.08]">
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            totalItems={total}
+            pageSize={limit}
+            itemName="bài viết"
+            baseUrl={baseUrl}
+          />
         </div>
       )}
     </div>

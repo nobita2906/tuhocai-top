@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
 import { verifyAdminSession, unauthorizedAdminResponse } from '@/lib/adminAuth';
 import { query, execute } from '@/lib/db';
+import { sendOrderApprovedEmail } from '@/lib/email';
 
 export async function GET(req: Request) {
   const admin = await verifyAdminSession();
@@ -67,6 +68,22 @@ export async function PUT(req: Request) {
           'INSERT IGNORE INTO user_library (id, user_id, product_id, order_id) VALUES (?, ?, ?, ?)',
           [randomUUID(), userId, order.product_id, order.id]
         );
+      }
+
+      // Automatically send delivery email to customer with secret download link
+      if (order.customer_email) {
+        const prods = await query<any>('SELECT download_url FROM products WHERE id = ? LIMIT 1', [order.product_id]);
+        const downloadUrl = (prods.length > 0 && prods[0].download_url)
+          ? prods[0].download_url
+          : 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing';
+
+        await sendOrderApprovedEmail({
+          customerName: order.customer_name,
+          customerEmail: order.customer_email,
+          orderCode: order.order_code,
+          productName: order.product_name,
+          downloadUrl,
+        }).catch((err) => console.error('Lỗi gửi email duyệt đơn:', err));
       }
     }
 
