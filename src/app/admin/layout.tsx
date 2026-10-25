@@ -21,6 +21,7 @@ import {
   Sparkles,
   Settings,
   BookOpen,
+  Share2,
 } from 'lucide-react';
 
 import ThemeToggle from '@/components/ThemeToggle';
@@ -74,6 +75,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: 'Quản lý thành viên', href: '/admin/thanh-vien', icon: Users },
     { label: 'Kho sản phẩm', href: '/admin/san-pham', icon: Package },
     { label: 'Đơn hàng & VietQR', href: '/admin/don-hang', icon: CreditCard },
+    { label: 'Đối tác Affiliate', href: '/admin/affiliate', icon: Share2 },
     { label: 'Danh sách Leads 0đ', href: '/admin/leads', icon: Mail },
     { label: 'Cài đặt Website & QR', href: '/admin/cai-dat', icon: Settings },
   ];
