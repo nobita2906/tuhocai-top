@@ -94,13 +94,19 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                var theme = localStorage.getItem('theme');
-                if (theme === 'dark') {
+                // Xoa bo gia tri dark mode cu luu trong localStorage truoc day
+                if (localStorage.getItem('theme') === 'dark' && !localStorage.getItem('tuhocai_theme_v2')) {
+                  localStorage.removeItem('theme');
+                }
+                var userTheme = localStorage.getItem('tuhocai_theme_v2');
+                if (userTheme === 'dark') {
                   document.documentElement.classList.add('dark');
                 } else {
                   document.documentElement.classList.remove('dark');
                 }
-              } catch (_) {}
+              } catch (_) {
+                document.documentElement.classList.remove('dark');
+              }
             `,
           }}
         />

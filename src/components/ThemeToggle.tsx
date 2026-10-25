@@ -9,8 +9,14 @@ export default function ThemeToggle() {
 
   useEffect(() => {
     setMounted(true);
-    const isDark = document.documentElement.classList.contains('dark');
-    setTheme(isDark ? 'dark' : 'light');
+    const saved = localStorage.getItem('tuhocai_theme_v2');
+    if (saved === 'dark') {
+      document.documentElement.classList.add('dark');
+      setTheme('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      setTheme('light');
+    }
   }, []);
 
   const toggleTheme = () => {
@@ -20,12 +26,14 @@ export default function ThemeToggle() {
     if (newTheme === 'dark') {
       document.documentElement.classList.add('dark');
       try {
-        localStorage.setItem('theme', 'dark');
+        localStorage.setItem('tuhocai_theme_v2', 'dark');
+        localStorage.removeItem('theme');
       } catch (_) {}
     } else {
       document.documentElement.classList.remove('dark');
       try {
-        localStorage.setItem('theme', 'light');
+        localStorage.setItem('tuhocai_theme_v2', 'light');
+        localStorage.removeItem('theme');
       } catch (_) {}
     }
 
