@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { randomUUID } from 'crypto';
 import { execute, query } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth';
@@ -17,10 +18,21 @@ export async function POST(req: Request) {
     // Determine affiliate referral code (from body or fallback to cookie)
     let finalAffiliateCode = (typeof affiliateRef === 'string' && affiliateRef.trim()) ? affiliateRef.trim() : null;
     if (!finalAffiliateCode) {
-      const cookieHeader = req.headers.get('cookie') || '';
-      const match = cookieHeader.match(/tuhocai_aff_ref=([^;]+)/);
-      if (match) {
-        finalAffiliateCode = decodeURIComponent(match[1].trim());
+      try {
+        const cookieStore = await cookies();
+        const cookieRef = cookieStore.get('tuhocai_aff_ref')?.value;
+        if (cookieRef && cookieRef.trim().length > 0) {
+          finalAffiliateCode = cookieRef.trim();
+        }
+      } catch (_) {
+        // Fallback to request header
+      }
+      if (!finalAffiliateCode) {
+        const cookieHeader = req.headers.get('cookie') || '';
+        const match = cookieHeader.match(/tuhocai_aff_ref=([^;]+)/);
+        if (match) {
+          finalAffiliateCode = decodeURIComponent(match[1].trim());
+        }
       }
     }
 

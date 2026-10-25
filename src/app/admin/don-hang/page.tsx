@@ -245,6 +245,13 @@ export default function AdminOrdersPage() {
                       <div className="text-xs text-slate-500 dark:text-slate-400 font-mono">
                         {o.created_at ? new Date(o.created_at).toLocaleString('vi-VN') : '—'}
                       </div>
+                      {o.affiliate_code && (
+                        <div className="mt-1">
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/70 dark:text-amber-300 border border-amber-300 dark:border-amber-700/60">
+                            🤝 Ref: {o.affiliate_code}
+                          </span>
+                        </div>
+                      )}
                     </td>
 
                     <td className="px-5 py-4">
