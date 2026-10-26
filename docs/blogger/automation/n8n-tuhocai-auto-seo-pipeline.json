@@ -1,0 +1,202 @@
+{
+  "name": "TuHocAI - Auto Anti-Slop SEO Publishing Pipeline 2026",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "id": "1",
+      "name": "Schedule Trigger (8h Sang)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://feeds.feedburner.com/venturebeat/ai",
+        "options": {}
+      },
+      "id": "2",
+      "name": "Fetch AI News RSS Feed",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "filter-title",
+              "leftValue": "={{ $json.title }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3",
+      "name": "Filter Valid Articles",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={{ $env.GEMINI_API_KEY }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"Bạn là Nguyễn Văn Đăng - AI Solution Architect tại Tự Học AI (tuhocai.top).\\nHãy phân tích và viết lại bài hướng dẫn thực chiến chuẩn SEO E-E-A-T và Anti-AI Slop dựa trên bài viết gốc:\\n\\nTIÊU ĐỀ GỐC: \" + $json.title + \"\\nNỘI DUNG/MÔ TẢ GỐC: \" + ($json.contentSnippet || $json.content || '') + \"\\n\\nQUY TẮC BẮT BUỘC:\\n1. Không viết sáo rỗng vô thưởng vô phạt. Đi thẳng vào vấn đề.\\n2. Bắt buộc có 1 khối Code/Prompt thực hành trong ```markdown.\\n3. Bắt buộc có 1 bảng Markdown so sánh hoặc checklist.\\n4. Bắt buộc có mục Lỗi thường gặp & Cách khắc phục.\\n5. Gắn internal link:\\n   - Nhận tài liệu 0đ: https://zalo.me/g/tuhocai\\n   - Khóa học / Quy trình n8n: https://www.tuhocai.top/lp/n8n-tu-dong-hoa-kiem-tien\\n   - Kiếm tiền Affiliate: https://www.tuhocai.top/affiliate\\n\\nTRẢ VỀ DUY NHẤT ĐỊNH DẠNG JSON HỢP LỆ:\\n{\\n  \\\"title\\\": \\\"Tiêu đề tiếng Việt hấp dẫn chuẩn SEO 50-70 ký tự\\\",\\n  \\\"summary\\\": \\\"Đoạn tóm tắt giải quyết nỗi đau 120-160 ký tự\\\",\\n  \\\"category\\\": \\\"WORKFLOW\\\",\\n  \\\"tags\\\": \\\"n8n, Tu Dong Hoa, AI, SEO\\\",\\n  \\\"content\\\": \\\"Nội dung bài viết đầy đủ bằng Markdown\\\"\\n}\"\n        }\n      ]\n    }\n  ],\n  \"generationConfig\": {\n    \"responseMimeType\": \"application/json\",\n    \"temperature\": 0.7\n  }\n}",
+        "options": {}
+      },
+      "id": "4",
+      "name": "Gemini AI (Anti-Slop Generator)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nlet parsed = {};\n\ntry {\n  const rawText = response.candidates[0].content.parts[0].text;\n  parsed = JSON.parse(rawText);\n} catch (e) {\n  throw new Error('Lỗi parse JSON từ Gemini: ' + e.message);\n}\n\nreturn {\n  json: {\n    title: parsed.title,\n    summary: parsed.summary,\n    content: parsed.content,\n    category: parsed.category || 'WORKFLOW',\n    tags: parsed.tags || 'AI, Tu Dong Hoa, tuhocai',\n    isFeatured: true,\n    isPublished: true\n  }\n};"
+      },
+      "id": "5",
+      "name": "Parse & Validate JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.tuhocai.top/api/webhook/publish-post",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer tuhocai-auto-publish-secret-key-2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "6",
+      "name": "Publish to TuHocAI Webhook",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "chatId": "=@tuhocai_channel",
+        "text": "=🎉 *BÀI VIẾT MỚI TỰ ĐỘNG XUẤT BẢN THÀNH CÔNG!*\n\n📌 *Tiêu đề:* {{ $json.post.title }}\n🏷 *Chuyên mục:* {{ $json.post.category }}\n🔗 *Đường dẫn:* {{ $json.post.url }}\n\n_Hệ thống n8n Pipeline & Anti-Slop Engine đã hoàn tất quy trình chuẩn SEO 2026._",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "7",
+      "name": "Notify Telegram Channel",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1560, 300]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger (8h Sang)": {
+      "main": [
+        [
+          {
+            "node": "Fetch AI News RSS Feed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch AI News RSS Feed": {
+      "main": [
+        [
+          {
+            "node": "Filter Valid Articles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Valid Articles": {
+      "main": [
+        [
+          {
+            "node": "Gemini AI (Anti-Slop Generator)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini AI (Anti-Slop Generator)": {
+      "main": [
+        [
+          {
+            "node": "Parse & Validate JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse & Validate JSON": {
+      "main": [
+        [
+          {
+            "node": "Publish to TuHocAI Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish to TuHocAI Webhook": {
+      "main": [
+        [
+          {
+            "node": "Notify Telegram Channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
