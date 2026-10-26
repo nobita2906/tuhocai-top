@@ -161,6 +161,17 @@ export default async function SingleArticlePage({
             </span>
           </div>
 
+          {/* Hero Thumbnail Banner */}
+          {post.thumbnail && (
+            <div className="rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-xl max-h-[480px] relative bg-slate-950">
+              <img
+                src={post.thumbnail}
+                alt={post.title}
+                className="w-full h-auto object-cover max-h-[480px] hover:scale-102 transition-transform duration-500"
+              />
+            </div>
+          )}
+
           {/* Lead Excerpt */}
           {post.summary && (
             <div className="p-5 sm:p-6 rounded-2xl bg-indigo-50/70 dark:bg-slate-900/90 border-l-4 border-indigo-600 dark:border-indigo-500 text-slate-800 dark:text-slate-100 text-base sm:text-lg leading-relaxed font-normal shadow-sm border border-slate-200/60 dark:border-slate-800">

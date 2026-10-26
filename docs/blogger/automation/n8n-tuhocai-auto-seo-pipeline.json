@@ -105,6 +105,16 @@
     },
     {
       "parameters": {
+        "jsCode": "const item = $input.first().json;\n\n// Tao prompt hinh anh chuan cinematic tu tieu de bai viet\nconst prompt = (item.title || 'AI Technology Automation') + ' cinematic hyperrealistic 3d tech illustration 8k wallpaper studio lighting';\nconst encoded = encodeURIComponent(prompt);\n\n// Tao link anh chat luong cao tu Pollinations AI (Flux Model - 1200x630 chuan OpenGraph & Web Banner)\nconst thumbUrl = `https://image.pollinations.ai/prompt/${encoded}?width=1200&height=630&nologo=true`;\n\nreturn {\n  json: {\n    ...item,\n    thumbnail: thumbUrl\n  }\n};"
+      },
+      "id": "5-thumb",
+      "name": "🎨 Tạo Ảnh Thumbnail AI",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1460, 300]
+    },
+    {
+      "parameters": {
         "method": "POST",
         "url": "https://www.tuhocai.top/api/webhook/publish-post",
         "authentication": "genericCredentialType",
@@ -131,7 +141,7 @@
       "name": "Publish to TuHocAI Webhook",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1460, 300]
+      "position": [1680, 300]
     },
     {
       "parameters": {
@@ -145,7 +155,7 @@
       "name": "Notify Telegram Channel",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [1680, 300]
+      "position": [1900, 300]
     }
   ],
   "connections": {
@@ -216,6 +226,17 @@
       ]
     },
     "Parse & Validate JSON": {
+      "main": [
+        [
+          {
+            "node": "🎨 Tạo Ảnh Thumbnail AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎨 Tạo Ảnh Thumbnail AI": {
       "main": [
         [
           {
