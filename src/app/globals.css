@@ -123,136 +123,224 @@ html.dark .bento-card:hover {
 
 /* Notion-like Markdown Body Styling for Light and Dark modes */
 .markdown-body {
-  color: var(--text-secondary);
-  font-size: 0.925rem;
-  line-height: 1.75;
+  color: #0f172a;
+  font-size: 1.0625rem;
+  line-height: 1.85;
 }
+html.dark .markdown-body {
+  color: #f8fafc; /* Crisp, bright, high-contrast white */
+}
+
 .markdown-body h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.5rem;
+}
+html.dark .markdown-body h1 {
+  color: #ffffff;
+  border-bottom-color: rgba(255, 255, 255, 0.15);
+}
+
+.markdown-body h2 {
   font-size: 1.6rem;
   font-weight: 800;
-  color: var(--text-primary);
-  margin-top: 1.5rem;
-  margin-bottom: 0.75rem;
-  border-bottom: 1px solid var(--border-subtle);
+  color: #0f172a;
+  margin-top: 2.25rem;
+  margin-bottom: 0.85rem;
+  border-bottom: 1.5px solid #e2e8f0;
   padding-bottom: 0.4rem;
 }
-.markdown-body h2 {
-  font-size: 1.35rem;
+html.dark .markdown-body h2 {
+  color: #ffffff;
+  border-bottom-color: rgba(255, 255, 255, 0.15);
+}
+
+.markdown-body h3 {
+  font-size: 1.3rem;
   font-weight: 700;
-  color: var(--text-primary);
-  margin-top: 1.5rem;
+  color: #312e81;
+  margin-top: 1.75rem;
   margin-bottom: 0.6rem;
 }
-.markdown-body h3 {
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: #0369a1;
+html.dark .markdown-body h3 {
+  color: #a5b4fc;
+}
+
+.markdown-body h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #3730a3;
   margin-top: 1.25rem;
   margin-bottom: 0.5rem;
 }
-html.dark .markdown-body h3 {
-  color: #38bdf8;
-}
-.markdown-body h4 {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #3730a3;
-  margin-top: 1rem;
-  margin-bottom: 0.4rem;
-}
 html.dark .markdown-body h4 {
-  color: #818cf8;
+  color: #c7d2fe;
 }
+
 .markdown-body p {
-  margin-bottom: 1rem;
+  color: #0f172a;
+  margin-top: 1.15rem;
+  margin-bottom: 1.15rem;
+  line-height: 1.85;
 }
+html.dark .markdown-body p {
+  color: #f8fafc; /* Pure bright white text, eliminating dim gray */
+}
+
+.markdown-body strong,
+.markdown-body b {
+  color: #000000;
+  font-weight: 700;
+}
+html.dark .markdown-body strong,
+html.dark .markdown-body b {
+  color: #ffffff;
+  font-weight: 700;
+}
+
 .markdown-body ul {
   list-style-type: disc;
-  padding-left: 1.4rem;
+  padding-left: 1.5rem;
+  margin-top: 1rem;
   margin-bottom: 1rem;
 }
 .markdown-body ol {
   list-style-type: decimal;
-  padding-left: 1.4rem;
+  padding-left: 1.5rem;
+  margin-top: 1rem;
   margin-bottom: 1rem;
 }
 .markdown-body li {
-  margin-bottom: 0.35rem;
+  color: #0f172a;
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
+  line-height: 1.75;
 }
+html.dark .markdown-body li {
+  color: #f8fafc;
+}
+
 .markdown-body blockquote {
-  border-left: 3px solid #3730a3;
-  background: rgba(55, 48, 163, 0.08);
-  padding: 0.75rem 1.2rem;
-  border-radius: 0 0.75rem 0.75rem 0;
-  margin: 1.25rem 0;
-  color: var(--text-primary);
-  font-style: normal;
+  border-left: 4px solid #6366f1;
+  background: #f8fafc;
+  padding: 1rem 1.4rem;
+  border-radius: 0 0.85rem 0.85rem 0;
+  margin: 1.5rem 0;
+  color: #1e293b;
+  font-style: italic;
+  font-size: 1.05rem;
 }
+html.dark .markdown-body blockquote {
+  background: rgba(99, 102, 241, 0.12);
+  color: #f1f5f9;
+}
+
 .markdown-body code {
-  background: rgba(55, 48, 163, 0.08);
-  color: #0369a1;
-  padding: 0.15rem 0.4rem;
-  border-radius: 0.35rem;
+  background: rgba(99, 102, 241, 0.1);
+  color: #4338ca;
+  padding: 0.2rem 0.45rem;
+  border-radius: 0.375rem;
   font-family: var(--font-mono);
-  font-size: 0.85em;
+  font-size: 0.9em;
+  font-weight: 600;
 }
 html.dark .markdown-body code {
-  background: rgba(255, 255, 255, 0.08);
-  color: #38bdf8;
+  background: rgba(99, 102, 241, 0.2);
+  color: #c7d2fe;
 }
+
 .markdown-body pre {
-  background: #0f172a;
-  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: #09090f;
+  border: 1px solid #1e293b;
   border-radius: 0.85rem;
-  padding: 1rem 1.25rem;
+  padding: 1.25rem 1.5rem;
   overflow-x: auto;
-  margin: 1.25rem 0;
+  margin: 1.5rem 0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 html.dark .markdown-body pre {
-  background: #09090d;
-  border-color: rgba(255, 255, 255, 0.1);
+  background: #09090f;
+  border-color: rgba(255, 255, 255, 0.15);
 }
 .markdown-body pre code {
   background: transparent;
   padding: 0;
-  color: #f1f5f9;
-  font-size: 0.85rem;
+  color: #38bdf8;
+  font-size: 0.9rem;
+  font-weight: 400;
 }
+
 .markdown-body table {
   width: 100%;
   border-collapse: collapse;
-  margin: 1.25rem 0;
-  font-size: 0.85rem;
+  margin: 1.75rem 0;
+  font-size: 0.95rem;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
 }
+html.dark .markdown-body table {
+  border-color: #334155;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
 .markdown-body th {
-  background: rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--border-subtle);
-  padding: 0.6rem 0.8rem;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 0.85rem 1rem;
   text-align: left;
-  font-weight: 600;
-  color: var(--text-primary);
+  font-weight: 700;
+  color: #0f172a;
 }
+html.dark .markdown-body th {
+  background: #1e1b4b;
+  border-color: #334155;
+  color: #ffffff;
+}
+
 .markdown-body td {
-  border: 1px solid var(--border-subtle);
-  padding: 0.6rem 0.8rem;
-  color: var(--text-secondary);
+  border: 1px solid #e2e8f0;
+  padding: 0.85rem 1rem;
+  color: #0f172a;
+  background: #ffffff;
 }
+html.dark .markdown-body td {
+  border-color: #1e293b;
+  color: #f8fafc; /* Crisp white cells */
+  background: #0f172a;
+}
+.markdown-body tr:nth-child(even) td {
+  background: #f8fafc;
+}
+html.dark .markdown-body tr:nth-child(even) td {
+  background: #111827;
+}
+
 .markdown-body hr {
   border: none;
-  border-top: 1px solid var(--border-subtle);
-  margin: 1.5rem 0;
+  border-top: 1.5px solid #e2e8f0;
+  margin: 2rem 0;
 }
+html.dark .markdown-body hr {
+  border-top-color: rgba(255, 255, 255, 0.12);
+}
+
 .markdown-body a {
-  color: #1d4ed8;
+  color: #4f46e5;
   text-decoration: underline;
-  text-underline-offset: 3px;
+  text-underline-offset: 4px;
+  font-weight: 600;
 }
 html.dark .markdown-body a {
-  color: #38bdf8;
+  color: #818cf8;
 }
 .markdown-body a:hover {
   color: #3730a3;
 }
 html.dark .markdown-body a:hover {
-  color: #818cf8;
+  color: #a5b4fc;
 }

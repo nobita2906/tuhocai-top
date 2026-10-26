@@ -68,3 +68,12 @@ scripts/            # Asset download scripts
 ## Agent Workflow
 - Edit `.agents/skills/clone-website/` for cloning-workflow changes. It is the canonical skill used by Codex, Cursor, and OpenCode.
 - Keep `.claude/commands/clone-website.md` as a thin Claude Code bridge to the canonical skill; do not duplicate the workflow there.
+
+## Quy Tắc Triển Khai & Deploy Lên Vercel (BẮT BUỘC TUÂN THỦ)
+- **TUYỆT ĐỐI KHÔNG TỰ Ý DEPLOY LÊN VERCEL** hoặc push lên remote kích hoạt auto-deploy khi chưa có sự kiểm tra và phê duyệt rõ ràng từ anh Đăng.
+- **Quy trình chuẩn nghiêm ngặt**:
+  1. Phát triển tính năng, kiểm thử trên `localhost:8899`.
+  2. Viết tester script và chạy QA đạt 100%.
+  3. Báo cáo cụ thể các đường link, kịch bản để anh Đăng trực tiếp kiểm tra và nghiệm thu trên localhost.
+  4. **CHỈ KHI anh Đăng đã kiểm tra xong trên localhost và phát lệnh phê duyệt** (ví dụ: *"anh duyệt rồi, deploy đi em"*, *"ok deploy lên vercel nhé"*), lúc đó Thùy Linh mới được phép commit/push để deploy lên Vercel.
+

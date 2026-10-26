@@ -106,16 +106,16 @@ export default async function SingleArticlePage({
 
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
         {/* Breadcrumbs & Navigation */}
-        <div className="flex items-center justify-between text-xs text-slate-400">
+        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
           <Link
             href="/bai-viet"
-            className="inline-flex items-center gap-1.5 hover:text-white transition-colors group"
+            className="inline-flex items-center gap-1.5 text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-white transition-colors group font-medium"
           >
             <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
             <span>Tất cả bài viết</span>
           </Link>
           <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 font-semibold text-xs tracking-wider uppercase">
+            <span className="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 font-bold text-xs tracking-wider uppercase">
               {post.category}
             </span>
           </div>
@@ -123,69 +123,69 @@ export default async function SingleArticlePage({
 
         {/* Article Header */}
         <header className="space-y-6">
-          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
             {post.title}
           </h1>
 
           {/* Metadata bar */}
-          <div className="flex flex-wrap items-center gap-y-3 gap-x-5 text-xs text-slate-400 border-y border-slate-800/80 py-4">
+          <div className="flex flex-wrap items-center gap-y-3 gap-x-5 text-xs text-slate-600 dark:text-slate-300 border-y border-slate-200 dark:border-slate-800/80 py-4">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-xs shadow">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold text-xs shadow">
                 Đ
               </div>
               <div>
-                <span className="text-slate-200 font-semibold">Nguyễn Văn Đăng</span>
-                <span className="text-indigo-400 ml-1.5 text-[11px] font-medium">Verified AI Author</span>
+                <span className="text-slate-900 dark:text-white font-bold">Nguyễn Văn Đăng</span>
+                <span className="text-indigo-600 dark:text-indigo-400 ml-1.5 text-[11px] font-semibold">Verified AI Author</span>
               </div>
             </div>
 
-            <span className="hidden sm:inline text-slate-600">•</span>
+            <span className="hidden sm:inline text-slate-300 dark:text-slate-700">•</span>
 
-            <span className="flex items-center gap-1.5 text-slate-300">
-              <Clock className="w-3.5 h-3.5 text-indigo-400" />
+            <span className="flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-200">
+              <Clock className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
               {new Date(post.created_at).toLocaleDateString('vi-VN')}
             </span>
 
-            <span className="hidden sm:inline text-slate-600">•</span>
+            <span className="hidden sm:inline text-slate-300 dark:text-slate-700">•</span>
 
-            <span className="flex items-center gap-1.5 text-slate-300">
-              <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-200">
+              <BookOpen className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               {readingMinutes} phút đọc (~{wordCount} từ)
             </span>
 
-            <span className="hidden sm:inline text-slate-600">•</span>
+            <span className="hidden sm:inline text-slate-300 dark:text-slate-700">•</span>
 
-            <span className="flex items-center gap-1.5 text-slate-300">
-              <Eye className="w-3.5 h-3.5 text-slate-500" />
+            <span className="flex items-center gap-1.5 font-medium text-slate-600 dark:text-slate-400">
+              <Eye className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
               {(post.views || 0) + 1} lượt xem
             </span>
           </div>
 
           {/* Lead Excerpt */}
           {post.summary && (
-            <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-indigo-950/40 to-slate-900/60 border-l-4 border-indigo-500 text-slate-200 text-sm sm:text-base leading-relaxed italic shadow-inner">
+            <div className="p-5 sm:p-6 rounded-2xl bg-indigo-50/70 dark:bg-slate-900/90 border-l-4 border-indigo-600 dark:border-indigo-500 text-slate-800 dark:text-slate-100 text-base sm:text-lg leading-relaxed font-normal shadow-sm border border-slate-200/60 dark:border-slate-800">
               {post.summary}
             </div>
           )}
 
           {/* Table of Contents (Mục lục bài viết) */}
           {toc.length >= 2 && (
-            <nav aria-label="Mục lục bài viết" className="rounded-2xl bg-slate-900/90 border border-slate-800 p-5 space-y-3 shadow-lg">
-              <div className="flex items-center gap-2 text-indigo-400 font-bold text-sm">
+            <nav aria-label="Mục lục bài viết" className="rounded-2xl bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-sm">
+              <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-bold text-sm sm:text-base">
                 <ListOrdered className="w-4 h-4" />
                 <span>Mục lục nội dung bài viết</span>
               </div>
-              <ul className="space-y-2 text-xs sm:text-sm">
+              <ul className="space-y-2.5 text-sm">
                 {toc.map((item, index) => (
                   <li
                     key={index}
-                    className={`${item.level === 3 ? 'pl-5 text-slate-400' : 'font-medium text-slate-300'}`}
+                    className={`${item.level === 3 ? 'pl-5 text-slate-600 dark:text-slate-300 text-xs sm:text-sm' : 'font-semibold text-slate-900 dark:text-slate-100'}`}
                   >
                     <a
                       href={`#${item.id}`}
-                      className="hover:text-indigo-400 hover:underline transition-colors flex items-baseline gap-1.5"
+                      className="hover:text-indigo-600 dark:hover:text-indigo-300 hover:underline transition-colors flex items-baseline gap-2"
                     >
-                      <span className="text-indigo-500 text-xs font-mono">{index + 1}.</span>
+                      <span className="text-indigo-600 dark:text-indigo-400 font-mono text-xs">{index + 1}.</span>
                       <span>{item.text}</span>
                     </a>
                   </li>
@@ -195,20 +195,20 @@ export default async function SingleArticlePage({
           )}
         </header>
 
-        {/* Main Article Body */}
+        {/* Main Article Body - High Contrast, Crystal Clear */}
         <div
-          className="prose prose-invert prose-indigo max-w-none text-slate-300 text-sm sm:text-base leading-relaxed space-y-5"
+          className="markdown-body max-w-none text-base sm:text-lg leading-relaxed space-y-6 pt-2"
           dangerouslySetInnerHTML={{ __html: html }}
         />
 
         {/* Tags */}
         {post.tags && (
-          <div className="pt-6 border-t border-slate-800/80 flex flex-wrap items-center gap-2">
-            <span className="text-xs text-slate-500 font-medium">Chủ đề liên quan:</span>
+          <div className="pt-6 border-t border-slate-200 dark:border-slate-800/80 flex flex-wrap items-center gap-2">
+            <span className="text-xs text-slate-500 font-semibold">Chủ đề liên quan:</span>
             {post.tags.split(',').map((tag, i) => (
               <span
                 key={i}
-                className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 text-xs font-medium hover:border-indigo-500/50 transition-colors"
+                className="px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold hover:border-indigo-500/50 transition-colors"
               >
                 #{tag.trim()}
               </span>

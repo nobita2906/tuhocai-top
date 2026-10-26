@@ -53,7 +53,7 @@ export function prepareArticleContent(content: string): PreparedArticle {
     toc.push({ id: baseId, text: cleanText, level });
 
     // Preserve any existing classes or attributes, add id and scroll margin
-    return `<h${level} id="${baseId}" class="scroll-mt-24 group relative ${level === 2 ? 'text-xl sm:text-2xl font-bold text-white mt-8 mb-4 border-b border-slate-800/80 pb-2' : 'text-lg sm:text-xl font-semibold text-indigo-200 mt-6 mb-3'}"><span class="text-indigo-400 opacity-60 mr-2 text-sm select-none">#</span>${innerText}</h${level}>`;
+    return `<h${level} id="${baseId}" class="scroll-mt-24 group relative ${level === 2 ? 'text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-10 mb-4 border-b border-slate-200 dark:border-slate-800 pb-3 tracking-tight' : 'text-xl sm:text-2xl font-bold text-indigo-700 dark:text-indigo-300 mt-8 mb-3 tracking-tight'}"><span class="text-indigo-500 mr-2 text-base select-none">#</span>${innerText}</h${level}>`;
   });
 
   return {

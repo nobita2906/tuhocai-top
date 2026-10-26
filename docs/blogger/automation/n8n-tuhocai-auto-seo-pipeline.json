@@ -16,18 +16,18 @@
       "name": "Schedule Trigger (8h Sang)",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [240, 300]
+      "position": [200, 300]
     },
     {
       "parameters": {
-        "url": "https://feeds.feedburner.com/venturebeat/ai",
+        "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
         "options": {}
       },
       "id": "2",
       "name": "Fetch AI News RSS Feed",
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
-      "position": [460, 300]
+      "position": [400, 300]
     },
     {
       "parameters": {
@@ -56,32 +56,52 @@
       "name": "Filter Valid Articles",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
-      "position": [680, 300]
+      "position": [600, 300]
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={{ $env.GEMINI_API_KEY }}",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"Bạn là Nguyễn Văn Đăng - AI Solution Architect tại Tự Học AI (tuhocai.top).\\nHãy phân tích và viết lại bài hướng dẫn thực chiến chuẩn SEO E-E-A-T và Anti-AI Slop dựa trên bài viết gốc:\\n\\nTIÊU ĐỀ GỐC: \" + $json.title + \"\\nNỘI DUNG/MÔ TẢ GỐC: \" + ($json.contentSnippet || $json.content || '') + \"\\n\\nQUY TẮC BẮT BUỘC:\\n1. Không viết sáo rỗng vô thưởng vô phạt. Đi thẳng vào vấn đề.\\n2. Bắt buộc có 1 khối Code/Prompt thực hành trong ```markdown.\\n3. Bắt buộc có 1 bảng Markdown so sánh hoặc checklist.\\n4. Bắt buộc có mục Lỗi thường gặp & Cách khắc phục.\\n5. Gắn internal link:\\n   - Nhận tài liệu 0đ: https://zalo.me/g/tuhocai\\n   - Khóa học / Quy trình n8n: https://www.tuhocai.top/lp/n8n-tu-dong-hoa-kiem-tien\\n   - Kiếm tiền Affiliate: https://www.tuhocai.top/affiliate\\n\\nTRẢ VỀ DUY NHẤT ĐỊNH DẠNG JSON HỢP LỆ:\\n{\\n  \\\"title\\\": \\\"Tiêu đề tiếng Việt hấp dẫn chuẩn SEO 50-70 ký tự\\\",\\n  \\\"summary\\\": \\\"Đoạn tóm tắt giải quyết nỗi đau 120-160 ký tự\\\",\\n  \\\"category\\\": \\\"WORKFLOW\\\",\\n  \\\"tags\\\": \\\"n8n, Tu Dong Hoa, AI, SEO\\\",\\n  \\\"content\\\": \\\"Nội dung bài viết đầy đủ bằng Markdown\\\"\\n}\"\n        }\n      ]\n    }\n  ],\n  \"generationConfig\": {\n    \"responseMimeType\": \"application/json\",\n    \"temperature\": 0.7\n  }\n}",
-        "options": {}
+        "operation": "limit",
+        "maxItems": 1
+      },
+      "id": "3-limit",
+      "name": "🎯 Lấy 1 Bài Mới Nhất",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 3,
+      "position": [800, 300]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Bạn là Nguyễn Văn Đăng - AI Solution Architect tại Tự Học AI (tuhocai.top).\nHãy phân tích và viết lại bài hướng dẫn thực chiến chuẩn SEO E-E-A-T và Anti-AI Slop dựa trên bài viết gốc:\n\nTIÊU ĐỀ GỐC: {{ $json.title }}\nNỘI DUNG/MÔ TẢ GỐC: {{ $json.contentSnippet || $json.content || '' }}\n\nQUY TẮC BẮT BUỘC (ANTI-AI SLOP):\n1. Không viết sáo rỗng vô thưởng vô phạt (Tuyệt đối không dùng: \"Trong kỷ nguyên số...\", \"Hãy cùng khám phá...\"). Đi thẳng vào vấn đề.\n2. Bắt buộc có 1 khối Code/Prompt thực hành trong ```markdown hoặc ```yaml (tránh viết raw json lồng bên trong để nội dung không bị lỗi định dạng).\n3. Bắt buộc có 1 bảng Markdown so sánh hoặc checklist thực thi.\n4. Bắt buộc có mục Lỗi thường gặp & Cách khắc phục (Troubleshooting).\n5. Gắn internal link phễu chuyển đổi:\n   - Nhận tài liệu 0đ: https://zalo.me/g/tuhocai\n   - Khóa học / Quy trình n8n: https://www.tuhocai.top/lp/n8n-tu-dong-hoa-kiem-tien\n   - Kiếm tiền Affiliate: https://www.tuhocai.top/affiliate\n\nBẮT BUỘC TRẢ VỀ DUY NHẤT ĐỊNH DẠNG JSON HỢP LỆ (KHÔNG KÈM BẤT KỲ LỜI CHÀO NÀO NGOÀI JSON):\n{\n  \"title\": \"Tiêu đề tiếng Việt hấp dẫn chuẩn SEO 50-70 ký tự\",\n  \"summary\": \"Đoạn tóm tắt giải quyết nỗi đau 120-160 ký tự\",\n  \"category\": \"WORKFLOW\",\n  \"tags\": \"n8n, Tu Dong Hoa, AI, SEO\",\n  \"content\": \"Nội dung bài viết đầy đủ bằng Markdown\"\n}"
       },
       "id": "4",
-      "name": "Gemini AI (Anti-Slop Generator)",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [900, 300]
+      "name": "🧠 AI Sáng Tạo Nội Dung Chuẩn SEO",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [1020, 300]
     },
     {
       "parameters": {
-        "jsCode": "const response = $input.first().json;\nlet parsed = {};\n\ntry {\n  const rawText = response.candidates[0].content.parts[0].text;\n  parsed = JSON.parse(rawText);\n} catch (e) {\n  throw new Error('Lỗi parse JSON từ Gemini: ' + e.message);\n}\n\nreturn {\n  json: {\n    title: parsed.title,\n    summary: parsed.summary,\n    content: parsed.content,\n    category: parsed.category || 'WORKFLOW',\n    tags: parsed.tags || 'AI, Tu Dong Hoa, tuhocai',\n    isFeatured: true,\n    isPublished: true\n  }\n};"
+        "modelName": "models/gemini-2.5-flash",
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "id": "4-model",
+      "name": "Google Gemini 2.0 Flash (Miễn Phí)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [1020, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nlet rawText = '';\n\nif (item.text) {\n  rawText = item.text;\n} else if (item.candidates && item.candidates[0]?.content?.parts?.[0]?.text) {\n  rawText = item.candidates[0].content.parts[0].text;\n} else if (typeof item === 'string') {\n  rawText = item;\n} else {\n  throw new Error('Khong tim thay noi dung phan hoi tu AI');\n}\n\nlet clean = rawText.replace(/^```json\\s*/i, '').replace(/```\\s*$/i, '').replace(/```/g, '').trim();\nlet parsed = null;\n\ntry {\n  parsed = JSON.parse(clean);\n} catch (e1) {\n  try {\n    const sanitized = clean.replace(/[\\u0000-\\u001F]+/g, (m) => {\n      if (m === '\\n') return '\\\\n';\n      if (m === '\\r') return '\\\\r';\n      if (m === '\\t') return '\\\\t';\n      return '';\n    });\n    parsed = JSON.parse(sanitized);\n  } catch (e2) {\n    const titleMatch = clean.match(/\"title\"\\s*:\\s*\"((?:\\\\.|[^\"\\\\])*)\"/s);\n    const summaryMatch = clean.match(/\"summary\"\\s*:\\s*\"((?:\\\\.|[^\"\\\\])*)\"/s);\n    const categoryMatch = clean.match(/\"category\"\\s*:\\s*\"((?:\\\\.|[^\"\\\\])*)\"/s);\n    const tagsMatch = clean.match(/\"tags\"\\s*:\\s*\"((?:\\\\.|[^\"\\\\])*)\"/s);\n\n    let content = '';\n    const contentRegex = /\"content\"\\s*:\\s*\"([\\s\\S]*)/i;\n    const match = clean.match(contentRegex);\n    if (match) {\n      let remainder = match[1];\n      remainder = remainder.replace(/\"\\s*}\\s*$/i, '');\n      content = remainder.replace(/\\\\n/g, '\\n').replace(/\\\\r/g, '').replace(/\\\\\"/g, '\"');\n    }\n\n    if (titleMatch || content) {\n      parsed = {\n        title: titleMatch ? titleMatch[1].replace(/\\\\\"/g, '\"') : 'Bai viet moi tu Tu Hoc AI',\n        summary: summaryMatch ? summaryMatch[1].replace(/\\\\\"/g, '\"') : '',\n        category: categoryMatch ? categoryMatch[1] : 'WORKFLOW',\n        tags: tagsMatch ? tagsMatch[1] : 'n8n, Tu Dong Hoa, AI, tuhocai',\n        content: content || 'Noi dung dang cap nhat'\n      };\n    } else {\n      throw new Error('Loi parse JSON tu AI: ' + e1.message + '\\nNoi dung goc:\\n' + rawText);\n    }\n  }\n}\n\nreturn {\n  json: {\n    title: parsed.title,\n    summary: parsed.summary,\n    content: parsed.content,\n    category: parsed.category || 'WORKFLOW',\n    tags: parsed.tags || 'n8n, Tu Dong Hoa, AI, tuhocai',\n    isFeatured: true,\n    isPublished: true\n  }\n};"
       },
       "id": "5",
       "name": "Parse & Validate JSON",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1120, 300]
+      "position": [1240, 300]
     },
     {
       "parameters": {
@@ -111,7 +131,7 @@
       "name": "Publish to TuHocAI Webhook",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1340, 300]
+      "position": [1460, 300]
     },
     {
       "parameters": {
@@ -125,7 +145,7 @@
       "name": "Notify Telegram Channel",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [1560, 300]
+      "position": [1680, 300]
     }
   ],
   "connections": {
@@ -155,14 +175,36 @@
       "main": [
         [
           {
-            "node": "Gemini AI (Anti-Slop Generator)",
+            "node": "🎯 Lấy 1 Bài Mới Nhất",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Gemini AI (Anti-Slop Generator)": {
+    "🎯 Lấy 1 Bài Mới Nhất": {
+      "main": [
+        [
+          {
+            "node": "🧠 AI Sáng Tạo Nội Dung Chuẩn SEO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini 2.0 Flash (Miễn Phí)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "🧠 AI Sáng Tạo Nội Dung Chuẩn SEO",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🧠 AI Sáng Tạo Nội Dung Chuẩn SEO": {
       "main": [
         [
           {

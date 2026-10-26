@@ -48,7 +48,7 @@ BẮT BUỘC trả về DUY NHẤT một chuỗi JSON hợp lệ (không kèm ba
     if (geminiKey) {
       try {
         const geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -82,7 +82,7 @@ BẮT BUỘC trả về DUY NHẤT một chuỗi JSON hợp lệ (không kèm ba
                 category: parsed.category || category,
                 tags: parsed.tags || 'AI, Tự Học AI, Công nghệ',
                 content: parsed.content || '',
-                source: 'Google Gemini 1.5 Flash (Anti-Slop Engine)'
+                source: 'Google Gemini 2.5 Flash (Anti-Slop Engine)'
               }
             });
           }

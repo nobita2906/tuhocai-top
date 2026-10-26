@@ -9,14 +9,20 @@ Hệ thống được thiết kế theo tiêu chuẩn kỹ thuật nghiêm ngặ
 
 ## 1. Cấu trúc Pipeline trong file `n8n-tuhocai-auto-seo-pipeline.json`
 
-Quy trình tự động gồm 7 Nodes liên hoàn:
+Quy trình tự động gồm 8 Nodes chuẩn LangChain:
 1. **Schedule Trigger**: Hẹn giờ tự động chạy (mặc định 08:00 sáng mỗi ngày).
 2. **Fetch AI News RSS Feed**: Cào bài viết công nghệ mới nhất từ RSS nguồn uy tín.
+   - *Nguồn mặc định (Đã test 100% hoạt động):* `https://techcrunch.com/category/artificial-intelligence/feed/`
+   - *Các nguồn thay thế uy tín khác:*
+     - The Verge AI: `https://www.theverge.com/rss/ai-artificial-intelligence/index.xml`
+     - Hacker News AI & n8n: `https://hnrss.org/newest?q=AI+n8n`
+     - NY Times Technology: `https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml`
 3. **Filter Valid Articles**: Lọc bỏ các bài rác hoặc tiêu đề trống.
-4. **Gemini AI (Anti-Slop Generator)**: Tái tạo nội dung theo System Prompt Anti-Slop (Có code/prompt copyable, checklist, troubleshooting, anchor link).
-5. **Parse & Validate JSON**: Kiểm tra tính hợp lệ của dữ liệu trước khi gửi đi.
-6. **Publish to TuHocAI Webhook**: Bắn API trực tiếp vào `https://www.tuhocai.top/api/webhook/publish-post`.
-7. **Notify Telegram Channel**: Bắn thông báo báo cáo kết quả kèm link bài viết vào Telegram Admin.
+4. **🧠 AI Sáng Tạo Nội Dung Chuẩn SEO (LangChain Basic LLM Chain)**: Nhận dữ liệu đầu vào và điều phối sinh nội dung theo chuẩn Anti-Slop (Có code/prompt copyable, checklist, troubleshooting, anchor link).
+5. **Google Gemini 2.0 Flash (LangChain Chat Model)**: Cấu hình `models/gemini-2.5-flash` kết nối với API Key của anh.
+6. **Parse & Validate JSON (Code Node)**: Tự động bóc tách sạch các thẻ markdown ````json```` và parse JSON an toàn 100%.
+7. **Publish to TuHocAI Webhook**: Bắn API trực tiếp vào `https://www.tuhocai.top/api/webhook/publish-post` (hoặc `http://localhost:8899/api/webhook/publish-post` khi test local).
+8. **Notify Telegram Channel**: Bắn thông báo báo cáo kết quả kèm link bài viết vào Telegram Admin.
 
 ---
 
@@ -27,6 +33,8 @@ Quy trình tự động gồm 7 Nodes liên hoàn:
 3. Chọn file `docs/blogger/automation/n8n-tuhocai-auto-seo-pipeline.json`.
 4. Điền các thông số môi trường của anh:
    - **GEMINI_API_KEY**: API Key từ Google AI Studio (miễn phí).
+   - **Model AI khuyến nghị**: Google đã thay thế `gemini-1.5-flash` bằng **`gemini-2.5-flash`** (hoặc `gemini-flash-latest`). URL gọi API chuẩn:
+     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={{ $env.GEMINI_API_KEY }}`
    - **Webhook Secret Key**: Mặc định là `tuhocai-auto-publish-secret-key-2026` (hoặc cấu hình trong `.env`).
    - **Telegram Credentials**: Chọn bot Telegram của anh để nhận thông báo.
 5. Nhấn **Active Workflow** để kích hoạt tự động chạy theo lịch trình.
