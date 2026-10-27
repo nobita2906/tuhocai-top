@@ -15,7 +15,14 @@ import {
   Mail,
   Zap,
   Layers,
-  Code2
+  Code2,
+  Clock,
+  FileCode,
+  Video,
+  FileText,
+  Lock,
+  Flame,
+  ChevronRight
 } from 'lucide-react';
 
 export default function CopyLandingPage() {
@@ -29,6 +36,23 @@ export default function CopyLandingPage() {
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Urgency Countdown 14:59
+  const [timeLeft, setTimeLeft] = useState({ minutes: 14, seconds: 59 });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev.seconds > 0) {
+          return { ...prev, seconds: prev.seconds - 1 };
+        } else if (prev.minutes > 0) {
+          return { minutes: prev.minutes - 1, seconds: 59 };
+        }
+        return { minutes: 14, seconds: 59 };
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   // VietQR VIB 99K
   const qrUrl = "https://img.vietqr.io/image/VIB-0934434101-compact2.png?amount=99000&addInfo=copy%20landing%20page&accountName=NGUYEN%20VAN%20DANG";
@@ -96,7 +120,7 @@ export default function CopyLandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050811] text-[#f5f4ef] font-sans antialiased selection:bg-[#00f2fe] selection:text-[#050811]">
+    <div className="min-h-screen bg-[#050811] text-[#f5f4ef] font-sans antialiased selection:bg-[#00f2fe] selection:text-[#050811] pb-24 md:pb-0">
       {/* Background Tech Grid */}
       <div 
         className="fixed inset-0 pointer-events-none opacity-25 z-0" 
@@ -106,83 +130,205 @@ export default function CopyLandingPage() {
         }}
       />
 
+      {/* TOP URGENCY BANNER */}
+      <div className="relative z-20 bg-gradient-to-r from-amber-500 via-rose-600 to-cyan-500 py-2.5 px-3 text-center text-xs font-black uppercase tracking-wider text-white shadow-lg">
+        <div className="flex items-center justify-center gap-2 flex-wrap">
+          <Flame className="w-4 h-4 text-yellow-300 animate-bounce" />
+          <span>ƯU ĐÃI FLASH SALE: GIÁ CHỈ 99.000đ (GIÁ GỐC 499.000đ)</span>
+          <span className="hidden sm:inline">·</span>
+          <div className="inline-flex items-center gap-1 bg-black/40 px-2 py-0.5 rounded-md font-mono text-yellow-300">
+            <Clock className="w-3.5 h-3.5" />
+            <span>{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}</span>
+          </div>
+          <span className="text-[11px] bg-white/20 px-2 py-0.5 rounded-full font-bold">Chỉ còn 8 suất</span>
+        </div>
+      </div>
+
       <main className="relative z-10 overflow-hidden">
         {/* HERO SECTION */}
-        <section className="relative px-5 pb-16 pt-10 sm:px-8 sm:pt-14 lg:pb-24">
+        <section className="relative px-4 pb-14 pt-8 sm:px-8 sm:pt-14 lg:pb-20">
           <div className="mx-auto flex max-w-5xl flex-col items-center text-center">
             
             {/* Author Avatar & Brand */}
             <div className="mb-6 flex flex-col items-center">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 p-0.5 shadow-[0_0_35px_rgba(6,182,212,0.35)]">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 p-0.5 shadow-[0_0_35px_rgba(6,182,212,0.35)]">
                 <div className="w-full h-full rounded-full bg-[#050811] flex items-center justify-center text-xl font-black text-cyan-400">
                   ĐAI
                 </div>
               </div>
-              <p className="mt-3 text-cyan-400 font-black text-sm tracking-wider uppercase">
+              <p className="mt-3 text-cyan-400 font-black text-xs sm:text-sm tracking-wider uppercase">
                 NGUYỄN ĐĂNG AI · TỰ HỌC AI (TUHOCAI.TOP)
               </p>
             </div>
 
             {/* Badges */}
-            <div className="mb-7 flex flex-wrap items-center justify-center gap-2">
-              <span className="rounded-full border border-cyan-500/40 bg-cyan-500/10 px-4 py-1.5 text-xs font-bold uppercase text-cyan-300">
+            <div className="mb-6 flex flex-wrap items-center justify-center gap-2">
+              <span className="rounded-full border border-cyan-500/40 bg-cyan-500/10 px-3.5 py-1 text-[11px] sm:text-xs font-bold uppercase text-cyan-300">
                 DÀNH CHO NGƯỜI KINH DOANH
               </span>
-              <span className="rounded-full border border-purple-500/40 bg-purple-500/10 px-4 py-1.5 text-xs font-bold uppercase text-purple-300">
+              <span className="rounded-full border border-purple-500/40 bg-purple-500/10 px-3.5 py-1 text-[11px] sm:text-xs font-bold uppercase text-purple-300">
                 SKILL AI SIÊU ĐỈNH CHO BÁN HÀNG
               </span>
             </div>
 
             {/* Main Headline */}
-            <h1 className="max-w-4xl text-balance text-3xl sm:text-5xl lg:text-6xl font-black uppercase leading-[1.15] tracking-tight">
+            <h1 className="max-w-4xl text-balance text-2xl sm:text-5xl lg:text-6xl font-black uppercase leading-[1.2] tracking-tight">
               SAO CHÉP BẤT KÌ LANDING PAGE CHUYỂN ĐỔI CAO BẠN MUỐN
-              <span className="mt-3 block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-yellow-300 drop-shadow-[0_4px_30px_rgba(6,182,212,0.35)]">
+              <span className="mt-2 block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-yellow-300 drop-shadow-[0_4px_30px_rgba(6,182,212,0.35)]">
                 CHỈ VỚI 1 CLICK
               </span>
             </h1>
 
             {/* Subheadline */}
-            <p className="mt-7 max-w-2xl text-pretty text-sm sm:text-base font-medium leading-relaxed text-slate-300">
+            <p className="mt-6 max-w-2xl text-pretty text-sm sm:text-base font-medium leading-relaxed text-slate-300">
               Chỉ cần gửi link sale page bạn muốn sao chép, Skill AI độc quyền này sẽ phân tích và tái tạo ra trang giống 99,99% trang gốc và cho phép chỉnh sửa nội dung tùy ý thần tốc!
             </p>
 
             {/* 3 Metric Pillars */}
-            <div className="mt-10 grid w-full max-w-4xl grid-cols-1 border-y border-slate-800 bg-slate-900/60 backdrop-blur-sm sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-800 rounded-2xl overflow-hidden border">
-              <div className="px-5 py-6">
-                <p className="text-xs font-bold uppercase text-slate-400">SKILL + VIDEO HƯỚNG DẪN</p>
-                <p className="mt-2 text-3xl font-black text-cyan-400">01</p>
-                <p className="mt-1 text-sm text-slate-400">Từng bước cụ thể</p>
+            <div className="mt-8 grid w-full max-w-4xl grid-cols-1 border-y border-slate-800 bg-slate-900/60 backdrop-blur-sm sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-800 rounded-2xl overflow-hidden border">
+              <div className="px-4 py-5">
+                <p className="text-[11px] font-bold uppercase text-slate-400">SKILL + VIDEO HƯỚNG DẪN</p>
+                <p className="mt-1 text-2xl sm:text-3xl font-black text-cyan-400">01</p>
+                <p className="mt-1 text-xs sm:text-sm text-slate-400">Từng bước cụ thể</p>
               </div>
-              <div className="px-5 py-6">
-                <p className="text-xs font-bold uppercase text-slate-400">Chi phí</p>
-                <p className="mt-2 text-3xl font-black text-yellow-400">99K</p>
-                <p className="mt-1 text-sm text-slate-400">Bằng 1 ly trà sữa</p>
+              <div className="px-4 py-5">
+                <p className="text-[11px] font-bold uppercase text-slate-400">Chi phí Flash Sale</p>
+                <p className="mt-1 text-2xl sm:text-3xl font-black text-yellow-400">99K <span className="text-xs line-through text-slate-500 font-normal">499K</span></p>
+                <p className="mt-1 text-xs sm:text-sm text-slate-400">Bằng 1 ly trà sữa</p>
               </div>
-              <div className="px-5 py-6">
-                <p className="text-xs font-bold uppercase text-slate-400">Nhận ngay</p>
-                <p className="mt-2 text-3xl font-black text-cyan-400">Email & Web</p>
-                <p className="mt-1 text-sm text-slate-400">Kích hoạt tài khoản ngay</p>
+              <div className="px-4 py-5">
+                <p className="text-[11px] font-bold uppercase text-slate-400">Nhận ngay lập tức</p>
+                <p className="mt-1 text-2xl sm:text-3xl font-black text-cyan-400">Email & Web</p>
+                <p className="mt-1 text-xs sm:text-sm text-slate-400">Kích hoạt tài khoản ngay</p>
               </div>
             </div>
 
             {/* CTA Button */}
-            <button 
-              onClick={() => setModalOpen(true)}
-              className="mt-9 inline-flex items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-cyan-400 to-teal-400 px-8 py-4 text-base font-black text-[#050811] shadow-[0_10px_36px_rgba(6,182,212,0.3)] hover:opacity-95 hover:-translate-y-0.5 transition-all cursor-pointer"
-            >
-              <span>NHẬN TOÀN BỘ QUY TRÌNH (99K)</span>
-              <ArrowDown className="w-5 h-5 animate-bounce" />
-            </button>
+            <div className="mt-8 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+              <a 
+                href="#nhan-quy-trinh"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-cyan-400 to-teal-400 px-8 py-4 text-base font-black text-[#050811] shadow-[0_10px_36px_rgba(6,182,212,0.3)] hover:opacity-95 hover:-translate-y-0.5 transition-all cursor-pointer"
+              >
+                <span>NHẬN TOÀN BỘ QUY TRÌNH (99K)</span>
+                <ArrowDown className="w-5 h-5 animate-bounce" />
+              </a>
+              <button
+                onClick={() => setModalOpen(true)}
+                className="w-full sm:w-auto px-6 py-4 rounded-xl border border-cyan-500/40 bg-cyan-950/30 text-cyan-300 font-bold text-sm hover:bg-cyan-950/60 transition-colors cursor-pointer"
+              >
+                Mở Form Kích Hoạt Nhanh
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION: FILE EXPLORER TEASER - XEM TRƯỚC TÀI LIỆU */}
+        <section className="px-4 py-12 sm:px-8 border-t border-slate-800 bg-[#060b18]">
+          <div className="mx-auto max-w-4xl">
+            <div className="text-center mb-8">
+              <span className="text-xs font-black uppercase tracking-widest text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-3 py-1 rounded-full">
+                SNEAK PEEK · XEM TRƯỚC TÀI SẢN SỐ
+              </span>
+              <h2 className="mt-3 text-2xl sm:text-3xl font-black uppercase text-white">
+                BÊN TRONG GÓI TÀI LIỆU BẠN SẼ NHẬN
+              </h2>
+              <p className="text-slate-400 text-xs sm:text-sm mt-2 max-w-xl mx-auto">
+                File nguồn thực chiến, prompt chuẩn hóa và video thao tác trực tiếp, mở khóa tức thì qua Drive và Email.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-700/80 bg-slate-900/90 shadow-2xl overflow-hidden backdrop-blur-sm">
+              <div className="flex items-center justify-between px-4 py-3 bg-slate-950 border-b border-slate-800 text-xs text-slate-400 font-mono">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-rose-500/80" />
+                  <div className="w-3 h-3 rounded-full bg-amber-500/80" />
+                  <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
+                  <span className="ml-2 text-slate-300 font-bold">tuhocai-vip / skill-clone-landing-page /</span>
+                </div>
+                <span className="text-cyan-400 font-bold">4 files · Mở khóa 100%</span>
+              </div>
+
+              <div className="divide-y divide-slate-800/80 text-sm">
+                <div className="p-4 flex items-center justify-between hover:bg-slate-800/40 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400 flex-shrink-0">
+                      <FileCode className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="font-mono text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                        <span>01_Skill_AI_Clone_Landing_Page.md</span>
+                        <span className="text-[10px] bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded">Core Skill</span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 mt-0.5">Tệp cấu hình Agentic Skill cho Claude Code, Cursor, Codex, OpenCode</p>
+                    </div>
+                  </div>
+                  <span className="text-xs text-slate-400 font-mono flex-shrink-0">38.4 KB</span>
+                </div>
+
+                <div className="p-4 flex items-center justify-between hover:bg-slate-800/40 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400 flex-shrink-0">
+                      <FileText className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="font-mono text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                        <span>02_Cursorrules_Blogger_Nextjs.txt</span>
+                        <span className="text-[10px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded">Rules</span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 mt-0.5">Bộ luật chỉ thị AI tái tạo CSS, giữ nguyên responsive mobile 1:1</p>
+                    </div>
+                  </div>
+                  <span className="text-xs text-slate-400 font-mono flex-shrink-0">12.1 KB</span>
+                </div>
+
+                <div className="p-4 flex items-center justify-between hover:bg-slate-800/40 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 flex-shrink-0">
+                      <FileText className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="font-mono text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                        <span>03_Prompt_Dao_Nguoc_Component.txt</span>
+                        <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded">Prompt</span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 mt-0.5">Prompt trích xuất typography, layout, icons và bảng màu chuẩn</p>
+                    </div>
+                  </div>
+                  <span className="text-xs text-slate-400 font-mono flex-shrink-0">8.7 KB</span>
+                </div>
+
+                <div className="p-4 flex items-center justify-between hover:bg-slate-800/40 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 flex-shrink-0">
+                      <Video className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="font-mono text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                        <span>04_Video_Huong_Dan_1_Click.mp4</span>
+                        <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded">1080p HD</span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 mt-0.5">Video hướng dẫn thực chiến 15 phút, người mới chưa biết lập trình vẫn làm được</p>
+                    </div>
+                  </div>
+                  <span className="text-xs text-slate-400 font-mono flex-shrink-0">142 MB</span>
+                </div>
+              </div>
+
+              <div className="p-3 bg-gradient-to-r from-cyan-950/60 to-slate-950 border-t border-slate-800 text-center text-xs text-slate-300 flex items-center justify-center gap-2">
+                <Lock className="w-3.5 h-3.5 text-yellow-400" />
+                <span>Toàn bộ 4 tài nguyên sẽ tự động mở khóa ngay sau khi thanh toán thành công 99K</span>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* SECTION: BẠN SẼ NHẬN ĐƯỢC GÌ? */}
-        <section className="border-y border-slate-800 bg-[#080d1a] px-5 py-20 sm:px-8 lg:py-28">
+        <section className="border-y border-slate-800 bg-[#080d1a] px-4 py-16 sm:px-8 lg:py-24">
           <div className="mx-auto max-w-5xl">
             <p className="text-xs font-extrabold uppercase tracking-widest text-cyan-400">
               Bạn sẽ nhận được gì?
             </p>
-            <h2 className="mt-3 text-3xl font-black uppercase sm:text-5xl tracking-tight text-white">
+            <h2 className="mt-3 text-2xl font-black uppercase sm:text-4xl lg:text-5xl tracking-tight text-white">
               SKILL + HƯỚNG DẪN ĐỂ BẮT ĐẦU
             </h2>
 
@@ -207,16 +353,16 @@ export default function CopyLandingPage() {
               ].map((item) => (
                 <article 
                   key={item.id}
-                  className="flex gap-5 rounded-2xl border border-slate-800 bg-slate-900/60 p-6 sm:p-8 hover:border-cyan-500/40 transition-colors"
+                  className="flex gap-4 sm:gap-5 rounded-2xl border border-slate-800 bg-slate-900/60 p-5 sm:p-7 hover:border-cyan-500/40 transition-colors"
                 >
-                  <span className="text-4xl font-black text-cyan-400/25 select-none">
+                  <span className="text-3xl sm:text-4xl font-black text-cyan-400/25 select-none">
                     {item.id}
                   </span>
                   <div>
-                    <div className="mb-4 flex size-8 items-center justify-center rounded-full bg-cyan-400 text-[#050811] shadow">
+                    <div className="mb-3 flex size-7 items-center justify-center rounded-full bg-cyan-400 text-[#050811] shadow">
                       <Check className="size-4 stroke-[3]" />
                     </div>
-                    <p className="font-semibold leading-relaxed text-slate-100">
+                    <p className="font-semibold text-sm sm:text-base leading-relaxed text-slate-100">
                       {item.text}
                     </p>
                   </div>
@@ -227,8 +373,8 @@ export default function CopyLandingPage() {
         </section>
 
         {/* SECTION: 1 LY TRÀ SỮA */}
-        <section className="px-5 py-20 sm:px-8 lg:py-28">
-          <div className="mx-auto grid max-w-5xl items-center gap-12 lg:grid-cols-[0.85fr_1.15fr]">
+        <section className="px-4 py-16 sm:px-8 lg:py-24">
+          <div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-[0.85fr_1.15fr]">
             <div className="relative mx-auto max-w-sm">
               <div className="absolute inset-10 rounded-full bg-cyan-500/15 blur-3xl pointer-events-none" />
               <img 
@@ -242,67 +388,101 @@ export default function CopyLandingPage() {
               <p className="text-xs font-extrabold uppercase tracking-widest text-cyan-400">
                 Một món quà nhỏ
               </p>
-              <h2 className="mt-3 text-4xl font-black uppercase leading-tight sm:text-5xl text-white">
+              <h2 className="mt-3 text-3xl font-black uppercase leading-tight sm:text-5xl text-white">
                 Mời NGUYỄN ĐĂNG AI 1 ly<br />
                 <span className="text-yellow-400">trà sữa 99.000đ</span>
               </h2>
-              <p className="mt-6 text-lg text-slate-300 leading-relaxed">
+              <p className="mt-5 text-sm sm:text-base text-slate-300 leading-relaxed">
                 Chỉ <strong className="text-white font-bold">99.000đ</strong> để nhận trọn bộ Skill AI Clone Landing Page thần tốc — một kỹ năng giúp bạn tạo ra hàng chục trang bán hàng đỉnh cao mỗi tuần cho doanh nghiệp của mình.
               </p>
-              <div className="mt-7 inline-flex items-center gap-3 border-l-2 border-cyan-400 pl-4 text-sm font-bold uppercase text-cyan-400">
+              <div className="mt-6 inline-flex items-center gap-3 border-l-2 border-cyan-400 pl-4 text-xs sm:text-sm font-bold uppercase text-cyan-400">
                 Nhận trọn bộ quy trình ngay hôm nay
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION: CHUYỂN KHOẢN NHANH CHÓNG */}
-        <section id="nhan-quy-trinh" className="border-y border-slate-800 bg-[#080d1a] px-5 py-20 sm:px-8 lg:py-28">
+        {/* SECTION: CHUYỂN KHOẢN NHANH CHÓNG (MOBILE-FIRST) */}
+        <section id="nhan-quy-trinh" className="border-y border-slate-800 bg-[#080d1a] px-4 py-16 sm:px-8 lg:py-24 scroll-mt-6">
           <div className="mx-auto max-w-5xl text-center">
-            <p className="text-xs font-extrabold uppercase tracking-widest text-cyan-400">
-              Chuyển khoản nhanh chóng
-            </p>
-            <h2 className="mt-3 text-3xl font-black uppercase sm:text-5xl text-white">
+            <span className="text-xs font-extrabold uppercase tracking-widest text-cyan-400 bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/30">
+              Chuyển khoản nhanh chóng · Tự động kích hoạt
+            </span>
+            <h2 className="mt-3 text-2xl sm:text-4xl lg:text-5xl font-black uppercase text-white">
               Nhận toàn bộ quy trình
             </h2>
-            <p className="mx-auto mt-5 max-w-2xl text-slate-300">
-              Quét mã QR ngân hàng VIB, nhập số tiền 99.000đ và nội dung “copy landing page”. Chuyển khoản xong, bấm NHẬN QUY TRÌNH để hệ thống kích hoạt tài liệu vào tài khoản email của bạn.
+            <p className="mx-auto mt-4 max-w-2xl text-slate-300 text-xs sm:text-sm leading-relaxed">
+              Quét mã QR ngân hàng VIB, nhập số tiền 99.000đ và nội dung “copy landing page”. Sau đó bấm nút kích hoạt để nhận tài liệu trực tiếp vào Email.
             </p>
 
-            <div className="mx-auto mt-10 grid max-w-4xl gap-8 rounded-2xl border border-slate-800 bg-[#0c1427] p-6 sm:p-10 text-left shadow-2xl md:grid-cols-[20rem_1fr]">
+            <div className="mx-auto mt-8 grid max-w-4xl gap-6 rounded-2xl border border-slate-800 bg-[#0c1427] p-5 sm:p-8 text-left shadow-2xl md:grid-cols-[20rem_1fr]">
               {/* QR Image Box */}
               <div className="overflow-hidden rounded-xl bg-white p-4 shadow-inner flex flex-col items-center justify-center">
                 <img 
                   src={qrUrl} 
                   alt="QR VietQR VIB 99.000đ" 
-                  className="mx-auto w-full max-w-64 object-contain"
+                  className="mx-auto w-full max-w-60 object-contain"
                 />
                 <span className="text-[11px] font-mono text-slate-700 mt-2 font-semibold">
                   Mã VietQR Ngân Hàng VIB
+                </span>
+                <span className="text-[10px] text-slate-500 text-center mt-1">
+                  (Dùng mọi App Ngân Hàng để quét)
                 </span>
               </div>
 
               {/* Payment Details */}
               <div className="flex flex-col justify-center">
-                <h3 className="text-lg font-bold uppercase text-cyan-400 flex items-center gap-2">
-                  <ShieldCheck className="w-5 h-5" />
+                <h3 className="text-base sm:text-lg font-bold uppercase text-cyan-400 flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5 flex-shrink-0" />
                   <span>Thông tin chuyển khoản chính thức</span>
                 </h3>
 
-                <dl className="mt-5 divide-y divide-slate-800 border-y border-slate-800">
-                  <div className="grid gap-1 py-3 sm:grid-cols-[8rem_1fr] items-center">
-                    <dt className="text-sm text-slate-400">Ngân hàng</dt>
-                    <dd className="font-bold text-white flex items-center justify-between">
-                      <span>VIB (Ngân hàng Quốc Tế)</span>
-                    </dd>
+                {/* 3 ONE-TAP QUICK COPY BUTTONS (ƯU TIÊN MOBILE) */}
+                <div className="mt-4 p-3 rounded-xl bg-cyan-950/40 border border-cyan-500/30 space-y-2">
+                  <p className="text-[11px] font-bold uppercase text-cyan-300 flex items-center gap-1.5">
+                    <Zap className="w-3.5 h-3.5 text-yellow-400" />
+                    <span>Dành cho điện thoại: Bấm copy 1-chạm dán sang Banking</span>
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <button
+                      onClick={() => handleCopy('0934434101', 'bank')}
+                      className="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-white flex items-center justify-between cursor-pointer transition-all active:scale-95"
+                    >
+                      <span>STK: <strong className="text-yellow-400 font-mono">0934434101</strong></span>
+                      {copiedBank ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
+                    </button>
+
+                    <button
+                      onClick={() => handleCopy('99000', 'amount')}
+                      className="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-white flex items-center justify-between cursor-pointer transition-all active:scale-95"
+                    >
+                      <span>Tiền: <strong className="text-yellow-400 font-mono">99.000đ</strong></span>
+                      {copiedAmount ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
+                    </button>
+
+                    <button
+                      onClick={() => handleCopy('copy landing page', 'content')}
+                      className="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-white flex items-center justify-between cursor-pointer transition-all active:scale-95"
+                    >
+                      <span>Nội dung: <strong className="text-cyan-300 font-mono">copy landing page</strong></span>
+                      {copiedContent ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
+                    </button>
                   </div>
-                  <div className="grid gap-1 py-3 sm:grid-cols-[8rem_1fr] items-center">
-                    <dt className="text-sm text-slate-400">Chủ tài khoản</dt>
+                </div>
+
+                <dl className="mt-4 divide-y divide-slate-800 border-y border-slate-800">
+                  <div className="grid gap-1 py-2.5 sm:grid-cols-[8rem_1fr] items-center text-xs sm:text-sm">
+                    <dt className="text-slate-400">Ngân hàng</dt>
+                    <dd className="font-bold text-white">VIB (Ngân hàng Quốc Tế)</dd>
+                  </div>
+                  <div className="grid gap-1 py-2.5 sm:grid-cols-[8rem_1fr] items-center text-xs sm:text-sm">
+                    <dt className="text-slate-400">Chủ tài khoản</dt>
                     <dd className="font-bold text-white">NGUYEN VAN DANG</dd>
                   </div>
-                  <div className="grid gap-1 py-3 sm:grid-cols-[8rem_1fr] items-center">
-                    <dt className="text-sm text-slate-400">Số tài khoản</dt>
-                    <dd className="font-mono font-bold text-yellow-400 text-base flex items-center justify-between">
+                  <div className="grid gap-1 py-2.5 sm:grid-cols-[8rem_1fr] items-center text-xs sm:text-sm">
+                    <dt className="text-slate-400">Số tài khoản</dt>
+                    <dd className="font-mono font-bold text-yellow-400 text-sm sm:text-base flex items-center justify-between">
                       <span>0934434101</span>
                       <button 
                         onClick={() => handleCopy('0934434101', 'bank')}
@@ -313,8 +493,8 @@ export default function CopyLandingPage() {
                       </button>
                     </dd>
                   </div>
-                  <div className="grid gap-1 py-3 sm:grid-cols-[8rem_1fr] items-center">
-                    <dt className="text-sm text-slate-400">Số tiền / Nội dung</dt>
+                  <div className="grid gap-1 py-2.5 sm:grid-cols-[8rem_1fr] items-center text-xs sm:text-sm">
+                    <dt className="text-slate-400">Số tiền / Nội dung</dt>
                     <dd className="font-bold text-white flex items-center justify-between">
                       <span>99.000đ · copy landing page</span>
                       <button 
@@ -328,13 +508,13 @@ export default function CopyLandingPage() {
                   </div>
                 </dl>
 
-                <p className="mt-6 text-sm text-slate-400">
+                <p className="mt-4 text-xs text-slate-400">
                   Sau khi chuyển khoản, bấm <strong className="text-white">NHẬN QUY TRÌNH</strong> để điền email nhận link kích hoạt tài liệu ngay lập tức.
                 </p>
 
                 <button 
                   onClick={() => setModalOpen(true)}
-                  className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-teal-400 py-4 px-6 font-black text-[#050811] hover:opacity-95 transition-all shadow-[0_10px_30px_rgba(6,182,212,0.3)] cursor-pointer text-base uppercase"
+                  className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-teal-400 py-3.5 px-6 font-black text-[#050811] hover:opacity-95 transition-all shadow-[0_10px_30px_rgba(6,182,212,0.3)] cursor-pointer text-sm sm:text-base uppercase"
                 >
                   <span>NHẬN QUY TRÌNH VÀO EMAIL</span>
                   <Sparkles className="w-5 h-5" />
@@ -345,28 +525,28 @@ export default function CopyLandingPage() {
         </section>
 
         {/* SECTION: QUÀ TẶNG KHÁC */}
-        <section className="px-5 py-20 text-center sm:px-8">
+        <section className="px-4 py-16 text-center sm:px-8">
           <div className="mx-auto max-w-3xl">
-            <Gift className="mx-auto size-12 text-cyan-400" />
-            <h2 className="mt-5 text-3xl font-black uppercase sm:text-4xl text-white">
+            <Gift className="mx-auto size-10 sm:size-12 text-cyan-400" />
+            <h2 className="mt-4 text-2xl font-black uppercase sm:text-4xl text-white">
               Nhận các quà tặng khác
             </h2>
-            <p className="mt-4 text-slate-300 leading-relaxed">
+            <p className="mt-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
               Kết nối trực tiếp cùng NGUYỄN ĐĂNG AI & TỰ HỌC AI để nhận thêm hàng trăm prompt, tài liệu và quy trình tự động hóa dành riêng cho cộng đồng.
             </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <div className="mt-6 flex flex-wrap justify-center gap-3">
               <a 
                 href="https://zalo.me/g/tuhocai" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-teal-400 px-7 py-3.5 font-black text-[#050811] hover:opacity-95 shadow-[0_10px_30px_rgba(6,182,212,0.25)] transition-all text-sm uppercase"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-teal-400 px-6 py-3 font-black text-[#050811] hover:opacity-95 shadow-[0_10px_30px_rgba(6,182,212,0.25)] transition-all text-xs sm:text-sm uppercase"
               >
                 <MessageCircle className="w-4 h-4" />
                 <span>Tham Gia Nhóm Zalo Tự Học AI</span>
               </a>
               <Link
                 href="/bai-viet"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-800 bg-slate-900 px-7 py-3.5 font-bold text-white hover:border-cyan-500/40 transition-all text-sm"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-800 bg-slate-900 px-6 py-3 font-bold text-white hover:border-cyan-500/40 transition-all text-xs sm:text-sm"
               >
                 <span>Xem Bài Viết Kỹ Thuật</span>
               </Link>
@@ -375,15 +555,39 @@ export default function CopyLandingPage() {
         </section>
 
         {/* FOOTER */}
-        <footer className="border-t border-slate-800 px-5 py-8 text-center text-xs text-slate-400 bg-[#03050a]">
+        <footer className="border-t border-slate-800 px-4 py-8 text-center text-xs text-slate-400 bg-[#03050a]">
           <p>© 2026 NGUYỄN ĐĂNG AI · TỰ HỌC AI (tuhocai.top) · STK VIB: 0934434101</p>
         </footer>
       </main>
 
+      {/* MOBILE STICKY FLOATING CTA BAR (CHỈ HIỆN TRÊN MOBILE) */}
+      <aside aria-label="Thanh ưu đãi chốt đơn nhanh" className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-[#070d1d]/95 backdrop-blur-lg border-t border-cyan-500/30 p-3 px-4 shadow-[0_-10px_30px_rgba(0,0,0,0.8)]">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-base font-black text-yellow-400">99.000đ</span>
+              <span className="text-[10px] text-slate-400 line-through">499.000đ</span>
+            </div>
+            <div className="flex items-center gap-1 text-[10px] text-cyan-300 font-bold">
+              <Clock className="w-3 h-3 text-amber-400" />
+              <span>Flash Sale {String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}</span>
+            </div>
+          </div>
+
+          <a
+            href="#nhan-quy-trinh"
+            className="flex-1 max-w-[200px] py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-400 to-teal-400 text-[#050811] font-black text-xs uppercase tracking-wider text-center shadow-lg active:scale-95 transition-all flex items-center justify-center gap-1"
+          >
+            <span>Nhận Skill Ngay</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </a>
+        </div>
+      </aside>
+
       {/* POPUP CHECKOUT */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md max-h-[92vh] overflow-y-auto rounded-3xl bg-gradient-to-b from-[#11192e] to-[#070b15] border border-cyan-500/40 p-6 sm:p-8 text-center shadow-2xl text-white">
+          <div className="relative w-full max-w-md max-h-[92vh] overflow-y-auto rounded-3xl bg-gradient-to-b from-[#11192e] to-[#070b15] border border-cyan-500/40 p-5 sm:p-7 text-center shadow-2xl text-white">
             <button 
               onClick={() => setModalOpen(false)}
               className="absolute right-4 top-4 text-slate-400 hover:text-white p-2 cursor-pointer"
@@ -391,34 +595,62 @@ export default function CopyLandingPage() {
               <X className="w-6 h-6" />
             </button>
 
-            <div className="text-cyan-400 font-extrabold text-xs tracking-widest uppercase mb-1">
+            <div className="text-cyan-400 font-extrabold text-[11px] tracking-widest uppercase mb-1">
               NGUYỄN ĐĂNG AI · TỰ HỌC AI
             </div>
 
-            <h2 className="text-xl font-black uppercase text-white">
+            <h2 className="text-lg sm:text-xl font-black uppercase text-white">
               KÍCH HOẠT SKILL CLONE LANDING PAGE
             </h2>
 
-            <div className="my-3 text-3xl font-black text-yellow-400">
-              99.000đ
+            <div className="my-2 text-2xl sm:text-3xl font-black text-yellow-400">
+              99.000đ <span className="text-xs line-through text-slate-500 font-normal">499.000đ</span>
             </div>
 
-            <div className="inline-flex p-3 bg-white rounded-xl shadow-md my-1">
+            <div className="inline-flex p-2.5 bg-white rounded-xl shadow-md my-1">
               <img 
                 src={qrUrl} 
                 alt="QR Code thanh toán VIB 99K" 
-                className="w-48 h-auto object-contain"
+                className="w-44 h-auto object-contain"
               />
             </div>
 
-            <div className="text-xs text-slate-300 bg-white/5 p-3 rounded-lg border border-white/10 my-2 text-left space-y-1">
+            {/* 3 Nút Copy trong Modal */}
+            <div className="grid grid-cols-3 gap-1.5 my-2">
+              <button
+                type="button"
+                onClick={() => handleCopy('0934434101', 'bank')}
+                className="p-1.5 rounded bg-white/10 hover:bg-white/20 text-[10px] font-bold text-yellow-400 flex items-center justify-center gap-1 cursor-pointer"
+              >
+                {copiedBank ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                <span>{copiedBank ? 'Đã copy' : 'Copy STK'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleCopy('99000', 'amount')}
+                className="p-1.5 rounded bg-white/10 hover:bg-white/20 text-[10px] font-bold text-yellow-400 flex items-center justify-center gap-1 cursor-pointer"
+              >
+                {copiedAmount ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                <span>{copiedAmount ? 'Đã copy' : 'Copy 99K'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleCopy('copy landing page', 'content')}
+                className="p-1.5 rounded bg-white/10 hover:bg-white/20 text-[10px] font-bold text-cyan-300 flex items-center justify-center gap-1 cursor-pointer"
+              >
+                {copiedContent ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                <span>{copiedContent ? 'Đã copy' : 'Copy ND'}</span>
+              </button>
+            </div>
+
+            <div className="text-xs text-slate-300 bg-white/5 p-2.5 rounded-lg border border-white/10 my-2 text-left space-y-1">
               <div>Ngân hàng: <strong className="text-white">VIB</strong></div>
               <div>Số TK: <strong className="text-yellow-400">0934434101</strong></div>
               <div>Chủ TK: <strong className="text-white">NGUYEN VAN DANG</strong></div>
               <div>Nội dung: <strong className="text-white">copy landing page</strong></div>
             </div>
 
-            <form onSubmit={handleConfirmPayment} className="mt-4 space-y-3 text-left">
+            <form onSubmit={handleConfirmPayment} className="mt-3 space-y-2.5 text-left">
               <div>
                 <label className="text-[11px] font-bold text-slate-300 block mb-1">
                   Email nhận tài liệu và mở khóa (Bắt buộc):
@@ -429,7 +661,7 @@ export default function CopyLandingPage() {
                   placeholder="name@gmail.com"
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-lg bg-black/50 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-400"
+                  className="w-full px-3.5 py-2 rounded-lg bg-black/50 border border-slate-700 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-400"
                 />
               </div>
 
@@ -443,7 +675,7 @@ export default function CopyLandingPage() {
                   placeholder="Ví dụ: Nguyễn Văn A"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-lg bg-black/50 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-400"
+                  className="w-full px-3.5 py-2 rounded-lg bg-black/50 border border-slate-700 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-400"
                 />
               </div>
 
@@ -457,14 +689,14 @@ export default function CopyLandingPage() {
                   placeholder="Ví dụ: 0912345678"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-lg bg-black/50 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-400"
+                  className="w-full px-3.5 py-2 rounded-lg bg-black/50 border border-slate-700 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-400"
                 />
               </div>
 
               <button 
                 type="submit"
                 disabled={isSubmitting}
-                className="mt-4 w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-cyan-400 via-teal-300 to-yellow-300 text-[#050811] font-black text-sm uppercase tracking-wider hover:opacity-95 cursor-pointer shadow-lg transition-all flex items-center justify-center gap-2"
+                className="mt-3 w-full py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-400 via-teal-300 to-yellow-300 text-[#050811] font-black text-xs sm:text-sm uppercase tracking-wider hover:opacity-95 cursor-pointer shadow-lg transition-all flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <span>Đang kích hoạt tài khoản...</span>
