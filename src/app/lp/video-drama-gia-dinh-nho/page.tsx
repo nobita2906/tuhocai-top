@@ -10,17 +10,17 @@ import {
   Copy, 
   CheckCircle2, 
   Sparkles, 
+  Clock, 
   X,
+  FileText,
+  Video,
+  FolderDown,
   ShieldCheck,
   Mail,
   Zap,
-  ArrowRight,
-  Clock,
+  Smartphone,
   Flame,
-  FolderDown,
-  FileText,
-  Video,
-  Smartphone
+  ChevronRight
 } from 'lucide-react';
 
 export default function VideoDramaLandingPage() {
@@ -29,31 +29,30 @@ export default function VideoDramaLandingPage() {
   const [copiedAmount, setCopiedAmount] = useState(false);
   const [copiedContent, setCopiedContent] = useState(false);
   
-  // Countdown Timer (14:59)
-  const [timeLeft, setTimeLeft] = useState(14 * 60 + 59);
-
   // Checkout form
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // VietQR URL VIB
-  const qrUrl = "https://img.vietqr.io/image/VIB-0934434101-compact2.png?amount=69000&addInfo=1%20ly%20tra%20sua&accountName=NGUYEN%20VAN%20DANG";
+  // Countdown timer 14:59 for urgency
+  const [timeLeft, setTimeLeft] = useState(14 * 60 + 59);
 
-  // Timer tick
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+      setTimeLeft(prev => (prev > 0 ? prev - 1 : 14 * 60 + 59));
     }, 1000);
     return () => clearInterval(timer);
   }, []);
 
-  const formatTimer = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
+  const formatTimer = (sec: number) => {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
+
+  // VietQR VIB 69K
+  const qrUrl = "https://img.vietqr.io/image/VIB-0934434101-compact2.png?amount=69000&addInfo=1%20ly%20tra%20sua&accountName=NGUYEN%20VAN%20DANG";
 
   // Affiliate tracking
   useEffect(() => {
@@ -99,7 +98,7 @@ export default function VideoDramaLandingPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           productId: 'WF-DRAMA-069',
-          customerName: customerName || 'Học Viên Video Drama',
+          customerName: customerName || 'Học Viên Drama',
           customerEmail: customerEmail,
           customerPhone: customerPhone,
           affiliateRef: affRef,
@@ -129,17 +128,17 @@ export default function VideoDramaLandingPage() {
       />
 
       {/* FLASH SALE TOP BANNER */}
-      <div className="sticky top-0 z-40 bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-black px-3 py-2 text-center text-xs font-black tracking-wide shadow-md flex items-center justify-center gap-2">
-        <Flame className="w-4 h-4 fill-black animate-pulse" />
+      <div className="sticky top-0 z-40 bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-black px-3 py-2 text-center text-xs sm:text-sm font-black tracking-wide shadow-md flex items-center justify-center gap-2 flex-wrap">
+        <Flame className="w-4 h-4 fill-black animate-pulse flex-shrink-0" />
         <span>ƯU ĐÃI 1 LY TRÀ SỮA (69K) CHỈ CÒN 7 SUẤT HÔM NAY · KẾT THÚC TRONG:</span>
-        <span className="font-mono bg-black text-[#ffc400] px-2 py-0.5 rounded text-[11px] font-black">
+        <span className="font-mono bg-black text-[#ffc400] px-2 py-0.5 rounded text-xs font-black">
           {formatTimer(timeLeft)}
         </span>
       </div>
 
       <main className="relative z-10 overflow-hidden">
         {/* HERO SECTION */}
-        <section className="relative px-4 pb-14 pt-8 sm:px-8 sm:pt-12 lg:pb-20">
+        <section className="relative px-4 pb-14 pt-8 sm:px-8 sm:pt-14 lg:pb-20">
           <div className="mx-auto flex max-w-5xl flex-col items-center text-center">
             
             {/* Author Avatar & Brand */}
@@ -157,21 +156,21 @@ export default function VideoDramaLandingPage() {
             </div>
 
             {/* Badge */}
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#ffc400]/40 bg-[#ffc400]/10 px-3.5 py-1.5 text-xs font-bold uppercase text-[#ffc400] shadow-[0_0_20px_rgba(255,196,0,0.15)]">
-              <Sparkles className="w-3.5 h-3.5 text-[#ffc400]" />
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#ffc400]/40 bg-[#ffc400]/10 px-4 py-1.5 text-xs sm:text-sm font-bold uppercase text-[#ffc400] shadow-[0_0_20px_rgba(255,196,0,0.15)]">
+              <Sparkles className="w-4 h-4 text-[#ffc400]" />
               <span>Video AI thực chiến · Độc quyền Tự Học AI</span>
             </div>
 
             {/* Main Headline */}
-            <h1 className="max-w-4xl text-balance text-3xl sm:text-5xl lg:text-7xl font-black uppercase leading-[1.12] tracking-tight">
+            <h1 className="max-w-4xl text-balance text-3xl sm:text-5xl lg:text-7xl font-black uppercase leading-[1.15] tracking-tight">
               Toàn bộ quy trình<br />làm video AI
               <span className="mt-2 block text-[#ffc400] drop-shadow-[0_4px_30px_rgba(255,196,0,0.35)]">
                 “Câu chuyện gia đình nhỏ”
               </span>
             </h1>
 
-            {/* Subheadline */}
-            <p className="mt-5 max-w-2xl text-pretty text-sm sm:text-base font-medium leading-relaxed text-[#aab1bc]">
+            {/* Subheadline (CÂN CHỈNH FONT RÕ NÉT TRÊN MOBILE) */}
+            <p className="mt-6 max-w-2xl text-pretty text-base sm:text-lg font-medium leading-relaxed text-slate-200">
               Từ ý tưởng đến video thành phẩm triệu view. Quy trình thực chiến đã được đóng gói đầy đủ file kịch bản, prompt ảnh nhân vật và chuyển động video. Kích hoạt trực tiếp vào email của bạn.
             </p>
 
@@ -182,38 +181,46 @@ export default function VideoDramaLandingPage() {
                 alt="Mini Drama Gia Đình Nhỏ — Kênh 11 ngày, 44 video, 427K follow" 
                 className="aspect-video w-full object-cover"
               />
-              <div className="absolute bottom-3 right-3 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/20 text-[11px] font-mono font-bold text-emerald-400">
+              <div className="absolute bottom-3 right-3 bg-black/85 backdrop-blur-md px-3.5 py-1.5 rounded-lg border border-white/20 text-xs sm:text-sm font-mono font-bold text-emerald-400">
                 ✓ Đã kiểm chứng 427K Follower
               </div>
             </div>
 
-            {/* 3 Metric Pillars */}
-            <div className="mt-8 grid w-full max-w-4xl grid-cols-3 border-y border-[#27303d] bg-[#070c16]/90 backdrop-blur-sm divide-x divide-[#27303d] rounded-xl overflow-hidden border">
-              <div className="px-2 py-4 sm:px-5 sm:py-6">
-                <p className="text-[10px] sm:text-xs font-bold uppercase text-[#aab1bc]">Quy trình</p>
-                <p className="mt-1 text-2xl sm:text-3xl font-black text-[#ffc400]">01</p>
-                <p className="mt-0.5 text-[11px] sm:text-sm text-[#aab1bc] truncate">Từng bước làm theo</p>
+            {/* 3 Metric Pillars (CÂN CHỈNH FONT CHỮ LỚN DỄ ĐỌC) */}
+            <div className="mt-8 grid w-full max-w-4xl grid-cols-3 border-y border-[#27303d] bg-[#070c16]/95 backdrop-blur-sm divide-x divide-[#27303d] rounded-xl overflow-hidden border">
+              <div className="px-3 py-4 sm:px-6 sm:py-6">
+                <p className="text-xs sm:text-sm font-bold uppercase text-slate-300">Quy trình</p>
+                <p className="mt-1 text-2xl sm:text-4xl font-black text-[#ffc400]">01</p>
+                <p className="mt-1 text-xs sm:text-sm text-slate-300 font-medium">Từng bước làm theo</p>
               </div>
-              <div className="px-2 py-4 sm:px-5 sm:py-6">
-                <p className="text-[10px] sm:text-xs font-bold uppercase text-[#aab1bc]">Chi phí</p>
-                <p className="mt-1 text-2xl sm:text-3xl font-black text-[#ffc400]">69K</p>
-                <p className="mt-0.5 text-[11px] sm:text-sm text-[#aab1bc] truncate">Bằng 1 ly trà sữa</p>
+              <div className="px-3 py-4 sm:px-6 sm:py-6">
+                <p className="text-xs sm:text-sm font-bold uppercase text-slate-300">Chi phí</p>
+                <p className="mt-1 text-2xl sm:text-4xl font-black text-[#ffc400]">69K <span className="text-xs line-through text-slate-500 font-normal">499K</span></p>
+                <p className="mt-1 text-xs sm:text-sm text-slate-300 font-medium">Bằng 1 ly trà sữa</p>
               </div>
-              <div className="px-2 py-4 sm:px-5 sm:py-6">
-                <p className="text-[10px] sm:text-xs font-bold uppercase text-[#aab1bc]">Nhận ngay</p>
-                <p className="mt-1 text-2xl sm:text-3xl font-black text-emerald-400">Email & Web</p>
-                <p className="mt-0.5 text-[11px] sm:text-sm text-[#aab1bc] truncate">Mở khóa tức thì</p>
+              <div className="px-3 py-4 sm:px-6 sm:py-6">
+                <p className="text-xs sm:text-sm font-bold uppercase text-slate-300">Nhận ngay</p>
+                <p className="mt-1 text-2xl sm:text-4xl font-black text-emerald-400">Email & Web</p>
+                <p className="mt-1 text-xs sm:text-sm text-slate-300 font-medium">Mở khóa tức thì</p>
               </div>
             </div>
 
-            {/* CTA Button */}
-            <button 
-              onClick={() => setModalOpen(true)}
-              className="mt-8 w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#ffc400] px-8 py-4 text-base font-black text-[#080b10] shadow-[0_10px_36px_rgba(255,196,0,0.3)] hover:bg-[#ffd33d] hover:scale-102 transition-all cursor-pointer"
-            >
-              <span>NHẬN TOÀN BỘ QUY TRÌNH (69K)</span>
-              <ArrowDown className="w-5 h-5 animate-bounce" />
-            </button>
+            {/* CTA Buttons */}
+            <div className="mt-8 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+              <a 
+                href="#nhan-quy-trinh"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#ffc400] px-8 py-4 text-base font-black text-[#080b10] shadow-[0_10px_36px_rgba(255,196,0,0.3)] hover:bg-[#ffd33d] active:scale-95 transition-all cursor-pointer"
+              >
+                <span>NHẬN TOÀN BỘ QUY TRÌNH (69K)</span>
+                <ArrowDown className="w-5 h-5 animate-bounce" />
+              </a>
+              <button 
+                onClick={() => setModalOpen(true)}
+                className="w-full sm:w-auto px-6 py-4 rounded-xl border border-[#ffc400]/40 bg-[#ffc400]/10 text-[#ffc400] font-bold text-sm hover:bg-[#ffc400]/20 transition-colors cursor-pointer"
+              >
+                Mở Form Kích Hoạt Nhanh
+              </button>
+            </div>
           </div>
         </section>
 
@@ -221,48 +228,75 @@ export default function VideoDramaLandingPage() {
         <section className="border-t border-[#27303d] bg-[#050a14] px-4 py-14 sm:px-8">
           <div className="max-w-4xl mx-auto space-y-6">
             <div className="text-center space-y-2">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#ffc400] bg-[#ffc400]/10 px-3 py-1 rounded-full border border-[#ffc400]/30">
+              <span className="text-xs sm:text-sm font-bold uppercase tracking-widest text-[#ffc400] bg-[#ffc400]/10 px-3.5 py-1 rounded-full border border-[#ffc400]/30">
                 Minh bạch 100% · Nhìn thấy trước khi mua
               </span>
               <h2 className="text-2xl sm:text-4xl font-black uppercase text-white">
                 Bên trong kho quy trình của bạn có gì?
               </h2>
-              <p className="text-xs sm:text-sm text-[#aab1bc]">
+              <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto">
                 Sau khi kích hoạt tài khoản, bạn sẽ mở khóa trực tiếp các tài liệu thực chiến sau:
               </p>
             </div>
 
-            <div className="rounded-2xl border border-[#27303d] bg-[#090f18] p-5 sm:p-7 space-y-3 font-mono text-xs shadow-2xl">
-              <div className="flex items-center gap-2 text-[#ffc400] font-bold pb-2 border-b border-[#27303d]">
+            <div className="rounded-2xl border border-[#27303d] bg-[#090f18] p-5 sm:p-7 space-y-3 font-mono shadow-2xl">
+              <div className="flex items-center gap-2 text-[#ffc400] font-bold pb-2 border-b border-[#27303d] text-xs sm:text-sm">
                 <FolderDown className="w-4 h-4 text-[#ffc400]" />
                 <span>KHO_QUY_TRINH_VIDEO_MINI_DRAMA_TUHOCAI/ (Được cấp quyền truy cập)</span>
               </div>
-              <div className="space-y-2.5 pt-1 text-slate-300">
-                <div className="flex items-center gap-2.5 p-2 rounded-lg bg-white/5 border border-white/5 hover:border-[#ffc400]/30">
-                  <FileText className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span className="font-semibold text-white">01_Bo_10_Kich_Ban_Drama_Cam_Dong_Trieu_View.docx</span>
+              <div className="space-y-2.5 pt-1 text-slate-200">
+                <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/5 hover:border-[#ffc400]/30 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <FileText className="w-5 h-5 text-amber-400 shrink-0" />
+                    <div>
+                      <span className="font-semibold text-white text-xs sm:text-sm block">01_Bo_10_Kich_Ban_Drama_Cam_Dong_Trieu_View.docx</span>
+                      <span className="text-[11px] text-slate-400">Kịch bản viết sẵn, chỉ việc đưa vào tạo ảnh</span>
+                    </div>
+                  </div>
+                  <span className="text-xs text-slate-400 hidden sm:inline">Word · 245 KB</span>
                 </div>
-                <div className="flex items-center gap-2.5 p-2 rounded-lg bg-white/5 border border-white/5 hover:border-[#ffc400]/30">
-                  <FileText className="w-4 h-4 text-cyan-400 shrink-0" />
-                  <span className="font-semibold text-white">02_Prompt_Khoa_Mat_Nhan_Vat_Flux_Midjourney.txt</span>
+
+                <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/5 hover:border-[#ffc400]/30 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <FileText className="w-5 h-5 text-cyan-400 shrink-0" />
+                    <div>
+                      <span className="font-semibold text-white text-xs sm:text-sm block">02_Prompt_Khoa_Mat_Nhan_Vat_Flux_Midjourney.txt</span>
+                      <span className="text-[11px] text-slate-400">Bộ câu lệnh giữ chuẩn nét mặt nhân vật</span>
+                    </div>
+                  </div>
+                  <span className="text-xs text-slate-400 hidden sm:inline">Text · 18 KB</span>
                 </div>
-                <div className="flex items-center gap-2.5 p-2 rounded-lg bg-white/5 border border-white/5 hover:border-[#ffc400]/30">
-                  <Video className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span className="font-semibold text-white">03_Video_Huong_Dan_Render_Khau_Hinh_Kling_Luma.mp4</span>
+
+                <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/5 hover:border-[#ffc400]/30 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <Video className="w-5 h-5 text-emerald-400 shrink-0" />
+                    <div>
+                      <span className="font-semibold text-white text-xs sm:text-sm block">03_Video_Huong_Dan_Render_Khau_Hinh_Kling_Luma.mp4</span>
+                      <span className="text-[11px] text-slate-400">Video thực chiến 1080p hướng dẫn từng click</span>
+                    </div>
+                  </div>
+                  <span className="text-xs text-slate-400 hidden sm:inline">MP4 · 185 MB</span>
                 </div>
-                <div className="flex items-center gap-2.5 p-2 rounded-lg bg-white/5 border border-white/5 hover:border-[#ffc400]/30">
-                  <Zap className="w-4 h-4 text-purple-400 shrink-0" />
-                  <span className="font-semibold text-white">04_File_Am_Thanh_BGM_Lay_Nuoc_Mat_Doc_Quyen.zip</span>
+
+                <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/5 hover:border-[#ffc400]/30 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <Zap className="w-5 h-5 text-purple-400 shrink-0" />
+                    <div>
+                      <span className="font-semibold text-white text-xs sm:text-sm block">04_File_Am_Thanh_BGM_Lay_Nuoc_Mat_Doc_Quyen.zip</span>
+                      <span className="text-[11px] text-slate-400">Bộ nhạc nền và hiệu ứng âm thanh cảm động</span>
+                    </div>
+                  </div>
+                  <span className="text-xs text-slate-400 hidden sm:inline">ZIP · 64 MB</span>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION: BẠN SẼ NHẬN ĐƯỢC GÌ? */}
+        {/* SECTION: BẠN SẼ NHẬN ĐƯỢC GÌ? (FONT TO RÕ NÉT) */}
         <section className="border-y border-[#27303d] bg-[#070c16] px-4 py-16 sm:px-8">
           <div className="mx-auto max-w-5xl">
-            <p className="text-xs font-extrabold uppercase tracking-widest text-[#ffc400]">
+            <p className="text-xs sm:text-sm font-extrabold uppercase tracking-widest text-[#ffc400]">
               Bạn sẽ nhận được gì?
             </p>
             <h2 className="mt-2 text-2xl sm:text-4xl font-black uppercase tracking-tight text-white">
@@ -292,14 +326,14 @@ export default function VideoDramaLandingPage() {
                   key={item.id}
                   className="flex gap-4 rounded-xl border border-[#27303d] bg-[#090f18] p-5 sm:p-6 hover:border-[#ffc400]/40 transition-colors"
                 >
-                  <span className="text-3xl font-black text-[#ffc400]/30 select-none">
+                  <span className="text-3xl sm:text-4xl font-black text-[#ffc400]/30 select-none">
                     {item.id}
                   </span>
                   <div>
-                    <div className="mb-2 flex size-7 items-center justify-center rounded-full bg-[#ffc400] text-[#080b10] shadow">
-                      <Check className="size-3.5 stroke-[3]" />
+                    <div className="mb-2.5 flex size-8 items-center justify-center rounded-full bg-[#ffc400] text-[#080b10] shadow">
+                      <Check className="size-4 stroke-[3]" />
                     </div>
-                    <p className="font-semibold text-sm leading-relaxed text-[#f5f4ef]">
+                    <p className="font-medium text-base sm:text-lg leading-relaxed text-white">
                       {item.text}
                     </p>
                   </div>
@@ -322,14 +356,14 @@ export default function VideoDramaLandingPage() {
             </div>
 
             <div>
-              <p className="text-xs font-extrabold uppercase tracking-widest text-[#ffc400]">
+              <p className="text-xs sm:text-sm font-extrabold uppercase tracking-widest text-[#ffc400]">
                 Khoản đầu tư siêu nhỏ
               </p>
               <h2 className="mt-2 text-3xl font-black uppercase leading-tight sm:text-5xl">
                 Mời NGUYỄN ĐĂNG AI 1 ly<br />
                 <span className="text-[#ffc400]">trà sữa 69.000đ</span>
               </h2>
-              <p className="mt-4 text-sm sm:text-base text-[#aab1bc] leading-relaxed">
+              <p className="mt-4 text-base sm:text-lg text-slate-200 leading-relaxed">
                 Chỉ <strong className="text-white font-bold">69.000đ</strong> — tương đương 1 ly trà sữa để sở hữu trọn bộ quy trình video AI triệu view, được kích hoạt thẳng vào tài khoản email của bạn trên hệ thống Tự Học AI.
               </p>
               <div className="mt-6 inline-flex items-center gap-3 border-l-2 border-[#ffc400] pl-4 text-xs sm:text-sm font-bold uppercase text-[#ffc400]">
@@ -339,16 +373,16 @@ export default function VideoDramaLandingPage() {
           </div>
         </section>
 
-        {/* SECTION: CHUYỂN KHOẢN MOBILE-FIRST (CÓ BỘ NÚT 1-CHẠM) */}
-        <section id="nhan-quy-trinh" className="border-t border-[#27303d] bg-[#070c16] px-4 py-16 sm:px-8">
+        {/* SECTION: CHUYỂN KHOẢN MOBILE-FIRST (CÓ BỘ NÚT 1-CHẠM & HỖ TRỢ ZALO 0938.494.303) */}
+        <section id="nhan-quy-trinh" className="border-t border-[#27303d] bg-[#070c16] px-4 py-16 sm:px-8 scroll-mt-8">
           <div className="mx-auto max-w-4xl text-center space-y-4">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#ffc400] bg-[#ffc400]/10 px-3 py-1 rounded-full border border-[#ffc400]/30">
-              Thanh toán 1-chạm tiện lợi
+            <span className="text-xs sm:text-sm font-bold uppercase tracking-widest text-[#ffc400] bg-[#ffc400]/10 px-3.5 py-1 rounded-full border border-[#ffc400]/30">
+              Thanh toán 1-chạm tiện lợi · Nhận ngay tức thì
             </span>
             <h2 className="text-2xl sm:text-4xl font-black uppercase text-white">
               Nhận toàn bộ quy trình ngay
             </h2>
-            <p className="text-xs sm:text-sm text-[#aab1bc] max-w-xl mx-auto">
+            <p className="text-sm sm:text-base text-slate-200 max-w-xl mx-auto">
               Trên điện thoại: Quét mã QR hoặc dùng cụm nút <strong>Copy 1-chạm</strong> bên dưới để dán vào App ngân hàng của bạn.
             </p>
 
@@ -360,89 +394,103 @@ export default function VideoDramaLandingPage() {
                   alt="QR VietQR VIB NGUYEN VAN DANG 69.000đ" 
                   className="w-full max-w-56 h-auto object-contain"
                 />
-                <span className="text-[10px] font-mono text-slate-800 mt-2 font-bold flex items-center gap-1">
-                  <Smartphone className="w-3.5 h-3.5 text-indigo-600" />
+                <span className="text-xs font-mono text-slate-800 mt-2 font-bold flex items-center gap-1">
+                  <Smartphone className="w-4 h-4 text-indigo-600" />
                   Quét bằng mọi App Ngân Hàng
                 </span>
               </div>
 
               {/* Mobile One-Tap Buttons & Details */}
               <div className="space-y-4">
-                <h3 className="text-base font-bold uppercase text-[#ffc400] flex items-center gap-2">
-                  <ShieldCheck className="w-5 h-5" />
-                  <span>Thông tin chuyển khoản VIB</span>
+                <h3 className="text-base sm:text-lg font-bold uppercase text-[#ffc400] flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5 flex-shrink-0" />
+                  <span>Thông tin chuyển khoản VIB chính thức</span>
                 </h3>
 
                 {/* 3 ONE-TAP QUICK COPY BUTTONS */}
                 <div className="grid grid-cols-1 gap-2.5">
                   {/* Copy STK */}
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 hover:border-[#ffc400]/50 transition-colors">
+                  <div className="flex items-center justify-between p-3.5 rounded-xl bg-white/5 border border-white/10 hover:border-[#ffc400]/50 transition-colors">
                     <div>
-                      <p className="text-[10px] text-[#aab1bc] uppercase font-bold">Số tài khoản VIB</p>
-                      <p className="text-base font-mono font-black text-[#ffc400]">0934434101</p>
+                      <p className="text-xs text-slate-300 uppercase font-bold">Số tài khoản VIB</p>
+                      <p className="text-lg sm:text-xl font-mono font-black text-[#ffc400]">0934434101</p>
                     </div>
                     <button 
                       onClick={() => handleCopy('0934434101', 'bank')}
-                      className="px-3 py-2 rounded-lg bg-[#ffc400] text-black font-black text-xs flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer shadow"
+                      className="px-3.5 py-2 rounded-lg bg-[#ffc400] text-black font-black text-xs sm:text-sm flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer shadow"
                     >
-                      {copiedBank ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <Copy className="w-3.5 h-3.5" />}
+                      {copiedBank ? <Check className="w-4 h-4 stroke-[3]" /> : <Copy className="w-4 h-4" />}
                       <span>{copiedBank ? 'Đã copy' : 'Copy STK'}</span>
                     </button>
                   </div>
 
                   {/* Copy Số tiền */}
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 hover:border-[#ffc400]/50 transition-colors">
+                  <div className="flex items-center justify-between p-3.5 rounded-xl bg-white/5 border border-white/10 hover:border-[#ffc400]/50 transition-colors">
                     <div>
-                      <p className="text-[10px] text-[#aab1bc] uppercase font-bold">Số tiền</p>
-                      <p className="text-base font-mono font-black text-white">69.000 đ</p>
+                      <p className="text-xs text-slate-300 uppercase font-bold">Số tiền chuyển khoản</p>
+                      <p className="text-lg sm:text-xl font-mono font-black text-white">69.000 đ</p>
                     </div>
                     <button 
                       onClick={() => handleCopy('69000', 'amount')}
-                      className="px-3 py-2 rounded-lg bg-white/15 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
+                      className="px-3.5 py-2 rounded-lg bg-white/15 hover:bg-white/20 text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
                     >
-                      {copiedAmount ? <Check className="w-3.5 h-3.5 text-emerald-400 stroke-[3]" /> : <Copy className="w-3.5 h-3.5" />}
+                      {copiedAmount ? <Check className="w-4 h-4 text-emerald-400 stroke-[3]" /> : <Copy className="w-4 h-4" />}
                       <span>{copiedAmount ? 'Đã copy' : 'Copy Số Tiền'}</span>
                     </button>
                   </div>
 
                   {/* Copy Nội dung */}
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 hover:border-[#ffc400]/50 transition-colors">
+                  <div className="flex items-center justify-between p-3.5 rounded-xl bg-white/5 border border-white/10 hover:border-[#ffc400]/50 transition-colors">
                     <div>
-                      <p className="text-[10px] text-[#aab1bc] uppercase font-bold">Nội dung chuyển khoản</p>
-                      <p className="text-sm font-mono font-bold text-emerald-400">1 ly tra sua</p>
+                      <p className="text-xs text-slate-300 uppercase font-bold">Nội dung chuyển khoản</p>
+                      <p className="text-base font-mono font-bold text-emerald-400">1 ly tra sua</p>
                     </div>
                     <button 
                       onClick={() => handleCopy('1 ly tra sua', 'content')}
-                      className="px-3 py-2 rounded-lg bg-white/15 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
+                      className="px-3.5 py-2 rounded-lg bg-white/15 hover:bg-white/20 text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
                     >
-                      {copiedContent ? <Check className="w-3.5 h-3.5 text-emerald-400 stroke-[3]" /> : <Copy className="w-3.5 h-3.5" />}
+                      {copiedContent ? <Check className="w-4 h-4 text-emerald-400 stroke-[3]" /> : <Copy className="w-4 h-4" />}
                       <span>{copiedContent ? 'Đã copy' : 'Copy Nội Dung'}</span>
                     </button>
                   </div>
                 </div>
 
-                <div className="text-xs text-[#aab1bc] space-y-1 pt-1">
-                  <p>Chủ tài khoản: <strong className="text-white">NGUYEN VAN DANG</strong></p>
-                  <p className="text-[11px] text-amber-300">
+                <div className="text-sm text-slate-300 space-y-1.5 pt-1">
+                  <p>Chủ tài khoản: <strong className="text-white font-bold">NGUYEN VAN DANG</strong></p>
+                  <p className="text-xs sm:text-sm text-amber-300">
                     *Chuyển khoản xong, bấm nút phía dưới để kích hoạt tài liệu vào email của bạn ngay lập tức.
                   </p>
                 </div>
 
                 <button 
                   onClick={() => setModalOpen(true)}
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#ffc400] py-4 px-6 font-black text-[#080b10] hover:bg-[#ffd33d] transition-all shadow-[0_10px_30px_rgba(255,196,0,0.2)] cursor-pointer text-sm sm:text-base uppercase"
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#ffc400] py-4 px-6 font-black text-[#080b10] hover:bg-[#ffd33d] transition-all shadow-[0_10px_30px_rgba(255,196,0,0.25)] cursor-pointer text-base uppercase"
                 >
                   <Mail className="w-5 h-5" />
                   <span>KÍCH HOẠT QUY TRÌNH VÀO EMAIL NGAY</span>
                 </button>
+
+                {/* HỖ TRỢ KỸ THUẬT TRỰC TIẾP QUA ZALO */}
+                <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs sm:text-sm">
+                  <span className="text-slate-400">Cần hỗ trợ kỹ thuật trực tiếp?</span>
+                  <a 
+                    href="https://zalo.me/0938494303" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-emerald-400 font-bold hover:underline"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    <span>Zalo: 0938.494.303</span>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         {/* FOOTER */}
-        <footer className="border-t border-[#27303d] px-4 py-8 text-center text-xs text-[#aab1bc] bg-[#02050b]">
-          <p>© 2026 NGUYỄN ĐĂNG AI · TỰ HỌC AI (tuhocai.top) · STK VIB: 0934434101</p>
+        <footer className="border-t border-[#27303d] px-4 py-8 text-center text-xs sm:text-sm text-slate-400 bg-[#02050b]">
+          <p>© 2026 NGUYỄN ĐĂNG AI · TỰ HỌC AI (tuhocai.top) · STK VIB: 0934434101 · Zalo: 0938.494.303</p>
         </footer>
       </main>
 
@@ -452,20 +500,20 @@ export default function VideoDramaLandingPage() {
           <div>
             <div className="flex items-center gap-1.5">
               <span className="text-xs line-through text-slate-500 font-bold">499K</span>
-              <span className="text-lg font-black text-[#ffc400]">69.000đ</span>
+              <span className="text-xl font-black text-[#ffc400]">69.000đ</span>
             </div>
-            <p className="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
-              <Clock className="w-3 h-3" />
+            <p className="text-xs text-emerald-400 font-bold flex items-center gap-1">
+              <Clock className="w-3.5 h-3.5" />
               <span>Flash Sale {formatTimer(timeLeft)}</span>
             </p>
           </div>
 
           <button 
             onClick={() => setModalOpen(true)}
-            className="flex-1 py-3 px-4 rounded-xl bg-[#ffc400] text-[#080b10] font-black text-xs uppercase tracking-wider shadow-lg active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1.5"
+            className="flex-1 py-3 px-4 rounded-xl bg-[#ffc400] text-[#080b10] font-black text-sm uppercase tracking-wider shadow-lg active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1.5"
           >
             <span>NHẬN QUY TRÌNH</span>
-            <Zap className="w-3.5 h-3.5 fill-black" />
+            <Zap className="w-4 h-4 fill-black" />
           </button>
         </div>
       </aside>
@@ -490,7 +538,7 @@ export default function VideoDramaLandingPage() {
             </h2>
 
             <div className="my-2.5 text-3xl font-black text-[#ffc400]">
-              69.000đ
+              69.000đ <span className="text-xs line-through text-slate-400 font-normal">499.000đ</span>
             </div>
 
             <div className="inline-flex p-3 bg-white rounded-xl shadow-md my-1">
@@ -501,14 +549,42 @@ export default function VideoDramaLandingPage() {
               />
             </div>
 
-            <div className="text-xs text-slate-300 bg-white/5 p-2.5 rounded-lg border border-white/10 my-2 text-left space-y-1">
+            {/* 3 Nút Copy trong Modal */}
+            <div className="grid grid-cols-3 gap-1.5 my-2">
+              <button
+                type="button"
+                onClick={() => handleCopy('0934434101', 'bank')}
+                className="p-2 rounded bg-white/10 hover:bg-white/20 text-xs font-bold text-yellow-400 flex items-center justify-center gap-1 cursor-pointer"
+              >
+                {copiedBank ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedBank ? 'Đã copy' : 'Copy STK'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleCopy('69000', 'amount')}
+                className="p-2 rounded bg-white/10 hover:bg-white/20 text-xs font-bold text-yellow-400 flex items-center justify-center gap-1 cursor-pointer"
+              >
+                {copiedAmount ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedAmount ? 'Đã copy' : 'Copy 69K'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleCopy('1 ly tra sua', 'content')}
+                className="p-2 rounded bg-white/10 hover:bg-white/20 text-xs font-bold text-emerald-300 flex items-center justify-center gap-1 cursor-pointer"
+              >
+                {copiedContent ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedContent ? 'Đã copy' : 'Copy ND'}</span>
+              </button>
+            </div>
+
+            <div className="text-xs sm:text-sm text-slate-300 bg-white/5 p-3 rounded-lg border border-white/10 my-2 text-left space-y-1">
               <div>Ngân hàng: <strong className="text-white">VIB</strong> · Số TK: <strong className="text-[#ffc400]">0934434101</strong></div>
               <div>Chủ TK: <strong className="text-white">NGUYEN VAN DANG</strong> · Nội dung: <strong className="text-white">1 ly tra sua</strong></div>
             </div>
 
             <form onSubmit={handleConfirmPayment} className="mt-3 space-y-3 text-left">
               <div>
-                <label className="text-[11px] font-bold text-[#aab1bc] block mb-1">
+                <label className="text-xs sm:text-sm font-bold text-slate-200 block mb-1">
                   Email nhận tài liệu và mở khóa (Bắt buộc):
                 </label>
                 <input 
@@ -517,12 +593,12 @@ export default function VideoDramaLandingPage() {
                   placeholder="name@gmail.com"
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-lg bg-black/50 border border-[#27303d] text-sm text-white focus:outline-none focus:border-[#ffc400]"
+                  className="w-full px-3.5 py-3 rounded-lg bg-black/50 border border-[#27303d] text-base text-white focus:outline-none focus:border-[#ffc400]"
                 />
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-[#aab1bc] block mb-1">
+                <label className="text-xs sm:text-sm font-bold text-slate-200 block mb-1">
                   Họ và tên của bạn:
                 </label>
                 <input 
@@ -531,12 +607,12 @@ export default function VideoDramaLandingPage() {
                   placeholder="Ví dụ: Nguyễn Văn A"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-lg bg-black/50 border border-[#27303d] text-sm text-white focus:outline-none focus:border-[#ffc400]"
+                  className="w-full px-3.5 py-3 rounded-lg bg-black/50 border border-[#27303d] text-base text-white focus:outline-none focus:border-[#ffc400]"
                 />
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-[#aab1bc] block mb-1">
+                <label className="text-xs sm:text-sm font-bold text-slate-200 block mb-1">
                   Số điện thoại / Zalo:
                 </label>
                 <input 
@@ -545,20 +621,20 @@ export default function VideoDramaLandingPage() {
                   placeholder="Ví dụ: 0912345678"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-lg bg-black/50 border border-[#27303d] text-sm text-white focus:outline-none focus:border-[#ffc400]"
+                  className="w-full px-3.5 py-3 rounded-lg bg-black/50 border border-[#27303d] text-base text-white focus:outline-none focus:border-[#ffc400]"
                 />
               </div>
 
               <button 
                 type="submit"
                 disabled={isSubmitting}
-                className="mt-3 w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#ffe66d] via-[#facc15] to-[#e9a808] text-[#141414] font-black text-sm uppercase tracking-wider hover:opacity-95 cursor-pointer shadow-[0_5px_22px_rgba(250,204,21,0.3)] transition-all flex items-center justify-center gap-2"
+                className="mt-3 w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#ffe66d] via-[#facc15] to-[#e9a808] text-[#141414] font-black text-sm sm:text-base uppercase tracking-wider hover:opacity-95 cursor-pointer shadow-[0_5px_22px_rgba(250,204,21,0.3)] transition-all flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <span>Đang kích hoạt tài khoản...</span>
                 ) : (
                   <>
-                    <Mail className="w-4 h-4 text-black" />
+                    <Mail className="w-5 h-5 text-black" />
                     <span>✓ TÔI ĐÃ CHUYỂN KHOẢN (MỞ KHÓA NGAY)</span>
                   </>
                 )}

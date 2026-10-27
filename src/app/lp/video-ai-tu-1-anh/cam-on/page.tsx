@@ -109,19 +109,19 @@ function ThankYouContent() {
             <h2 className="text-xl font-black uppercase text-white">
               Hỗ Trợ Kỹ Thuật Nguyễn Đăng AI
             </h2>
-            <p className="text-xs sm:text-sm text-[#d5c6ac] leading-relaxed">
-              Cần hỗ trợ sửa prompt hoặc hỏi đáp quy trình dựng video? Nhắn tin trực tiếp qua Zalo admin: <strong>0934.434.101</strong>.
+            <p className="text-sm sm:text-base text-slate-200 leading-relaxed">
+              Cần hỗ trợ sửa prompt hoặc hỏi đáp quy trình dựng video? Nhắn tin trực tiếp qua Zalo admin: <strong className="text-emerald-400">0938.494.303</strong>.
             </p>
           </div>
 
           <a 
-            href="https://zalo.me/0934434101" 
+            href="https://zalo.me/0938494303" 
             target="_blank" 
             rel="noopener noreferrer"
             className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 px-6 font-black shadow-lg transition-all text-sm uppercase cursor-pointer"
           >
             <MessageCircle className="w-4 h-4" />
-            <span>NHẮN ZALO ADMIN: 0934.434.101</span>
+            <span>NHẮN ZALO ADMIN: 0938.494.303</span>
           </a>
         </div>
       </div>
@@ -129,13 +129,13 @@ function ThankYouContent() {
       {/* Community Banner */}
       <div className="rounded-2xl border border-[#2a2015] bg-[#140e08] p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#eab84e] bg-[#eab84e]/10 px-2.5 py-0.5 rounded-full border border-[#eab84e]/20">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#eab84e] bg-[#eab84e]/10 px-2.5 py-0.5 rounded-full border border-[#eab84e]/20">
             Cộng đồng thực chiến
           </span>
-          <h3 className="text-base font-bold text-white mt-1">
+          <h3 className="text-base sm:text-lg font-bold text-white mt-1">
             Tham Gia Nhóm Zalo Tự Học AI (Miễn Phí)
           </h3>
-          <p className="text-xs text-[#d5c6ac] mt-1">
+          <p className="text-xs sm:text-sm text-slate-300 mt-1">
             Giao lưu cùng hơn 5.000+ thành viên đang ứng dụng AI xây kênh và tự động hóa.
           </p>
         </div>
@@ -144,7 +144,7 @@ function ThankYouContent() {
           href="https://zalo.me/g/tuhocai"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-shrink-0 px-5 py-3 rounded-xl bg-[#eab84e] text-[#100c08] hover:bg-[#f8d575] font-black text-xs flex items-center gap-2 transition-colors"
+          className="flex-shrink-0 px-5 py-3 rounded-xl bg-[#eab84e] text-[#100c08] hover:bg-[#f8d575] font-black text-xs sm:text-sm flex items-center gap-2 transition-colors"
         >
           <span>Vào Nhóm Zalo</span>
           <ArrowRight className="w-4 h-4" />
@@ -152,8 +152,8 @@ function ThankYouContent() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-[#2a2015] pt-8 pb-4 text-center text-xs text-[#a39480]">
-        <p>© 2026 NGUYỄN ĐĂNG AI · TỰ HỌC AI (tuhocai.top) · STK VIB: 0934434101</p>
+      <footer className="border-t border-[#2a2015] pt-8 pb-4 text-center text-xs sm:text-sm text-slate-400">
+        <p>© 2026 NGUYỄN ĐĂNG AI · TỰ HỌC AI (tuhocai.top) · STK VIB: 0934434101 · Zalo: 0938.494.303</p>
       </footer>
     </div>
   );
