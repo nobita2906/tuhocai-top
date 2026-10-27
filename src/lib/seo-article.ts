@@ -25,10 +25,11 @@ export function prepareArticleContent(content: string): PreparedArticle {
   const words = plainText ? plainText.split(/\s+/).length : 0;
   const readingMinutes = Math.max(1, Math.ceil(words / 220));
 
-  // Determine if content is Markdown or HTML
-  // If it doesn't look like rich HTML (<p>, <div>, etc.), parse with marked
-  const isHtml = /<[a-z][\s\S]*>/i.test(content) && !content.trim().startsWith('#');
-  let rawHtml = isHtml ? content : (marked.parse(content, { breaks: true, gfm: true }) as string);
+  // Determine if content is Markdown or pure HTML
+  // If content has markdown markers (headings, code blocks, tables, bold, lists), always parse with marked
+  const hasMarkdownMarkers = /(?:^|\n)(?:#{1,6}\s|```|\|[\s\S]*\||[\*\-]\s|\d+\.\s)/.test(content);
+  const isPureHtml = !hasMarkdownMarkers && /^\s*<(?:!DOCTYPE|html|div|p|article|main|section|h[1-6])/i.test(content.trim());
+  let rawHtml = isPureHtml ? content : (marked.parse(content, { breaks: true, gfm: true }) as string);
 
   // Extract headings (H2, H3) and inject anchor IDs for Table of Contents
   const toc: TocItem[] = [];

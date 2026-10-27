@@ -490,6 +490,7 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
                   src={getPostCover(post)}
                   alt={post.title}
                   fill
+                  unoptimized
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   className="object-cover object-center group-hover:scale-[1.02] transition-transform duration-300 ease-out"
                 />

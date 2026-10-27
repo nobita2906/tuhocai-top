@@ -55,6 +55,7 @@ export default function ProductCard({ product, onFreeClick }: ProductCardProps) 
           src={coverImage}
           alt={product.name}
           fill
+          unoptimized
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           className="object-cover object-center group-hover:scale-[1.02] transition-transform duration-300 ease-out"
           priority={product.pid === 'WF-THAI-099'}
