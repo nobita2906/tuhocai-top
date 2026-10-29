@@ -16,6 +16,10 @@ import {
   MessageCircle,
   FileText,
   Clock,
+  Send,
+  Zap,
+  KeyRound,
+  X,
 } from 'lucide-react';
 
 interface CheckoutClientProps {
@@ -27,6 +31,7 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -46,6 +51,20 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
   const [receiptSent, setReceiptSent] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
 
+  // 60-second timer & manual review state
+  const [secondsElapsed, setSecondsElapsed] = useState(0);
+  const [manualReviewSent, setManualReviewSent] = useState(false);
+  const [manualReviewLoading, setManualReviewLoading] = useState(false);
+
+  // Password change modal state
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+
   // Copy helpers
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
@@ -55,31 +74,132 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
       .then((r) => r.json())
       .then((d) => {
         if (d.authenticated && d.user) {
+          setIsLoggedIn(true);
           if (!name) setName(d.user.name || '');
           if (!email) setEmail(d.user.email || '');
+          if (d.user.phone) setPhone(d.user.phone);
         }
       })
       .catch(() => {});
   }, []);
 
-  // Poll status when at Step 2 and receipt sent
+  // Timer for 60s threshold when at Step 2
   useEffect(() => {
-    if (step !== 2 || !orderCode || downloadUrl) return;
+    if (step !== 2) {
+      setSecondsElapsed(0);
+      return;
+    }
+    const timer = setInterval(() => {
+      setSecondsElapsed((prev) => prev + 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [step]);
+
+  // Poll status when at Step 2 and automatically redirect to Thank You page upon approval
+  useEffect(() => {
+    if (step !== 2 || !orderCode) return;
 
     const interval = setInterval(async () => {
       try {
         const res = await fetch(`/api/orders/check-status?orderCode=${orderCode}`);
         const data = await res.json();
         if (data.success && data.status === 'APPROVED') {
-          setDownloadUrl(data.downloadUrl || 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026');
-          setStep(3);
           clearInterval(interval);
+
+          const pid = String(product?.id || '').toLowerCase();
+          const pname = String(product?.name || '').toLowerCase();
+          let thankYouUrl = '';
+
+          if (bankInfo?.landingSlug) {
+            thankYouUrl = `/lp/${bankInfo.landingSlug}/cam-on?code=${orderCode}`;
+          } else if (pid.includes('drama') || pname.includes('drama')) {
+            thankYouUrl = `/lp/video-drama-gia-dinh-nho/cam-on?code=${orderCode}`;
+          } else if (pid.includes('clone') || pname.includes('sao-chep') || pname.includes('landing')) {
+            thankYouUrl = `/lp/sao-chep-landing-page/cam-on?code=${orderCode}`;
+          } else if (pid.includes('vip') || pid.includes('video') || pname.includes('1 ảnh') || pname.includes('1 anh')) {
+            thankYouUrl = `/lp/video-ai-tu-1-anh/cam-on?code=${orderCode}`;
+          }
+
+          if (thankYouUrl) {
+            window.location.href = thankYouUrl;
+          } else {
+            setDownloadUrl(data.downloadUrl || 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026');
+            setStep(3);
+          }
         }
       } catch (e) {}
-    }, 4000);
+    }, 3000);
 
     return () => clearInterval(interval);
-  }, [step, orderCode, downloadUrl]);
+  }, [step, orderCode, product, bankInfo]);
+
+  const handleNavigateToCourse = () => {
+    // Nếu là khách mới vừa được tạo pass theo SĐT -> hỏi đổi pass
+    if (!isLoggedIn) {
+      setShowPasswordModal(true);
+    } else {
+      window.location.href = '/dashboard';
+    }
+  };
+
+  const handleChangePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError('');
+
+    if (newPassword.length < 6) {
+      setPasswordError('Mật khẩu mới phải có ít nhất 6 ký tự');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError('Mật khẩu xác nhận không trùng khớp');
+      return;
+    }
+
+    setPasswordLoading(true);
+    try {
+      const res = await fetch('/api/user/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          currentPassword: phone, // SĐT là mật khẩu mặc định ban đầu
+          newPassword,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Đổi mật khẩu không thành công');
+
+      setPasswordSuccess(true);
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 1500);
+    } catch (err: any) {
+      setPasswordError(err.message || 'Lỗi xử lý');
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
+  const handleRequestManualReview = async () => {
+    if (!orderCode || manualReviewLoading) return;
+    setManualReviewLoading(true);
+    setError('');
+    try {
+      const res = await fetch('/api/orders/request-manual-review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderCode }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Lỗi gửi yêu cầu duyệt');
+      setManualReviewSent(true);
+    } catch (err: any) {
+      setError(err.message || 'Lỗi gửi yêu cầu');
+    } finally {
+      setManualReviewLoading(false);
+    }
+  };
 
   const copyToClipboard = (text: string, field: string) => {
     navigator.clipboard.writeText(text);
@@ -91,8 +211,25 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
     e.preventDefault();
     if (!product) return;
 
-    setLoading(true);
     setError('');
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPhone = phone.replace(/\s+/g, '').trim();
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      setError('Email không đúng định dạng. Vui lòng nhập email hợp lệ (VD: name@gmail.com)');
+      return;
+    }
+
+    if (!isLoggedIn) {
+      const phoneRegex = /^0[0-9]{9}$/;
+      if (!phoneRegex.test(cleanPhone)) {
+        setError('Số điện thoại phải bao gồm đúng 10 chữ số (bắt đầu bằng 0, ví dụ: 0912345678)');
+        return;
+      }
+    }
+
+    setLoading(true);
 
     try {
       const res = await fetch('/api/checkout', {
@@ -101,8 +238,8 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
         body: JSON.stringify({
           productId: product.id,
           customerName: name,
-          customerEmail: email,
-          customerPhone: phone,
+          customerEmail: cleanEmail,
+          customerPhone: cleanPhone || undefined,
         }),
       });
 
@@ -265,18 +402,39 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-800 dark:text-slate-300 mb-1.5">
-                  Số điện thoại / Zalo
-                </label>
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="0938..."
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-indigo-700 shadow-xs"
-                />
-              </div>
+              {isLoggedIn ? (
+                <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border-2 border-emerald-300 dark:border-emerald-500/20 text-emerald-800 dark:text-emerald-400 text-xs flex items-center justify-between font-semibold">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Tài khoản nhận: <strong>{email}</strong></span>
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-200/60 dark:bg-emerald-500/30 px-2 py-0.5 rounded">
+                    ĐÃ ĐĂNG NHẬP
+                  </span>
+                </div>
+              ) : (
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-bold text-slate-800 dark:text-slate-300">
+                      Số điện thoại (Đúng 10 số) <span className="text-indigo-700 dark:text-indigo-400">*</span>
+                    </label>
+                    <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold">Mật khẩu Kho Của Tôi</span>
+                  </div>
+                  <input
+                    type="tel"
+                    required
+                    maxLength={10}
+                    pattern="0[0-9]{9}"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="Ví dụ: 0912345678"
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-indigo-700 shadow-xs"
+                  />
+                  <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                    *SĐT này sẽ là mật khẩu mặc định để bạn tra cứu và tải tài nguyên trong mục &quot;Kho Của Tôi&quot;.
+                  </p>
+                </div>
+              )}
 
               <button
                 type="submit"
@@ -328,15 +486,15 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
               <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/80 border-2 border-slate-200 dark:border-slate-800 space-y-2.5 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-600 dark:text-slate-400 font-medium">Ngân hàng:</span>
-                  <span className="font-bold text-slate-900 dark:text-white">VPBank (Việt Nam Thịnh Vượng)</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{bankInfo?.bankName || 'ACB (Ngân hàng TMCP Á Châu)'}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <span className="text-slate-600 dark:text-slate-400 font-medium">Số tài khoản:</span>
                   <div className="flex items-center gap-1.5 font-mono text-sm font-black text-indigo-800 dark:text-indigo-400">
-                    <span>{bankInfo?.accountNo || '0934434101'}</span>
+                    <span>{bankInfo?.accountNo || '4747827'}</span>
                     <button
-                      onClick={() => copyToClipboard(bankInfo?.accountNo || '0934434101', 'acc')}
+                      onClick={() => copyToClipboard(bankInfo?.accountNo || '4747827', 'acc')}
                       className="p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded text-slate-500 hover:text-slate-900 dark:hover:text-white"
                       title="Sao chép"
                     >
@@ -367,9 +525,9 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
                 <div className="flex items-center justify-between pt-1 border-t-2 border-slate-200 dark:border-slate-800">
                   <span className="text-slate-600 dark:text-slate-400 font-medium">Nội dung CK:</span>
                   <div className="flex items-center gap-1.5 font-mono font-bold text-sm text-amber-700 dark:text-yellow-400">
-                    <span>{orderCode}</span>
+                    <span>{bankInfo?.content || orderCode}</span>
                     <button
-                      onClick={() => copyToClipboard(orderCode, 'code')}
+                      onClick={() => copyToClipboard(bankInfo?.content || orderCode, 'code')}
                       className="p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded text-slate-500 hover:text-slate-900 dark:hover:text-white"
                       title="Sao chép"
                     >
@@ -379,12 +537,56 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
                 </div>
               </div>
 
+              {/* 60-Second Conditional Manual Review via Telegram */}
+              {secondsElapsed >= 60 ? (
+                <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-500/10 border-2 border-amber-300 dark:border-amber-500/30 space-y-2.5 animate-fadeIn">
+                  <div className="flex items-center gap-2 text-amber-900 dark:text-amber-300 font-extrabold text-xs">
+                    <Zap className="w-4 h-4 text-amber-600 fill-amber-500" />
+                    <span>Nếu bạn chưa nhận được khóa học, hãy bấm vào:</span>
+                  </div>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400">
+                    Hệ thống sẽ gửi mã đơn <strong>{orderCode}</strong> trực tiếp đến bot Telegram cá nhân của quản trị viên để bấm duyệt kích hoạt tức thì cho bạn!
+                  </p>
+
+                  {!manualReviewSent ? (
+                    <button
+                      type="button"
+                      onClick={handleRequestManualReview}
+                      disabled={manualReviewLoading}
+                      className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-extrabold text-xs shadow-lg shadow-amber-900/20 transition-all active:scale-[0.98]"
+                    >
+                      {manualReviewLoading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Đang gửi mã đơn tới Telegram...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4" />
+                          ⚡ Gửi Mã Đơn Yêu Cầu Duyệt Nhanh Qua Telegram
+                        </>
+                      )}
+                    </button>
+                  ) : (
+                    <div className="p-3 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 border-2 border-emerald-300 dark:border-emerald-500/30 text-emerald-800 dark:text-emerald-300 text-xs font-bold flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span>Đã gửi mã đơn tới Telegram Admin! Khi Admin bấm duyệt, màn hình này sẽ tự động chuyển trang tải khóa học ngay.</span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex items-center justify-center gap-2 py-2 text-[11px] text-slate-500 dark:text-slate-400">
+                  <Clock className="w-3.5 h-3.5 animate-spin text-indigo-600" />
+                  <span>Hệ thống đang tự động kiểm tra giao dịch ngân hàng ({60 - secondsElapsed}s)...</span>
+                </div>
+              )}
+
               {/* Receipt Upload Section */}
               <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-200 dark:border-slate-700/80 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                     <Upload className="w-4 h-4 text-indigo-700 dark:text-indigo-400" />
-                    Đính kèm ảnh chụp biên lai (Giúp duyệt tức thì)
+                    Đính kèm ảnh chụp biên lai (Tùy chọn)
                   </span>
                   {receiptSent && (
                     <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1">
@@ -477,25 +679,14 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
               </div>
 
               <div className="space-y-3 pt-2">
-                {downloadUrl && (
-                  <a
-                    href={downloadUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-85 text-white font-extrabold text-sm shadow-xl shadow-indigo-950/30 transition-all active:scale-[0.98]"
-                  >
-                    <Download className="w-4 h-4" />
-                    Mở Link Tải Trực Tiếp (Google Drive)
-                  </a>
-                )}
-
-                <Link
-                  href="/dashboard"
-                  className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-white dark:bg-slate-800 hover:opacity-80 text-slate-800 dark:text-slate-200 font-bold text-xs border-2 border-slate-300 dark:border-slate-700 transition-all shadow-xs"
+                <button
+                  type="button"
+                  onClick={handleNavigateToCourse}
+                  className="w-full flex items-center justify-center gap-2 py-4 px-4 rounded-xl bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-90 text-white font-extrabold text-sm shadow-xl shadow-indigo-950/30 transition-all active:scale-[0.98]"
                 >
-                  <FileText className="w-4 h-4" />
-                  Xem Trong Kho Tài Liệu Của Tôi
-                </Link>
+                  <FileText className="w-5 h-5" />
+                  🚀 Vào Khu Vực Học Tập / Khóa Học Của Tôi
+                </button>
 
                 <a
                   href="https://zalo.me/g/tuhocai"
@@ -511,6 +702,112 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
           )}
         </div>
       </div>
+
+      {/* POPUP HỎI ĐỔI MẬT KHẨU SAU KHI MUA HÀNG THÀNH CÔNG */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#111116] border-2 border-indigo-400 dark:border-indigo-500/40 rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-14 h-14 rounded-2xl bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-400 flex items-center justify-center mx-auto border border-indigo-300 dark:border-indigo-500/30">
+              <KeyRound className="w-7 h-7" />
+            </div>
+
+            <div className="text-center space-y-1.5">
+              <h3 className="text-lg font-black text-slate-900 dark:text-white">
+                Bảo Mật Tài Khoản Khách Hàng
+              </h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                Tài khoản của bạn đã được kích hoạt thành công với <strong>mật khẩu mặc định là Số điện thoại</strong> bạn vừa đăng ký. Bạn có muốn đổi mật khẩu mới để bảo mật hơn không?
+              </p>
+            </div>
+
+            {passwordError && (
+              <div className="p-3 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-300 text-red-700 dark:text-red-400 text-xs font-bold flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{passwordError}</span>
+              </div>
+            )}
+
+            {passwordSuccess && (
+              <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-300 text-emerald-700 dark:text-emerald-400 text-xs font-bold flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>Đổi mật khẩu thành công! Đang chuyển bạn vào khu vực học tập...</span>
+              </div>
+            )}
+
+            {!showChangePasswordForm ? (
+              <div className="space-y-2.5 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowChangePasswordForm(true)}
+                  className="w-full py-3.5 px-4 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white font-extrabold text-xs shadow-md shadow-indigo-900/25 transition-all active:scale-[0.98]"
+                >
+                  🔐 Đổi Mật Khẩu Mới Ngay
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPasswordModal(false);
+                    window.location.href = '/dashboard';
+                  }}
+                  className="w-full py-3 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition-all"
+                >
+                  🚀 Để Sau, Vào Học Ngay
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleChangePasswordSubmit} className="space-y-3 pt-2">
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Mật khẩu mới (tối thiểu 6 ký tự)
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Nhập mật khẩu mới"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-white outline-none focus:border-indigo-600"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Xác nhận lại mật khẩu mới
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Nhập lại mật khẩu mới"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-white outline-none focus:border-indigo-600"
+                  />
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowChangePasswordForm(false)}
+                    className="w-1/3 py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs"
+                  >
+                    Quay lại
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={passwordLoading || passwordSuccess}
+                    className="w-2/3 py-2.5 px-4 rounded-xl bg-indigo-700 hover:bg-indigo-800 disabled:opacity-50 text-white font-extrabold text-xs shadow-md transition-all flex items-center justify-center gap-1.5"
+                  >
+                    {passwordLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
+                    Lưu Mật Khẩu
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

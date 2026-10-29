@@ -17,8 +17,8 @@ export interface SiteSettings {
 }
 
 export const DEFAULT_SETTINGS: SiteSettings = {
-  bank_id: 'VPB',
-  account_no: '0934434101',
+  bank_id: 'ACB',
+  account_no: '4747827',
   account_name: 'NGUYEN VAN DANG',
   hotline: '0934.434.101',
   zalo_group_url: 'https://zalo.me/g/tuhocai',

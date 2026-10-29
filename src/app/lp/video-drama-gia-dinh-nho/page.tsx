@@ -22,6 +22,7 @@ import {
   Flame,
   ChevronRight
 } from 'lucide-react';
+import { trackLandingPageView, trackLandingPageCtaClick, getStoredUtm } from '@/lib/funnelTracker';
 
 export default function VideoDramaLandingPage() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -34,6 +35,7 @@ export default function VideoDramaLandingPage() {
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState('');
 
   // Countdown timer 14:59 for urgency
   const [timeLeft, setTimeLeft] = useState(14 * 60 + 59);
@@ -54,8 +56,10 @@ export default function VideoDramaLandingPage() {
   // VietQR VIB 69K
   const qrUrl = "https://img.vietqr.io/image/VIB-0934434101-compact2.png?amount=69000&addInfo=1%20ly%20tra%20sua&accountName=NGUYEN%20VAN%20DANG";
 
-  // Affiliate tracking
+  // Funnel & Affiliate tracking
   useEffect(() => {
+    trackLandingPageView('video-drama-gia-dinh-nho');
+
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const ref = params.get('ref');
@@ -69,6 +73,12 @@ export default function VideoDramaLandingPage() {
       }
     }
   }, []);
+
+  const handleOpenCheckout = () => {
+    trackLandingPageCtaClick('video-drama-gia-dinh-nho');
+    setFormError('');
+    setModalOpen(true);
+  };
 
   const handleCopy = (text: string, type: 'bank' | 'amount' | 'content') => {
     navigator.clipboard.writeText(text);
@@ -86,6 +96,23 @@ export default function VideoDramaLandingPage() {
 
   const handleConfirmPayment = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError('');
+
+    const cleanEmail = customerEmail.trim().toLowerCase();
+    const cleanPhone = customerPhone.replace(/\s+/g, '').trim();
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      setFormError('Email không đúng định dạng. Vui lòng nhập email hợp lệ (VD: name@gmail.com)');
+      return;
+    }
+
+    const phoneRegex = /^0[0-9]{9}$/;
+    if (!phoneRegex.test(cleanPhone)) {
+      setFormError('Số điện thoại phải bao gồm đúng 10 chữ số (bắt đầu bằng 0, VD: 0912345678)');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       let affRef: string | null = null;
@@ -93,26 +120,38 @@ export default function VideoDramaLandingPage() {
         affRef = localStorage.getItem('tuhocai_aff_ref');
       }
 
-      await fetch('/api/checkout', {
+      const utm = getStoredUtm('video-drama-gia-dinh-nho');
+
+      const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           productId: 'WF-DRAMA-069',
           customerName: customerName || 'Học Viên Drama',
-          customerEmail: customerEmail,
-          customerPhone: customerPhone,
+          customerEmail: cleanEmail,
+          customerPhone: cleanPhone,
           affiliateRef: affRef,
+          landingSlug: 'video-drama-gia-dinh-nho',
+          utmSource: utm.utmSource,
+          utmMedium: utm.utmMedium,
+          utmCampaign: utm.utmCampaign,
         }),
       });
 
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('customer_email_drama', customerEmail);
+      const resData = await res.json();
+      if (!res.ok) {
+        setFormError(resData.error || 'Có lỗi xảy ra khi tạo đơn hàng');
+        setIsSubmitting(false);
+        return;
       }
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('customer_email_drama', cleanEmail);
+      }
+      window.location.href = `/lp/video-drama-gia-dinh-nho/cam-on?email=${encodeURIComponent(cleanEmail)}`;
     } catch (_) {
-      // Continue
-    } finally {
+      setFormError('Không thể kết nối máy chủ. Vui lòng thử lại.');
       setIsSubmitting(false);
-      window.location.href = `/lp/video-drama-gia-dinh-nho/cam-on?email=${encodeURIComponent(customerEmail)}`;
     }
   };
 
@@ -209,13 +248,14 @@ export default function VideoDramaLandingPage() {
             <div className="mt-8 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
               <a 
                 href="#nhan-quy-trinh"
+                onClick={handleOpenCheckout}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#ffc400] px-8 py-4 text-base font-black text-[#080b10] shadow-[0_10px_36px_rgba(255,196,0,0.3)] hover:bg-[#ffd33d] active:scale-95 transition-all cursor-pointer"
               >
                 <span>NHẬN TOÀN BỘ QUY TRÌNH (69K)</span>
                 <ArrowDown className="w-5 h-5 animate-bounce" />
               </a>
               <button 
-                onClick={() => setModalOpen(true)}
+                onClick={handleOpenCheckout}
                 className="w-full sm:w-auto px-6 py-4 rounded-xl border border-[#ffc400]/40 bg-[#ffc400]/10 text-[#ffc400] font-bold text-sm hover:bg-[#ffc400]/20 transition-colors cursor-pointer"
               >
                 Mở Form Kích Hoạt Nhanh
@@ -463,7 +503,7 @@ export default function VideoDramaLandingPage() {
                 </div>
 
                 <button 
-                  onClick={() => setModalOpen(true)}
+                  onClick={handleOpenCheckout}
                   className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#ffc400] py-4 px-6 font-black text-[#080b10] hover:bg-[#ffd33d] transition-all shadow-[0_10px_30px_rgba(255,196,0,0.25)] cursor-pointer text-base uppercase"
                 >
                   <Mail className="w-5 h-5" />
@@ -583,6 +623,12 @@ export default function VideoDramaLandingPage() {
             </div>
 
             <form onSubmit={handleConfirmPayment} className="mt-3 space-y-3 text-left">
+              {formError && (
+                <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs font-bold leading-relaxed">
+                  ⚠️ {formError}
+                </div>
+              )}
+
               <div>
                 <label className="text-xs sm:text-sm font-bold text-slate-200 block mb-1">
                   Email nhận tài liệu và mở khóa (Bắt buộc):
@@ -592,7 +638,10 @@ export default function VideoDramaLandingPage() {
                   required
                   placeholder="name@gmail.com"
                   value={customerEmail}
-                  onChange={(e) => setCustomerEmail(e.target.value)}
+                  onChange={(e) => {
+                    setCustomerEmail(e.target.value);
+                    if (formError) setFormError('');
+                  }}
                   className="w-full px-3.5 py-3 rounded-lg bg-black/50 border border-[#27303d] text-base text-white focus:outline-none focus:border-[#ffc400]"
                 />
               </div>
@@ -612,17 +661,28 @@ export default function VideoDramaLandingPage() {
               </div>
 
               <div>
-                <label className="text-xs sm:text-sm font-bold text-slate-200 block mb-1">
-                  Số điện thoại / Zalo:
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-xs sm:text-sm font-bold text-slate-200 block">
+                    Số điện thoại (Đúng 10 số):
+                  </label>
+                  <span className="text-[11px] text-amber-300 font-medium">Mật khẩu Kho Của Tôi</span>
+                </div>
                 <input 
                   type="tel" 
                   required
+                  maxLength={10}
+                  pattern="0[0-9]{9}"
                   placeholder="Ví dụ: 0912345678"
                   value={customerPhone}
-                  onChange={(e) => setCustomerPhone(e.target.value)}
+                  onChange={(e) => {
+                    setCustomerPhone(e.target.value);
+                    if (formError) setFormError('');
+                  }}
                   className="w-full px-3.5 py-3 rounded-lg bg-black/50 border border-[#27303d] text-base text-white focus:outline-none focus:border-[#ffc400]"
                 />
+                <p className="mt-1 text-[11px] text-slate-400">
+                  *SĐT này sẽ là mật khẩu mặc định để bạn đăng nhập tra cứu và tải tài liệu trọn đời.
+                </p>
               </div>
 
               <button 

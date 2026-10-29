@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { MessageCircle, Phone, Sparkles, X, Send, ChevronUp, Bot, ExternalLink } from 'lucide-react';
 
 const FAQ_MAP: Record<string, string> = {
@@ -17,6 +18,7 @@ const FAQ_MAP: Record<string, string> = {
 };
 
 export default function FloatingAssistant() {
+  const pathname = usePathname();
   const [chatOpen, setChatOpen] = useState(false);
   const [messages, setMessages] = useState<Array<{ sender: 'bot' | 'user'; text: string }>>([
     {
@@ -27,25 +29,10 @@ export default function FloatingAssistant() {
   const [inputVal, setInputVal] = useState('');
   const [userInteracted, setUserInteracted] = useState(false);
 
-  // Auto pop-up after 4s, auto close after 10s if not interacted
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!userInteracted) {
-        setChatOpen(true);
-      }
-    }, 4000);
-
-    const autoClose = setTimeout(() => {
-      if (!userInteracted) {
-        setChatOpen(false);
-      }
-    }, 14000);
-
-    return () => {
-      clearTimeout(timer);
-      clearTimeout(autoClose);
-    };
-  }, [userInteracted]);
+  // Không hiển thị widget chat trong trang quản trị admin
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   const handleQuickAsk = (key: string, label: string) => {
     setUserInteracted(true);

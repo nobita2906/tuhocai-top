@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { X, Sparkles, ShoppingBag } from 'lucide-react';
 
 interface ToastItem {
@@ -50,9 +51,15 @@ const SAMPLE_EVENTS: ToastItem[] = [
 ];
 
 export default function SocialProofToast() {
+  const pathname = usePathname();
   const [current, setCurrent] = useState<ToastItem | null>(null);
   const [visible, setVisible] = useState(false);
   const [index, setIndex] = useState(0);
+
+  // Không hiển thị toast trên trang quản trị admin
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   useEffect(() => {
     // Show first toast after 4s

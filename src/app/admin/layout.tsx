@@ -22,6 +22,8 @@ import {
   Settings,
   BookOpen,
   Share2,
+  Layers,
+  Send,
 } from 'lucide-react';
 
 import ThemeToggle from '@/components/ThemeToggle';
@@ -69,14 +71,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const navItems = [
     { label: 'Tổng quan', href: '/admin', icon: LayoutDashboard },
+    { label: 'Landing Pages & Phễu', href: '/admin/landing-pages', icon: Layers },
+    { label: 'Đơn hàng & VietQR', href: '/admin/don-hang', icon: CreditCard },
+    { label: 'Kho sản phẩm', href: '/admin/san-pham', icon: Package },
+    { label: 'Đối tác Affiliate', href: '/admin/affiliate', icon: Share2 },
+    { label: 'Danh sách Leads 0đ', href: '/admin/leads', icon: Mail },
     { label: 'Không gian nội bộ (Wiki)', href: '/admin/noi-bo', icon: BookOpen },
     { label: 'Quản lý bài viết', href: '/admin/bai-viet', icon: FileText },
     { label: 'Viết bài mới', href: '/admin/bai-viet/them-moi', icon: PlusCircle },
     { label: 'Quản lý thành viên', href: '/admin/thanh-vien', icon: Users },
-    { label: 'Kho sản phẩm', href: '/admin/san-pham', icon: Package },
-    { label: 'Đơn hàng & VietQR', href: '/admin/don-hang', icon: CreditCard },
-    { label: 'Đối tác Affiliate', href: '/admin/affiliate', icon: Share2 },
-    { label: 'Danh sách Leads 0đ', href: '/admin/leads', icon: Mail },
+    { label: 'Cấu hình Telegram', href: '/admin/cai-dat-telegram', icon: Send },
     { label: 'Cài đặt Website & QR', href: '/admin/cai-dat', icon: Settings },
   ];
 

@@ -24,6 +24,7 @@ import {
   Flame,
   ChevronRight
 } from 'lucide-react';
+import { trackLandingPageView, trackLandingPageCtaClick, getStoredUtm } from '@/lib/funnelTracker';
 
 export default function CopyLandingPage() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -36,6 +37,7 @@ export default function CopyLandingPage() {
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState('');
 
   // Urgency Countdown 14:59
   const [timeLeft, setTimeLeft] = useState({ minutes: 14, seconds: 59 });
@@ -57,8 +59,9 @@ export default function CopyLandingPage() {
   // VietQR VIB 99K
   const qrUrl = "https://img.vietqr.io/image/VIB-0934434101-compact2.png?amount=99000&addInfo=copy%20landing%20page&accountName=NGUYEN%20VAN%20DANG";
 
-  // Affiliate tracking
+  // Track pageview & affiliate
   useEffect(() => {
+    trackLandingPageView('sao-chep-landing-page');
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const ref = params.get('ref');
@@ -72,6 +75,12 @@ export default function CopyLandingPage() {
       }
     }
   }, []);
+
+  const handleOpenCheckout = () => {
+    trackLandingPageCtaClick('sao-chep-landing-page');
+    setFormError('');
+    setModalOpen(true);
+  };
 
   const handleCopy = (text: string, type: 'bank' | 'amount' | 'content') => {
     navigator.clipboard.writeText(text);
@@ -89,33 +98,61 @@ export default function CopyLandingPage() {
 
   const handleConfirmPayment = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError('');
+
+    const cleanEmail = customerEmail.trim().toLowerCase();
+    const cleanPhone = customerPhone.replace(/\s+/g, '').trim();
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      setFormError('Email không đúng định dạng. Vui lòng nhập email hợp lệ (VD: name@gmail.com)');
+      return;
+    }
+
+    const phoneRegex = /^0[0-9]{9}$/;
+    if (!phoneRegex.test(cleanPhone)) {
+      setFormError('Số điện thoại phải bao gồm đúng 10 chữ số (bắt đầu bằng 0, VD: 0912345678)');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       let affRef: string | null = null;
       if (typeof window !== 'undefined') {
         affRef = localStorage.getItem('tuhocai_aff_ref');
       }
+      const utmData = getStoredUtm('sao-chep-landing-page');
 
-      await fetch('/api/checkout', {
+      const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           productId: 'SKILL-CLONE-099',
           customerName: customerName || 'Học Viên Copy Landing Page',
-          customerEmail: customerEmail,
-          customerPhone: customerPhone,
+          customerEmail: cleanEmail,
+          customerPhone: cleanPhone,
           affiliateRef: affRef,
+          landingSlug: 'sao-chep-landing-page',
+          utmSource: utmData.utmSource,
+          utmMedium: utmData.utmMedium,
+          utmCampaign: utmData.utmCampaign,
         }),
       });
 
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('customer_email_copy_lp', customerEmail);
+      const resData = await res.json();
+      if (!res.ok) {
+        setFormError(resData.error || 'Có lỗi xảy ra khi tạo đơn hàng');
+        setIsSubmitting(false);
+        return;
       }
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('customer_email_copy_lp', cleanEmail);
+      }
+      window.location.href = `/lp/sao-chep-landing-page/cam-on?email=${encodeURIComponent(cleanEmail)}`;
     } catch (_) {
-      // Continue
-    } finally {
+      setFormError('Không thể kết nối máy chủ. Vui lòng thử lại.');
       setIsSubmitting(false);
-      window.location.href = `/lp/sao-chep-landing-page/cam-on?email=${encodeURIComponent(customerEmail)}`;
     }
   };
 
@@ -205,13 +242,14 @@ export default function CopyLandingPage() {
             <div className="mt-8 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
               <a 
                 href="#nhan-quy-trinh"
+                onClick={handleOpenCheckout}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-cyan-400 to-teal-400 px-8 py-4 text-base font-black text-[#050811] shadow-[0_10px_36px_rgba(6,182,212,0.3)] hover:opacity-95 active:scale-95 transition-all cursor-pointer"
               >
                 <span>NHẬN TOÀN BỘ QUY TRÌNH (99K)</span>
                 <ArrowDown className="w-5 h-5 animate-bounce" />
               </a>
               <button
-                onClick={() => setModalOpen(true)}
+                onClick={handleOpenCheckout}
                 className="w-full sm:w-auto px-6 py-4 rounded-xl border border-cyan-500/40 bg-cyan-950/30 text-cyan-300 font-bold text-sm hover:bg-cyan-950/60 transition-colors cursor-pointer"
               >
                 Mở Form Kích Hoạt Nhanh
@@ -511,7 +549,7 @@ export default function CopyLandingPage() {
                 </p>
 
                 <button 
-                  onClick={() => setModalOpen(true)}
+                  onClick={handleOpenCheckout}
                   className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-teal-400 py-4 px-6 font-black text-[#050811] hover:opacity-95 transition-all shadow-[0_10px_30px_rgba(6,182,212,0.3)] cursor-pointer text-base uppercase"
                 >
                   <span>NHẬN QUY TRÌNH VÀO EMAIL</span>
@@ -588,6 +626,7 @@ export default function CopyLandingPage() {
 
           <a
             href="#nhan-quy-trinh"
+            onClick={handleOpenCheckout}
             className="flex-1 max-w-[200px] py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-400 to-teal-400 text-[#050811] font-black text-sm uppercase tracking-wider text-center shadow-lg active:scale-95 transition-all flex items-center justify-center gap-1"
           >
             <span>Nhận Skill Ngay</span>
@@ -663,6 +702,12 @@ export default function CopyLandingPage() {
             </div>
 
             <form onSubmit={handleConfirmPayment} className="mt-3 space-y-3 text-left">
+              {formError && (
+                <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs font-bold leading-relaxed">
+                  ⚠️ {formError}
+                </div>
+              )}
+
               <div>
                 <label className="text-xs sm:text-sm font-bold text-slate-200 block mb-1">
                   Email nhận tài liệu và mở khóa (Bắt buộc):
@@ -672,7 +717,10 @@ export default function CopyLandingPage() {
                   required
                   placeholder="name@gmail.com"
                   value={customerEmail}
-                  onChange={(e) => setCustomerEmail(e.target.value)}
+                  onChange={(e) => {
+                    setCustomerEmail(e.target.value);
+                    if (formError) setFormError('');
+                  }}
                   className="w-full px-3.5 py-3 rounded-lg bg-black/50 border border-slate-700 text-base text-white focus:outline-none focus:border-cyan-400"
                 />
               </div>
@@ -692,17 +740,28 @@ export default function CopyLandingPage() {
               </div>
 
               <div>
-                <label className="text-xs sm:text-sm font-bold text-slate-200 block mb-1">
-                  Số điện thoại / Zalo:
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-xs sm:text-sm font-bold text-slate-200 block">
+                    Số điện thoại (Đúng 10 số):
+                  </label>
+                  <span className="text-[11px] text-yellow-300 font-medium">Mật khẩu Kho Của Tôi</span>
+                </div>
                 <input 
                   type="tel" 
                   required
+                  maxLength={10}
+                  pattern="0[0-9]{9}"
                   placeholder="Ví dụ: 0912345678"
                   value={customerPhone}
-                  onChange={(e) => setCustomerPhone(e.target.value)}
+                  onChange={(e) => {
+                    setCustomerPhone(e.target.value);
+                    if (formError) setFormError('');
+                  }}
                   className="w-full px-3.5 py-3 rounded-lg bg-black/50 border border-slate-700 text-base text-white focus:outline-none focus:border-cyan-400"
                 />
+                <p className="mt-1 text-[11px] text-slate-400">
+                  *SĐT này sẽ là mật khẩu mặc định để bạn đăng nhập tra cứu và tải tài liệu trọn đời.
+                </p>
               </div>
 
               <button 

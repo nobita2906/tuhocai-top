@@ -18,11 +18,16 @@ import {
   ShoppingBag,
 } from 'lucide-react';
 import Pagination from '@/components/ui/Pagination';
+import { useSearchParams } from 'next/navigation';
 
 export default function AdminOrdersPage() {
+  const searchParams = useSearchParams();
+  const initialLandingSlug = searchParams.get('landing_slug') || 'ALL';
+
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [landingFilter, setLandingFilter] = useState(initialLandingSlug);
   const [page, setPage] = useState(1);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [selectedReceipt, setSelectedReceipt] = useState<string | null>(null);
@@ -35,6 +40,7 @@ export default function AdminOrdersPage() {
       setLoading(true);
       const url = new URL('/api/admin/orders', window.location.origin);
       if (statusFilter !== 'ALL') url.searchParams.set('status', statusFilter);
+      if (landingFilter !== 'ALL') url.searchParams.set('landing_slug', landingFilter);
 
       const res = await fetch(url.toString());
       const data = await res.json();
@@ -51,7 +57,7 @@ export default function AdminOrdersPage() {
   useEffect(() => {
     setPage(1);
     loadOrders();
-  }, [statusFilter]);
+  }, [statusFilter, landingFilter]);
 
   const handleUpdateStatus = async (orderId: string, newStatus: 'APPROVED' | 'REJECTED') => {
     const confirmMsg =
@@ -158,55 +164,74 @@ export default function AdminOrdersPage() {
         </div>
       )}
 
-      {/* Filter Tabs */}
-      <div className="flex items-center gap-2 border-b-2 border-slate-200 dark:border-slate-800 pb-3">
-        <button
-          type="button"
-          onClick={() => setStatusFilter('ALL')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-            statusFilter === 'ALL'
-              ? 'bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 text-white shadow-md shadow-indigo-950/25'
-              : 'border-2 border-slate-300 dark:border-white/10 bg-white dark:bg-white/[0.04] text-slate-700 dark:text-slate-400 hover:opacity-80'
-          }`}
-        >
-          Tất cả ({orders.length})
-        </button>
-        <button
-          type="button"
-          onClick={() => setStatusFilter('PENDING')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            statusFilter === 'PENDING'
-              ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-300 border-2 border-amber-400 dark:border-amber-500/30 shadow-xs'
-              : 'border-2 border-slate-300 dark:border-white/10 bg-white dark:bg-white/[0.04] text-slate-700 dark:text-slate-400 hover:opacity-80'
-          }`}
-        >
-          <Clock className="w-4 h-4" />
-          Chờ duyệt {pendingCount > 0 && <span className="px-1.5 py-0.5 rounded-full bg-amber-500 text-black text-[10px] font-mono font-black">{pendingCount}</span>}
-        </button>
-        <button
-          type="button"
-          onClick={() => setStatusFilter('APPROVED')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            statusFilter === 'APPROVED'
-              ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-900 dark:text-emerald-300 border-2 border-emerald-400 dark:border-emerald-500/30 shadow-xs'
-              : 'border-2 border-slate-300 dark:border-white/10 bg-white dark:bg-white/[0.04] text-slate-700 dark:text-slate-400 hover:opacity-80'
-          }`}
-        >
-          <CheckCircle2 className="w-4 h-4" />
-          Đã thanh toán
-        </button>
-        <button
-          type="button"
-          onClick={() => setStatusFilter('REJECTED')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            statusFilter === 'REJECTED'
-              ? 'bg-rose-100 dark:bg-rose-500/20 text-rose-900 dark:text-rose-300 border-2 border-rose-400 dark:border-rose-500/30 shadow-xs'
-              : 'border-2 border-slate-300 dark:border-white/10 bg-white dark:bg-white/[0.04] text-slate-700 dark:text-slate-400 hover:opacity-80'
-          }`}
-        >
-          <XCircle className="w-4 h-4" />
-          Đã hủy
-        </button>
+      {/* Filter Tabs & Landing Page Dropdown */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-slate-200 dark:border-slate-800 pb-3">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+          <button
+            type="button"
+            onClick={() => setStatusFilter('ALL')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+              statusFilter === 'ALL'
+                ? 'bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 text-white shadow-md shadow-indigo-950/25'
+                : 'border-2 border-slate-300 dark:border-white/10 bg-white dark:bg-white/[0.04] text-slate-700 dark:text-slate-400 hover:opacity-80'
+            }`}
+          >
+            Tất cả ({orders.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setStatusFilter('PENDING')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+              statusFilter === 'PENDING'
+                ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-300 border-2 border-amber-400 dark:border-amber-500/30 shadow-xs'
+                : 'border-2 border-slate-300 dark:border-white/10 bg-white dark:bg-white/[0.04] text-slate-700 dark:text-slate-400 hover:opacity-80'
+            }`}
+          >
+            <Clock className="w-4 h-4" />
+            Chờ duyệt {pendingCount > 0 && <span className="px-1.5 py-0.5 rounded-full bg-amber-500 text-black text-[10px] font-mono font-black">{pendingCount}</span>}
+          </button>
+          <button
+            type="button"
+            onClick={() => setStatusFilter('APPROVED')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+              statusFilter === 'APPROVED'
+                ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-900 dark:text-emerald-300 border-2 border-emerald-400 dark:border-emerald-500/30 shadow-xs'
+                : 'border-2 border-slate-300 dark:border-white/10 bg-white dark:bg-white/[0.04] text-slate-700 dark:text-slate-400 hover:opacity-80'
+            }`}
+          >
+            <CheckCircle2 className="w-4 h-4" />
+            Đã thanh toán
+          </button>
+          <button
+            type="button"
+            onClick={() => setStatusFilter('REJECTED')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+              statusFilter === 'REJECTED'
+                ? 'bg-rose-100 dark:bg-rose-500/20 text-rose-900 dark:text-rose-300 border-2 border-rose-400 dark:border-rose-500/30 shadow-xs'
+                : 'border-2 border-slate-300 dark:border-white/10 bg-white dark:bg-white/[0.04] text-slate-700 dark:text-slate-400 hover:opacity-80'
+            }`}
+          >
+            <XCircle className="w-4 h-4" />
+            Đã hủy
+          </button>
+        </div>
+
+        {/* Dropdown Lọc Theo Landing Page */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1">
+            <span>🌐 LP:</span>
+          </span>
+          <select
+            value={landingFilter}
+            onChange={(e) => setLandingFilter(e.target.value)}
+            className="px-3 py-1.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="ALL">Tất cả Landing Pages</option>
+            <option value="video-drama-gia-dinh-nho">Mini Drama (69K)</option>
+            <option value="video-ai-tu-1-anh">Video AI VIP 1 Ảnh (297K)</option>
+            <option value="sao-chep-landing-page">Sao Chép Landing Page (99K)</option>
+          </select>
+        </div>
       </div>
 
       {/* Orders Table */}
@@ -226,7 +251,7 @@ export default function AdminOrdersPage() {
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50 dark:bg-slate-950/60 border-b-2 border-slate-200 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400 font-mono font-bold uppercase">
                 <tr>
-                  <th className="px-5 py-3.5">Mã đơn / Thời gian</th>
+                  <th className="px-5 py-3.5">Mã đơn / Nguồn LP</th>
                   <th className="px-5 py-3.5">Khách hàng</th>
                   <th className="px-5 py-3.5">Sản phẩm</th>
                   <th className="px-5 py-3.5">Số tiền</th>
@@ -240,13 +265,29 @@ export default function AdminOrdersPage() {
                   <tr key={o.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
                     <td className="px-5 py-4">
                       <div className="font-mono text-xs font-bold text-indigo-800 dark:text-indigo-400">
-                        #{o.id.substring(0, 8)}
+                        #{o.order_code || o.id.substring(0, 8)}
                       </div>
                       <div className="text-xs text-slate-500 dark:text-slate-400 font-mono">
                         {o.created_at ? new Date(o.created_at).toLocaleString('vi-VN') : '—'}
                       </div>
-                      {o.affiliate_code && (
+                      {/* Badge Nguồn Landing Page */}
+                      {o.landing_slug && (
                         <div className="mt-1">
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-950/70 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-700/60">
+                            🌐 /lp/{o.landing_slug}
+                          </span>
+                        </div>
+                      )}
+                      {/* Badge Nguồn UTM Campaign */}
+                      {o.utm_source && (
+                        <div className="mt-0.5">
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-100 text-cyan-800 dark:bg-cyan-950/70 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-700/60 capitalize">
+                            🎯 {o.utm_source}
+                          </span>
+                        </div>
+                      )}
+                      {o.affiliate_code && (
+                        <div className="mt-0.5">
                           <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/70 dark:text-amber-300 border border-amber-300 dark:border-amber-700/60">
                             🤝 Ref: {o.affiliate_code}
                           </span>

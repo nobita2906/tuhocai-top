@@ -13,6 +13,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status') || '';
     const search = searchParams.get('q') || '';
+    const landingSlug = searchParams.get('landing_slug') || '';
 
     let sql = 'SELECT * FROM orders WHERE 1=1';
     const params: any[] = [];
@@ -20,6 +21,11 @@ export async function GET(req: Request) {
     if (status && status !== 'ALL') {
       sql += ' AND payment_status = ?';
       params.push(status);
+    }
+
+    if (landingSlug && landingSlug !== 'ALL') {
+      sql += ' AND landing_slug = ?';
+      params.push(landingSlug);
     }
 
     if (search) {

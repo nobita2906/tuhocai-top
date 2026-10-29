@@ -2,18 +2,60 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { randomUUID } from 'crypto';
 import { execute, query } from '@/lib/db';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser, hashPassword } from '@/lib/auth';
 import { sendFreeResourceEmail } from '@/lib/email';
 import { getSiteSettings } from '@/lib/settings';
 import { attachAffiliateToOrder } from '@/lib/affiliate';
+import { broadcastTelegramMessage } from '@/lib/telegram';
 
 export async function POST(req: Request) {
   try {
-    const { productId, customerName, customerEmail, customerPhone, affiliateRef } = await req.json();
+    const { 
+      productId, 
+      customerName, 
+      customerEmail, 
+      customerPhone, 
+      affiliateRef,
+      landingSlug,
+      utmSource,
+      utmMedium,
+      utmCampaign
+    } = await req.json();
 
-    if (!productId || !customerName || !customerEmail) {
+    const session = await getCurrentUser();
+    let userId = session?.id || null;
+    const isLoggedIn = !!userId;
+
+    if (!productId || !customerName || !customerEmail || (!isLoggedIn && !customerPhone)) {
       return NextResponse.json({ error: 'Vui lòng cung cấp đầy đủ thông tin đặt hàng' }, { status: 400 });
     }
+
+    const cleanEmail = String(customerEmail).trim().toLowerCase();
+    const cleanName = String(customerName).trim();
+    let cleanPhone = customerPhone ? String(customerPhone).replace(/\s+/g, '').trim() : '';
+
+    // 1. Kiểm tra định dạng Email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      return NextResponse.json({ 
+        error: 'Email không đúng định dạng. Vui lòng nhập email hợp lệ (ví dụ: name@gmail.com)' 
+      }, { status: 400 });
+    }
+
+    // 2. Nếu là khách mới (chưa đăng nhập), bắt buộc Số điện thoại phải đúng 10 chữ số
+    if (!isLoggedIn) {
+      const phoneRegex = /^0[0-9]{9}$/;
+      if (!phoneRegex.test(cleanPhone)) {
+        return NextResponse.json({ 
+          error: 'Số điện thoại phải bao gồm đúng 10 chữ số (bắt đầu bằng 0, ví dụ: 0912345678)' 
+        }, { status: 400 });
+      }
+    }
+
+    const cleanLandingSlug = landingSlug ? String(landingSlug).trim() : null;
+    const cleanUtmSource = utmSource ? String(utmSource).trim() : null;
+    const cleanUtmMedium = utmMedium ? String(utmMedium).trim() : null;
+    const cleanUtmCampaign = utmCampaign ? String(utmCampaign).trim() : null;
 
     // Determine affiliate referral code (from body or fallback to cookie)
     let finalAffiliateCode = (typeof affiliateRef === 'string' && affiliateRef.trim()) ? affiliateRef.trim() : null;
@@ -43,12 +85,21 @@ export async function POST(req: Request) {
     }
 
     const product = products[0];
-    const cleanEmail = customerEmail.trim().toLowerCase();
-    const cleanName = customerName.trim();
 
-    // Check logged in user
-    const session = await getCurrentUser();
-    const userId = session?.id || null;
+    // Check logged in user or auto-create customer user account with default password = phone
+    if (!userId) {
+      const existingUsers = await query<any>('SELECT id FROM users WHERE LOWER(email) = ? LIMIT 1', [cleanEmail]);
+      if (existingUsers.length > 0) {
+        userId = existingUsers[0].id;
+      } else {
+        userId = randomUUID();
+        const hashedPassword = await hashPassword(cleanPhone);
+        await execute(
+          'INSERT INTO users (id, name, email, password_hash, role, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())',
+          [userId, cleanName, cleanEmail, hashedPassword, 'USER']
+        );
+      }
+    }
 
     // Load dynamic site settings
     const siteSettings = await getSiteSettings();
@@ -59,10 +110,14 @@ export async function POST(req: Request) {
       const orderCode = `FREE-${Math.floor(100000 + Math.random() * 900000)}`;
 
       await execute(
-        `INSERT INTO orders (id, order_code, user_id, customer_name, customer_email, customer_phone, product_id, product_name, price, payment_status, payment_method, approved_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 'APPROVED', 'FREE', NOW())`,
-        [orderId, orderCode, userId, cleanName, cleanEmail, customerPhone || null, product.id, product.name]
+        `INSERT INTO orders (id, order_code, user_id, customer_name, customer_email, customer_phone, product_id, product_name, landing_slug, utm_source, utm_medium, utm_campaign, price, payment_status, payment_method, approved_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 'APPROVED', 'FREE', NOW())`,
+        [orderId, orderCode, userId, cleanName, cleanEmail, customerPhone || null, product.id, product.name, cleanLandingSlug, cleanUtmSource, cleanUtmMedium, cleanUtmCampaign]
       );
+
+      if (cleanLandingSlug) {
+        execute('UPDATE landing_pages SET conversions = conversions + 1 WHERE slug = ?', [cleanLandingSlug]).catch(() => {});
+      }
 
       // Unlock in library if user exists
       if (userId) {
@@ -97,10 +152,14 @@ export async function POST(req: Request) {
     const orderCode = `THAI${Math.floor(100000 + Math.random() * 900000)}`;
 
     await execute(
-      `INSERT INTO orders (id, order_code, user_id, customer_name, customer_email, customer_phone, product_id, product_name, price, payment_status, payment_method)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING', 'VIETQR')`,
-      [orderId, orderCode, userId, cleanName, cleanEmail, customerPhone || null, product.id, product.name, product.price]
+      `INSERT INTO orders (id, order_code, user_id, customer_name, customer_email, customer_phone, product_id, product_name, landing_slug, utm_source, utm_medium, utm_campaign, price, payment_status, payment_method)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING', 'VIETQR')`,
+      [orderId, orderCode, userId, cleanName, cleanEmail, customerPhone || null, product.id, product.name, cleanLandingSlug, cleanUtmSource, cleanUtmMedium, cleanUtmCampaign, product.price]
     );
+
+    if (cleanLandingSlug) {
+      execute('UPDATE landing_pages SET conversions = conversions + 1 WHERE slug = ?', [cleanLandingSlug]).catch(() => {});
+    }
 
     // Gắn Affiliate và tạo hoa hồng PENDING nếu có mã giới thiệu
     let affResult: any = null;
@@ -113,13 +172,28 @@ export async function POST(req: Request) {
       });
     }
 
-    // Generate VietQR URL with dynamic settings
-    const bankId = siteSettings.bank_id || 'VPB';
-    const accountNo = siteSettings.account_no || '0934434101';
+    // Generate VietQR URL with dynamic course prefix and settings
+    function getCoursePrefix(pid: string, pname: string): string {
+      const text = `${pid} ${pname}`.toLowerCase();
+      if (text.includes('drama')) return 'DRAMA';
+      if (text.includes('sao-chep') || text.includes('landing') || text.includes('clone')) return 'CLONELP';
+      if (text.includes('video-ai') || text.includes('vip') || text.includes('1 anh')) return 'VIDEOAI';
+      if (text.includes('n8n') || text.includes('facebook') || text.includes('fb')) return 'N8NFB';
+      if (text.includes('prompt')) return 'PROMPT';
+      const clean = pid.replace(/[^a-zA-Z0-9]/g, '').slice(0, 7).toUpperCase();
+      return clean || 'THAI';
+    }
+
+    const coursePrefix = getCoursePrefix(product.id, product.name);
+    const transferContent = `${coursePrefix} ${orderCode}`;
+
+    const bankId = siteSettings.bank_id || 'ACB';
+    const accountNo = siteSettings.account_no || '4747827';
     const accountName = siteSettings.account_name || 'NGUYEN VAN DANG';
 
     const encodedName = encodeURIComponent(accountName);
-    const vietQrUrl = `https://img.vietqr.io/image/${bankId}-${accountNo}-compact2.png?amount=${product.price}&addInfo=${orderCode}&accountName=${encodedName}`;
+    const encodedContent = encodeURIComponent(transferContent);
+    const vietQrUrl = `https://img.vietqr.io/image/${bankId}-${accountNo}-compact2.png?amount=${product.price}&addInfo=${encodedContent}&accountName=${encodedName}`;
 
     // Immediately notify Telegram Bot Admin
     const telegramToken = siteSettings.telegram_bot_token;
@@ -132,6 +206,9 @@ export async function POST(req: Request) {
       affText = `\n🤝 *Affiliate:* ${affResult.partner.name} (\`${affResult.partner.code}\`)\n🎁 *Hoa hồng:* ${commFormatted} (${affResult.rate}%)`;
     }
 
+    const lpInfo = cleanLandingSlug ? `\n🌐 *Nguồn Landing Page:* \`${cleanLandingSlug}\`` : '';
+    const utmInfo = cleanUtmSource ? `\n🎯 *Chiến dịch:* \`${cleanUtmSource}\` ${cleanUtmCampaign ? `(${cleanUtmCampaign})` : ''}` : '';
+
     const caption = `🛒 *CÓ ĐƠN HÀNG MỚI KHỞI TẠO!*
 
 📦 *Mã đơn:* \`${orderCode}\`
@@ -139,7 +216,9 @@ export async function POST(req: Request) {
 📧 *Email:* ${cleanEmail}
 📞 *SĐT:* ${customerPhone || 'Không có'}
 💎 *Sản phẩm:* ${product.name}
-💰 *Số tiền:* ${priceFormatted}${affText}
+💰 *Số tiền:* ${priceFormatted}
+🏦 *Ngân hàng:* ${bankId} - STK: \`${accountNo}\`
+📝 *Nội dung CK:* \`${transferContent}\`${lpInfo}${utmInfo}${affText}
 
 👉 *Khách hàng đang xem mã VietQR. Bạn có thể bấm DUYỆT ngay nếu tài khoản ${bankId} đã nhận được tiền:*`;
 
@@ -152,18 +231,22 @@ export async function POST(req: Request) {
       ]
     };
 
-    if (telegramToken && telegramChatId) {
-      fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: telegramChatId,
-          text: caption,
-          parse_mode: 'Markdown',
-          reply_markup: inlineKeyboard,
-        }),
-      }).catch((e) => console.error('Error sending Telegram notification on checkout:', e));
-    }
+    await broadcastTelegramMessage({
+      type: 'order_created',
+      variables: {
+        order_code: orderCode,
+        customer_name: cleanName,
+        customer_email: cleanEmail,
+        customer_phone: cleanPhone || 'Không có',
+        product_name: product.name,
+        amount: priceFormatted,
+        bank_name: bankId,
+        account_no: accountNo,
+        transfer_content: transferContent,
+        created_at: new Date().toLocaleString('vi-VN'),
+      },
+      replyMarkup: inlineKeyboard,
+    });
 
     return NextResponse.json({
       success: true,
@@ -177,11 +260,15 @@ export async function POST(req: Request) {
         price: product.price,
       },
       bankInfo: {
-        bankName: `${bankId} (Ngân hàng thụ hưởng)`,
+        bankName: bankId === 'ACB' ? 'ACB (Ngân hàng TMCP Á Châu)' : `${bankId} (Ngân hàng thụ hưởng)`,
+        bankId,
         accountNo,
         accountName,
         amount: product.price,
-        content: orderCode,
+        content: transferContent,
+        orderCode,
+        landingSlug: cleanLandingSlug || null,
+        productId: product.id,
       },
       vietQrUrl,
     });

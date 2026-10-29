@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { execute, query } from '@/lib/db';
-import { randomUUID } from 'crypto';
+import { randomUUID, createHmac, timingSafeEqual } from 'crypto';
 import { sendOrderApprovedEmail } from '@/lib/email';
 import { approveAffiliateCommission } from '@/lib/affiliate';
 import { getSiteSettings } from '@/lib/settings';
+import { broadcastTelegramMessage } from '@/lib/telegram';
 
 /**
  * SEPAY WEBHOOK ENDPOINT FOR TUHOCAI.TOP
@@ -26,6 +27,40 @@ interface SePayWebhookPayload {
   description?: string;
 }
 
+function safeCompare(a: string, b: string): boolean {
+  if (!a || !b || a.length !== b.length) return false;
+  try {
+    return timingSafeEqual(Buffer.from(a, 'hex'), Buffer.from(b, 'hex'));
+  } catch {
+    return false;
+  }
+}
+
+function verifySepaySignature(rawBody: string, signatureHeader: string, timestampHeader: string, secret: string): boolean {
+  if (!secret) return true;
+  if (!signatureHeader) return false;
+
+  let providedHash = signatureHeader.trim();
+  if (providedHash.startsWith('sha256=')) {
+    providedHash = providedHash.slice(7).trim();
+  } else if (providedHash.includes('v1=')) {
+    const match = providedHash.match(/v1=([a-fA-F0-9]+)/);
+    if (match) providedHash = match[1];
+  }
+
+  // Phương án 1: Ký `${timestamp}.${rawBody}` (chuẩn SePay HMAC)
+  if (timestampHeader) {
+    const hmacWithTimestamp = createHmac('sha256', secret).update(`${timestampHeader}.${rawBody}`).digest('hex');
+    if (safeCompare(hmacWithTimestamp, providedHash)) return true;
+  }
+
+  // Phương án 2: Ký trực tiếp rawBody
+  const hmacDirect = createHmac('sha256', secret).update(rawBody).digest('hex');
+  if (safeCompare(hmacDirect, providedHash)) return true;
+
+  return false;
+}
+
 export async function POST(req: Request) {
   try {
     const rawBody = await req.text();
@@ -39,11 +74,21 @@ export async function POST(req: Request) {
 
     console.log('[SePay Webhook] Nhận dữ liệu biến động số dư:', JSON.stringify(payload));
 
-    // 1. Kiểm tra xác thực SePay API Key (nếu có cấu hình)
+    // 1. Kiểm tra xác thực SePay (HMAC-SHA256 hoặc API Key)
+    const sepaySecret = process.env.SEPAY_WEBHOOK_SECRET || 'whsec_Mb3fdTLikFj3RKluA4iyHRyMYxyXITZB';
+    const signatureHeader = req.headers.get('x-sepay-signature') || req.headers.get('x-signature') || '';
+    const timestampHeader = req.headers.get('x-sepay-timestamp') || '';
     const authHeader = req.headers.get('authorization') || '';
     const configuredApiKey = process.env.SEPAY_API_KEY;
 
-    if (configuredApiKey) {
+    if (signatureHeader) {
+      const isValid = verifySepaySignature(rawBody, signatureHeader, timestampHeader, sepaySecret);
+      if (!isValid) {
+        console.warn('[SePay Webhook] HMAC-SHA256 signature không khớp:', signatureHeader);
+        return NextResponse.json({ success: false, message: 'Invalid HMAC signature' }, { status: 401 });
+      }
+      console.log('[SePay Webhook] Xác thực chữ ký HMAC-SHA256 thành công!');
+    } else if (configuredApiKey) {
       const token = authHeader.replace(/^Apikey\s+/i, '').trim();
       if (token !== configuredApiKey) {
         console.warn('[SePay Webhook] Sai hoặc thiếu API Key xác thực:', authHeader);
@@ -58,8 +103,8 @@ export async function POST(req: Request) {
 
     const amount = Number(payload.transferAmount || 0);
     const content = (payload.content || payload.description || '').trim();
-    const gateway = payload.gateway || 'VIB';
-    const accountNo = payload.accountNumber || '';
+    const gateway = payload.gateway || 'ACB';
+    const accountNo = payload.accountNumber || '4747827';
 
     if (amount <= 0) {
       return NextResponse.json({ success: false, message: 'Transfer amount must be greater than 0' });
@@ -217,35 +262,22 @@ export async function POST(req: Request) {
         emailStatusText = mailRes?.success ? '✓ Đã gửi thành công' : '⚠️ Lỗi gửi email';
       }
 
-      // Bắn tin nhắn chúc mừng qua Telegram cho anh Đăng
-      if (telegramToken && telegramChatId) {
-        const affMsg = affComm
-          ? `\n🤝 *Hoa hồng đối tác:* +${new Intl.NumberFormat('vi-VN').format(affComm.commission_amount)} đ`
-          : '';
-
-        const tgText = `🤖 *SEPAY ĐÃ TỰ ĐỘNG KHỚP TIỀN VIB & DUYỆT ĐƠN THÀNH CÔNG!*
-
-📦 *Mã đơn:* \`${matchedOrder.order_code}\`
-👤 *Khách hàng:* ${matchedOrder.customer_name} (\`${matchedOrder.customer_email}\`)
-📞 *SĐT/Zalo:* ${matchedOrder.customer_phone || 'Không có'}
-💎 *Sản phẩm:* ${matchedOrder.product_name}
-💰 *Tiền vào VIB:* +${new Intl.NumberFormat('vi-VN').format(amount)} đ
-📝 *Nội dung CK:* "${content}"
-📂 *Link tài liệu:* [Mở Google Drive](${downloadLink})
-📧 *Email khách hàng:* ${emailStatusText}${affMsg}
-
-✨ *Trạng thái:* Hệ thống đã tự động mở khóa tài nguyên cho khách hàng 100%!`;
-
-        fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: telegramChatId,
-            text: tgText,
-            parse_mode: 'Markdown',
-          }),
-        }).catch(() => {});
-      }
+      // Bắn tin nhắn chúc mừng qua Telegram theo các kênh cấu hình
+      await broadcastTelegramMessage({
+        type: 'order_approved',
+        variables: {
+          order_code: matchedOrder.order_code,
+          customer_name: matchedOrder.customer_name,
+          customer_email: matchedOrder.customer_email,
+          customer_phone: matchedOrder.customer_phone || 'Không có',
+          product_name: matchedOrder.product_name,
+          amount: new Intl.NumberFormat('vi-VN').format(amount) + ' đ',
+          bank_name: gateway,
+          account_no: accountNo,
+          transfer_content: content,
+          created_at: payload.transactionDate || new Date().toLocaleString('vi-VN'),
+        },
+      });
 
       return NextResponse.json({
         success: true,
@@ -259,26 +291,21 @@ export async function POST(req: Request) {
     // 5. NẾU NHẬN TIỀN NHƯNG CHƯA KHỚP ĐƠN NÀO TRONG HỆ THỐNG
     console.warn(`[SePay Webhook] Tiền vào ${amount} đ với nội dung "${content}" nhưng chưa tìm thấy đơn PENDING khớp.`);
 
-    if (telegramToken && telegramChatId) {
-      const alertMsg = `⚠️ *THÔNG BÁO TIỀN VÀO VIB (CHƯA KHỚP ĐƠN):*
-
-💰 *Số tiền:* +${new Intl.NumberFormat('vi-VN').format(amount)} đ
-🏦 *Ngân hàng:* ${gateway} (${accountNo})
-📝 *Nội dung CK:* "${content}"
-⏰ *Thời gian:* ${payload.transactionDate || new Date().toLocaleString('vi-VN')}
-
-👉 *Ghi chú:* Hệ thống chưa tìm thấy đơn PENDING trùng khớp. Anh Đăng vui lòng kiểm tra mục Quản lý đơn hàng trên trang Admin nhé!`;
-
-      fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: telegramChatId,
-          text: alertMsg,
-          parse_mode: 'Markdown',
-        }),
-      }).catch(() => {});
-    }
+    await broadcastTelegramMessage({
+      type: 'unmatched_payment',
+      variables: {
+        order_code: 'CHƯA_KHỚP',
+        customer_name: 'Khách chuyển khoản',
+        customer_email: 'Chưa xác định',
+        customer_phone: 'Chưa xác định',
+        product_name: 'Chưa xác định',
+        amount: new Intl.NumberFormat('vi-VN').format(amount) + ' đ',
+        bank_name: gateway,
+        account_no: accountNo,
+        transfer_content: content,
+        created_at: payload.transactionDate || new Date().toLocaleString('vi-VN'),
+      },
+    });
 
     return NextResponse.json({
       success: true,

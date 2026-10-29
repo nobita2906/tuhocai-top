@@ -22,6 +22,7 @@ import {
   ChevronRight,
   Flame
 } from 'lucide-react';
+import { trackLandingPageView, trackLandingPageCtaClick, getStoredUtm } from '@/lib/funnelTracker';
 
 export default function VideoAiTu1AnhPage() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -34,6 +35,7 @@ export default function VideoAiTu1AnhPage() {
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState('');
 
   // Countdown timer 14:59
   const [timeLeft, setTimeLeft] = useState(14 * 60 + 59);
@@ -54,8 +56,9 @@ export default function VideoAiTu1AnhPage() {
   // VietQR VIB 297K
   const qrUrl = "https://img.vietqr.io/image/VIB-0934434101-compact2.png?amount=297000&addInfo=video%20ai%201%20anh&accountName=NGUYEN%20VAN%20DANG";
 
-  // Affiliate tracking
+  // Track pageview & affiliate
   useEffect(() => {
+    trackLandingPageView('video-ai-tu-1-anh');
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const ref = params.get('ref');
@@ -69,6 +72,12 @@ export default function VideoAiTu1AnhPage() {
       }
     }
   }, []);
+
+  const handleOpenCheckout = () => {
+    trackLandingPageCtaClick('video-ai-tu-1-anh');
+    setFormError('');
+    setModalOpen(true);
+  };
 
   const handleCopy = (text: string, type: 'bank' | 'amount' | 'content') => {
     navigator.clipboard.writeText(text);
@@ -86,33 +95,61 @@ export default function VideoAiTu1AnhPage() {
 
   const handleConfirmPayment = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError('');
+
+    const cleanEmail = customerEmail.trim().toLowerCase();
+    const cleanPhone = customerPhone.replace(/\s+/g, '').trim();
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      setFormError('Email không đúng định dạng. Vui lòng nhập email hợp lệ (VD: name@gmail.com)');
+      return;
+    }
+
+    const phoneRegex = /^0[0-9]{9}$/;
+    if (!phoneRegex.test(cleanPhone)) {
+      setFormError('Số điện thoại phải bao gồm đúng 10 chữ số (bắt đầu bằng 0, VD: 0912345678)');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       let affRef: string | null = null;
       if (typeof window !== 'undefined') {
         affRef = localStorage.getItem('tuhocai_aff_ref');
       }
+      const utmData = getStoredUtm('video-ai-tu-1-anh');
 
-      await fetch('/api/checkout', {
+      const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           productId: 'WF-VIP-297',
           customerName: customerName || 'Học Viên Video AI 1 Ảnh',
-          customerEmail: customerEmail,
-          customerPhone: customerPhone,
+          customerEmail: cleanEmail,
+          customerPhone: cleanPhone,
           affiliateRef: affRef,
+          landingSlug: 'video-ai-tu-1-anh',
+          utmSource: utmData.utmSource,
+          utmMedium: utmData.utmMedium,
+          utmCampaign: utmData.utmCampaign,
         }),
       });
 
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('customer_email_video_vip', customerEmail);
+      const resData = await res.json();
+      if (!res.ok) {
+        setFormError(resData.error || 'Có lỗi xảy ra khi tạo đơn hàng');
+        setIsSubmitting(false);
+        return;
       }
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('customer_email_video_vip', cleanEmail);
+      }
+      window.location.href = `/lp/video-ai-tu-1-anh/cam-on?email=${encodeURIComponent(cleanEmail)}`;
     } catch (_) {
-      // Continue
-    } finally {
+      setFormError('Không thể kết nối máy chủ. Vui lòng thử lại.');
       setIsSubmitting(false);
-      window.location.href = `/lp/video-ai-tu-1-anh/cam-on?email=${encodeURIComponent(customerEmail)}`;
     }
   };
 
@@ -210,7 +247,7 @@ export default function VideoAiTu1AnhPage() {
 
               <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
                 <button 
-                  onClick={() => setModalOpen(true)}
+                  onClick={handleOpenCheckout}
                   className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#eab84e] text-[#100c08] font-black text-base uppercase hover:bg-[#f8d575] shadow-[0_10px_35px_rgba(234,184,78,0.3)] transition-all cursor-pointer text-center"
                 >
                   NHẬN QUY TRÌNH · 297.000Đ
@@ -451,7 +488,7 @@ export default function VideoAiTu1AnhPage() {
                   className="w-full max-w-56 h-auto object-contain"
                 />
                 <button 
-                  onClick={() => setModalOpen(true)}
+                  onClick={handleOpenCheckout}
                   className="mt-4 w-full py-4 px-6 rounded-xl bg-[#eab84e] hover:bg-[#f8d575] text-[#100c08] font-black text-base uppercase transition-all shadow-md cursor-pointer flex items-center justify-center gap-2"
                 >
                   <Mail className="w-5 h-5" />
@@ -483,7 +520,7 @@ export default function VideoAiTu1AnhPage() {
           </div>
 
           <button 
-            onClick={() => setModalOpen(true)}
+            onClick={handleOpenCheckout}
             className="flex-1 py-3 px-4 rounded-xl bg-[#eab84e] text-[#100c08] font-black text-sm uppercase tracking-wider shadow-lg active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1.5"
           >
             <span>NHẬN QUY TRÌNH</span>
@@ -557,6 +594,12 @@ export default function VideoAiTu1AnhPage() {
             </div>
 
             <form onSubmit={handleConfirmPayment} className="mt-3 space-y-3 text-left">
+              {formError && (
+                <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs font-bold leading-relaxed">
+                  ⚠️ {formError}
+                </div>
+              )}
+
               <div>
                 <label className="text-xs sm:text-sm font-bold text-slate-200 block mb-1">
                   Email nhận tài liệu và mở khóa (Bắt buộc):
@@ -566,7 +609,10 @@ export default function VideoAiTu1AnhPage() {
                   required
                   placeholder="name@gmail.com"
                   value={customerEmail}
-                  onChange={(e) => setCustomerEmail(e.target.value)}
+                  onChange={(e) => {
+                    setCustomerEmail(e.target.value);
+                    if (formError) setFormError('');
+                  }}
                   className="w-full px-3.5 py-3 rounded-lg bg-black/50 border border-[#382c1e] text-base text-white focus:outline-none focus:border-[#eab84e]"
                 />
               </div>
@@ -586,17 +632,28 @@ export default function VideoAiTu1AnhPage() {
               </div>
 
               <div>
-                <label className="text-xs sm:text-sm font-bold text-slate-200 block mb-1">
-                  Số điện thoại / Zalo:
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-xs sm:text-sm font-bold text-slate-200 block">
+                    Số điện thoại (Đúng 10 số):
+                  </label>
+                  <span className="text-[11px] text-amber-300 font-medium">Mật khẩu Kho Của Tôi</span>
+                </div>
                 <input 
                   type="tel" 
                   required
+                  maxLength={10}
+                  pattern="0[0-9]{9}"
                   placeholder="Ví dụ: 0912345678"
                   value={customerPhone}
-                  onChange={(e) => setCustomerPhone(e.target.value)}
+                  onChange={(e) => {
+                    setCustomerPhone(e.target.value);
+                    if (formError) setFormError('');
+                  }}
                   className="w-full px-3.5 py-3 rounded-lg bg-black/50 border border-[#382c1e] text-base text-white focus:outline-none focus:border-[#eab84e]"
                 />
+                <p className="mt-1 text-[11px] text-slate-400">
+                  *SĐT này sẽ là mật khẩu mặc định để bạn đăng nhập tra cứu và tải tài liệu trọn đời.
+                </p>
               </div>
 
               <button 
