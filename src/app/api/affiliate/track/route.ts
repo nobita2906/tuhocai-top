@@ -4,7 +4,8 @@ import { recordAffiliateClick } from '@/lib/affiliate';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { ref, landingPath, referrer } = body;
+    const ref = body.ref || body.aff;
+    const { landingPath, referrer } = body;
 
     if (!ref || typeof ref !== 'string') {
       return NextResponse.json({ error: 'Mã giới thiệu không hợp lệ' }, { status: 400 });
@@ -34,12 +35,14 @@ export async function POST(req: Request) {
       },
     });
 
-    // Lưu cookie tuhocai_aff_ref tồn tại 30 ngày
+    // Lưu cookie tuhocai_aff_ref tồn tại 30 ngày (chia sẻ cho mọi subdomain *.tuhocai.top)
+    const isProd = process.env.NODE_ENV === 'production';
     response.cookies.set('tuhocai_aff_ref', result.partner.code, {
       path: '/',
       maxAge: 30 * 24 * 60 * 60, // 30 ngày
       httpOnly: false, // Để client script có thể đọc nếu cần
       sameSite: 'lax',
+      ...(isProd ? { domain: '.tuhocai.top' } : {}),
     });
 
     return response;

@@ -82,7 +82,7 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
   // Copy helpers
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  // Auto-fill if user logged in or from URL query
+  // Auto-fill if user logged in or from URL query + Capture affiliate and UTM
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const sp = new URLSearchParams(window.location.search);
@@ -92,6 +92,31 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
       if (qEmail) setEmail(qEmail);
       if (qPhone) setPhone(qPhone);
       if (qName) setName(qName);
+
+      // Affiliate & UTM Tracking
+      const affCode = sp.get('ref') || sp.get('aff');
+      if (affCode) {
+        localStorage.setItem('tuhocai_aff_ref', affCode);
+        fetch('/api/affiliate/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ref: affCode, landingPath: '/thanh-toan' }),
+        }).catch(() => {});
+      }
+
+      const uSrc = sp.get('utm_source') || sp.get('source');
+      const uMed = sp.get('utm_medium');
+      const uCam = sp.get('utm_campaign');
+      const uCnt = sp.get('utm_content');
+      if (uSrc) sessionStorage.setItem('checkout_utm_source', uSrc);
+      if (uMed) sessionStorage.setItem('checkout_utm_medium', uMed);
+      if (uCam) sessionStorage.setItem('checkout_utm_campaign', uCam);
+      if (uCnt) sessionStorage.setItem('checkout_utm_content', uCnt);
+
+      // Facebook Pixel PageView
+      if (typeof (window as any).fbq === 'function') {
+        (window as any).fbq('track', 'PageView');
+      }
     }
 
     fetch('/api/auth/me')
@@ -131,6 +156,16 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
           clearInterval(interval);
           setDownloadUrl(data.downloadUrl || '/dashboard');
           setStep(3);
+
+          // Facebook Pixel Purchase Event
+          if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
+            (window as any).fbq('track', 'Purchase', {
+              content_name: product?.name || 'Khóa học Tự Học AI',
+              value: product?.price || 0,
+              currency: 'VND',
+            });
+          }
+
           // Tự động mở modal hỏi đổi mật khẩu nếu là khách mới
           if (!isLoggedIn) {
             setShowPasswordModal(true);
@@ -241,6 +276,19 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
     setLoading(true);
 
     try {
+      let affRef: string | null = null;
+      let utmSource: string | null = null;
+      let utmMedium: string | null = null;
+      let utmCampaign: string | null = null;
+
+      if (typeof window !== 'undefined') {
+        const sp = new URLSearchParams(window.location.search);
+        affRef = sp.get('ref') || sp.get('aff') || localStorage.getItem('tuhocai_aff_ref');
+        utmSource = sp.get('utm_source') || sp.get('source') || sessionStorage.getItem('checkout_utm_source');
+        utmMedium = sp.get('utm_medium') || sessionStorage.getItem('checkout_utm_medium');
+        utmCampaign = sp.get('utm_campaign') || sessionStorage.getItem('checkout_utm_campaign');
+      }
+
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -249,6 +297,10 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
           customerName: name,
           customerEmail: cleanEmail,
           customerPhone: cleanPhone || undefined,
+          affiliateRef: affRef || undefined,
+          utmSource: utmSource || undefined,
+          utmMedium: utmMedium || undefined,
+          utmCampaign: utmCampaign || undefined,
         }),
       });
 
@@ -259,6 +311,15 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
         setDownloadUrl(data.downloadUrl);
         setStep(3);
         return;
+      }
+
+      // Facebook Pixel AddPaymentInfo Event
+      if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
+        (window as any).fbq('track', 'AddPaymentInfo', {
+          content_name: product.name,
+          value: product.price,
+          currency: 'VND',
+        });
       }
 
       setOrderId(data.orderId);

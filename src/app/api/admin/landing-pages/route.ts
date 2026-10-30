@@ -75,7 +75,8 @@ export async function GET(req: Request) {
         revenue,
         ctaRate,
         conversionRate,
-        rpm,
+        subdomain: lp.subdomain || null,
+        facebookPixelId: lp.facebook_pixel_id || null,
         createdAt: lp.created_at,
         updatedAt: lp.updated_at,
       };
@@ -143,6 +144,8 @@ export async function POST(req: Request) {
       features,
       modules,
       isPublished,
+      subdomain,
+      facebookPixelId,
     } = body;
 
     if (!slug || !title || !headline) {
@@ -150,6 +153,7 @@ export async function POST(req: Request) {
     }
 
     const cleanSlug = String(slug).trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+    const cleanSubdomain = subdomain ? String(subdomain).trim().toLowerCase().replace(/[^a-z0-9-]/g, '') : null;
 
     // Kiểm tra trùng slug
     const existing = await query<any>('SELECT id FROM landing_pages WHERE slug = ? LIMIT 1', [cleanSlug]);
@@ -161,12 +165,13 @@ export async function POST(req: Request) {
 
     await execute(
       `INSERT INTO landing_pages (
-        id, slug, title, headline, subheadline, product_id, price, original_price, 
-        video_url, cta_text, hero_badge, features, modules, is_published, views, cta_clicks, conversions
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 0)`,
+        id, slug, subdomain, title, headline, subheadline, product_id, price, original_price, 
+        video_url, cta_text, facebook_pixel_id, hero_badge, features, modules, is_published, views, cta_clicks, conversions
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 0)`,
       [
         newId,
         cleanSlug,
+        cleanSubdomain,
         title.trim(),
         headline.trim(),
         subheadline?.trim() || null,
@@ -175,6 +180,7 @@ export async function POST(req: Request) {
         Number(originalPrice) || 499000,
         videoUrl?.trim() || null,
         ctaText?.trim() || '⚡ NHẬN QUY TRÌNH NGAY',
+        facebookPixelId?.trim() || null,
         heroBadge?.trim() || '✦ KHÓA HỌC THỰC CHIẾN TỰ HỌC AI',
         features ? JSON.stringify(features) : null,
         modules ? JSON.stringify(modules) : null,
@@ -202,15 +208,17 @@ export async function PUT(req: Request) {
     }
 
     const body = await req.json();
-    const { id, title, headline, subheadline, price, originalPrice, videoUrl, ctaText, isPublished } = body;
+    const { id, title, headline, subheadline, price, originalPrice, videoUrl, ctaText, isPublished, subdomain, facebookPixelId } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'Missing landing page ID' }, { status: 400 });
     }
 
+    const cleanSubdomain = subdomain ? String(subdomain).trim().toLowerCase().replace(/[^a-z0-9-]/g, '') : null;
+
     await execute(
       `UPDATE landing_pages 
-       SET title = ?, headline = ?, subheadline = ?, price = ?, original_price = ?, video_url = ?, cta_text = ?, is_published = ?
+       SET title = ?, headline = ?, subheadline = ?, price = ?, original_price = ?, video_url = ?, cta_text = ?, is_published = ?, subdomain = ?, facebook_pixel_id = ?
        WHERE id = ?`,
       [
         title,
@@ -221,6 +229,8 @@ export async function PUT(req: Request) {
         videoUrl,
         ctaText,
         Boolean(isPublished),
+        cleanSubdomain,
+        facebookPixelId?.trim() || null,
         id,
       ]
     );

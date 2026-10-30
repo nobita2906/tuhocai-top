@@ -86,7 +86,7 @@ export default function CopyLandingPage() {
     trackLandingPageView('sao-chep-landing-page');
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
-      const ref = params.get('ref');
+      const ref = params.get('ref') || params.get('aff');
       if (ref) {
         localStorage.setItem('tuhocai_aff_ref', ref);
         fetch('/api/affiliate/track', {
@@ -100,12 +100,18 @@ export default function CopyLandingPage() {
 
   const handleOpenCheckout = () => {
     trackLandingPageCtaClick('sao-chep-landing-page');
-    let refParam = '';
+    let queryParams = '?pid=SKILL-CLONE-099';
     if (typeof window !== 'undefined') {
       const ref = localStorage.getItem('tuhocai_aff_ref');
-      if (ref) refParam = `&ref=${encodeURIComponent(ref)}`;
+      if (ref) queryParams += `&ref=${encodeURIComponent(ref)}`;
+
+      const utm = getStoredUtm('sao-chep-landing-page');
+      if (utm.utmSource) queryParams += `&utm_source=${encodeURIComponent(utm.utmSource)}`;
+      if (utm.utmMedium) queryParams += `&utm_medium=${encodeURIComponent(utm.utmMedium)}`;
+      if (utm.utmCampaign) queryParams += `&utm_campaign=${encodeURIComponent(utm.utmCampaign)}`;
+      if (utm.utmContent) queryParams += `&utm_content=${encodeURIComponent(utm.utmContent)}`;
     }
-    window.location.href = `/thanh-toan?pid=SKILL-CLONE-099${refParam}`;
+    window.location.href = `/thanh-toan${queryParams}`;
   };
 
   const handleCopy = (text: string, type: 'bank' | 'amount' | 'content') => {
