@@ -32,8 +32,22 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [recognizedCustomer, setRecognizedCustomer] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const handleEmailBlur = async () => {
+    if (isLoggedIn || !email || !email.includes('@')) return;
+    try {
+      const res = await fetch(`/api/checkout/lookup-customer?email=${encodeURIComponent(email.trim().toLowerCase())}`);
+      const data = await res.json();
+      if (data.exists) {
+        if (!name && data.name) setName(data.name);
+        if (!phone && data.phone) setPhone(data.phone);
+        setRecognizedCustomer(true);
+      }
+    } catch (_) {}
+  };
 
   // Step state: 1 = Form, 2 = VietQR Payment, 3 = Approved / Done
   const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -68,8 +82,18 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
   // Copy helpers
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  // Auto-fill if user logged in
+  // Auto-fill if user logged in or from URL query
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const sp = new URLSearchParams(window.location.search);
+      const qEmail = sp.get('email');
+      const qPhone = sp.get('phone');
+      const qName = sp.get('name');
+      if (qEmail) setEmail(qEmail);
+      if (qPhone) setPhone(qPhone);
+      if (qName) setName(qName);
+    }
+
     fetch('/api/auth/me')
       .then((r) => r.json())
       .then((d) => {
@@ -105,33 +129,18 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
         const data = await res.json();
         if (data.success && data.status === 'APPROVED') {
           clearInterval(interval);
-
-          const pid = String(product?.id || '').toLowerCase();
-          const pname = String(product?.name || '').toLowerCase();
-          let thankYouUrl = '';
-
-          if (bankInfo?.landingSlug) {
-            thankYouUrl = `/lp/${bankInfo.landingSlug}/cam-on?code=${orderCode}`;
-          } else if (pid.includes('drama') || pname.includes('drama')) {
-            thankYouUrl = `/lp/video-drama-gia-dinh-nho/cam-on?code=${orderCode}`;
-          } else if (pid.includes('clone') || pname.includes('sao-chep') || pname.includes('landing')) {
-            thankYouUrl = `/lp/sao-chep-landing-page/cam-on?code=${orderCode}`;
-          } else if (pid.includes('vip') || pid.includes('video') || pname.includes('1 ảnh') || pname.includes('1 anh')) {
-            thankYouUrl = `/lp/video-ai-tu-1-anh/cam-on?code=${orderCode}`;
-          }
-
-          if (thankYouUrl) {
-            window.location.href = thankYouUrl;
-          } else {
-            setDownloadUrl(data.downloadUrl || 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026');
-            setStep(3);
+          setDownloadUrl(data.downloadUrl || '/dashboard');
+          setStep(3);
+          // Tự động mở modal hỏi đổi mật khẩu nếu là khách mới
+          if (!isLoggedIn) {
+            setShowPasswordModal(true);
           }
         }
       } catch (e) {}
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [step, orderCode, product, bankInfo]);
+  }, [step, orderCode, product, bankInfo, isLoggedIn]);
 
   const handleNavigateToCourse = () => {
     // Nếu là khách mới vừa được tạo pass theo SĐT -> hỏi đổi pass
@@ -396,10 +405,20 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
                   type="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (recognizedCustomer) setRecognizedCustomer(false);
+                  }}
+                  onBlur={handleEmailBlur}
                   placeholder="name@gmail.com"
                   className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-indigo-700 shadow-xs"
                 />
+                {recognizedCustomer && (
+                  <p className="mt-1.5 text-[11px] text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1.5 animate-in fade-in duration-200">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Chào mừng bạn quay lại! Đã tự động nhận diện thông tin của bạn.</span>
+                  </p>
+                )}
               </div>
 
               {isLoggedIn ? (
@@ -636,7 +655,7 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
                       Hệ thống đang chờ Admin kiểm duyệt qua Telegram...
                     </p>
                     <p className="text-[11px] text-slate-600 dark:text-slate-400">
-                      Ngay khi Admin bấm DUYỆT, màn hình sẽ tự động hiển thị link tải Google Drive bên dưới!
+                      Ngay khi Admin bấm DUYỆT, màn hình sẽ tự động kích hoạt đơn hàng và mở khóa khóa học trong tài khoản của bạn!
                     </p>
                   </div>
                 )}

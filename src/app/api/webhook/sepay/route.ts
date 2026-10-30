@@ -101,10 +101,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true, message: 'Ignored outbound transfer' });
     }
 
-    const amount = Number(payload.transferAmount || 0);
-    const content = (payload.content || payload.description || '').trim();
-    const gateway = payload.gateway || 'ACB';
-    const accountNo = payload.accountNumber || '4747827';
+    const anyPayload = payload as any;
+    const amount = Number(payload.transferAmount || anyPayload.amountIn || anyPayload.amount || 0);
+    const content = (payload.content || anyPayload.transactionContent || payload.description || '').trim();
+    const gateway = payload.gateway || anyPayload.bank_brand_name || 'ACB';
+    const accountNo = payload.accountNumber || anyPayload.account_number || '4747827';
 
     if (amount <= 0) {
       return NextResponse.json({ success: false, message: 'Transfer amount must be greater than 0' });

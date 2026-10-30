@@ -15,12 +15,20 @@ export async function GET() {
   );
   const libraryCount = countRes[0]?.count || 0;
 
+  // Get customer_phone from previous orders
+  const phoneRes = await query<any>(
+    'SELECT customer_phone FROM orders WHERE user_id = ? AND customer_phone IS NOT NULL AND customer_phone != "" ORDER BY created_at DESC LIMIT 1',
+    [session.id]
+  );
+  const phone = phoneRes[0]?.customer_phone || '';
+
   return NextResponse.json({
     authenticated: true,
     user: {
       id: session.id,
       name: session.name,
       email: session.email,
+      phone,
       role: session.role,
       libraryCount,
     }

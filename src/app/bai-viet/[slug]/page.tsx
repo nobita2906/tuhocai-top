@@ -275,21 +275,31 @@ export default async function SingleArticlePage({
           {/* Box 2 & 3: Upsell & Affiliate Dual Card */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Box 2: Core Product Upsell */}
-            <div className="rounded-2xl bg-slate-900/90 border border-slate-800 p-5 space-y-3 hover:border-indigo-500/40 transition-all group">
-              <div className="flex items-center gap-2 text-indigo-400 font-bold text-sm">
-                <Zap className="w-4 h-4" />
-                <span>Quy trình n8n Tự Động Hóa 2026</span>
+            <div className="rounded-2xl bg-slate-900/90 border border-slate-800 p-5 space-y-3 hover:border-indigo-500/40 transition-all group flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-2 text-indigo-400 font-bold text-sm">
+                  <Zap className="w-4 h-4" />
+                  <span>Workflow n8n Tự Động Đăng Bài Đa Kênh</span>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed mt-2">
+                  Tự động hóa hoàn toàn khâu xuất bản bài viết lên Facebook, Telegram và Website 24/7.
+                </p>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Tự động hóa hoàn toàn khâu tìm kiếm khách hàng, gửi email chốt đơn và chăm sóc 24/7 không cần nhân sự.
-              </p>
-              <Link
-                href="/lp/n8n-tu-dong-hoa-kiem-tien"
-                className="inline-flex items-center gap-1.5 text-xs text-indigo-400 group-hover:text-indigo-300 font-semibold pt-1"
-              >
-                <span>Xem chi tiết giải pháp</span>
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-              </Link>
+              <div className="flex items-center gap-3 pt-2">
+                <Link
+                  href="/san-pham/workflow-n8n-tu-dong-dang-bai-da-kenh"
+                  className="text-xs text-slate-300 hover:text-white font-medium"
+                >
+                  Chi tiết
+                </Link>
+                <Link
+                  href="/thanh-toan?pid=WF-THAI-099"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow transition-all"
+                >
+                  <span>Mua Ngay (99K)</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
             </div>
 
             {/* Box 3: Affiliate Invitation */}

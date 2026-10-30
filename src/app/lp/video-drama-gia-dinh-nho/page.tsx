@@ -98,8 +98,12 @@ export default function VideoDramaLandingPage() {
 
   const handleOpenCheckout = () => {
     trackLandingPageCtaClick('video-drama-gia-dinh-nho');
-    setFormError('');
-    setModalOpen(true);
+    let refParam = '';
+    if (typeof window !== 'undefined') {
+      const ref = localStorage.getItem('tuhocai_aff_ref');
+      if (ref) refParam = `&ref=${encodeURIComponent(ref)}`;
+    }
+    window.location.href = `/thanh-toan?pid=WF-DRAMA-069${refParam}`;
   };
 
   const handleCopy = (text: string, type: 'bank' | 'amount' | 'content') => {
@@ -518,9 +522,9 @@ export default function VideoDramaLandingPage() {
                 </div>
 
                 <div className="text-sm text-slate-300 space-y-1.5 pt-1">
-                  <p>Chủ tài khoản: <strong className="text-white font-bold">NGUYEN VAN DANG</strong></p>
+                  <p>Chủ tài khoản: <strong className="text-white font-bold">{bankSettings.accountName}</strong></p>
                   <p className="text-xs sm:text-sm text-amber-300">
-                    *Chuyển khoản xong, bấm nút phía dưới để kích hoạt tài liệu vào email của bạn ngay lập tức.
+                    *Bấm nút dưới đây để tạo mã đơn hàng & quét mã VietQR tự động kích hoạt ngay lập tức.
                   </p>
                 </div>
 
@@ -529,7 +533,7 @@ export default function VideoDramaLandingPage() {
                   className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#ffc400] py-4 px-6 font-black text-[#080b10] hover:bg-[#ffd33d] transition-all shadow-[0_10px_30px_rgba(255,196,0,0.25)] cursor-pointer text-base uppercase"
                 >
                   <Mail className="w-5 h-5" />
-                  <span>KÍCH HOẠT QUY TRÌNH VÀO EMAIL NGAY</span>
+                  <span>TIẾN HÀNH ĐẶT MUA (69.000đ)</span>
                 </button>
 
                 {/* HỖ TRỢ KỸ THUẬT TRỰC TIẾP QUA ZALO */}
@@ -571,7 +575,7 @@ export default function VideoDramaLandingPage() {
           </div>
 
           <button 
-            onClick={() => setModalOpen(true)}
+            onClick={handleOpenCheckout}
             className="flex-1 py-3 px-4 rounded-xl bg-[#ffc400] text-[#080b10] font-black text-sm uppercase tracking-wider shadow-lg active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1.5"
           >
             <span>NHẬN QUY TRÌNH</span>

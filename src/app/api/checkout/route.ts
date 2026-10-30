@@ -173,18 +173,19 @@ export async function POST(req: Request) {
     }
 
     // Generate VietQR URL with dynamic course prefix and settings
-    function getCoursePrefix(pid: string, pname: string): string {
-      const text = `${pid} ${pname}`.toLowerCase();
-      if (text.includes('drama')) return 'DRAMA';
-      if (text.includes('sao-chep') || text.includes('landing') || text.includes('clone')) return 'CLONELP';
-      if (text.includes('video-ai') || text.includes('vip') || text.includes('1 anh')) return 'VIDEOAI';
-      if (text.includes('n8n') || text.includes('facebook') || text.includes('fb')) return 'N8NFB';
-      if (text.includes('prompt')) return 'PROMPT';
-      const clean = pid.replace(/[^a-zA-Z0-9]/g, '').slice(0, 7).toUpperCase();
+    function getCoursePrefix(pid: string, pname: string, pObj?: any): string {
+      const fullText = `${pid} ${pname} ${pObj?.pid || ''} ${pObj?.slug || ''}`.toLowerCase();
+      const normalized = fullText.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      if (normalized.includes('drama')) return 'DRAMA';
+      if (normalized.includes('sao-chep') || normalized.includes('landing') || normalized.includes('clone')) return 'CLONELP';
+      if (normalized.includes('video-ai') || normalized.includes('vip') || normalized.includes('1 anh')) return 'VIDEOAI';
+      if (normalized.includes('n8n') || normalized.includes('facebook') || normalized.includes('fb')) return 'N8NFB';
+      if (normalized.includes('prompt')) return 'PROMPT';
+      const clean = (pObj?.pid || pid).replace(/[^a-zA-Z0-9]/g, '').slice(0, 7).toUpperCase();
       return clean || 'THAI';
     }
 
-    const coursePrefix = getCoursePrefix(product.id, product.name);
+    const coursePrefix = getCoursePrefix(product.id, product.name, product);
     const transferContent = `${coursePrefix} ${orderCode}`;
 
     const bankId = siteSettings.bank_id || 'ACB';

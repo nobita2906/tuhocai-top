@@ -97,8 +97,12 @@ export default function VideoAiTu1AnhPage() {
 
   const handleOpenCheckout = () => {
     trackLandingPageCtaClick('video-ai-tu-1-anh');
-    setFormError('');
-    setModalOpen(true);
+    let refParam = '';
+    if (typeof window !== 'undefined') {
+      const ref = localStorage.getItem('tuhocai_aff_ref');
+      if (ref) refParam = `&ref=${encodeURIComponent(ref)}`;
+    }
+    window.location.href = `/thanh-toan?pid=WF-VIP-297${refParam}`;
   };
 
   const handleCopy = (text: string, type: 'bank' | 'amount' | 'content') => {
@@ -514,7 +518,7 @@ export default function VideoAiTu1AnhPage() {
                   className="mt-4 w-full py-4 px-6 rounded-xl bg-[#eab84e] hover:bg-[#f8d575] text-[#100c08] font-black text-base uppercase transition-all shadow-md cursor-pointer flex items-center justify-center gap-2"
                 >
                   <Mail className="w-5 h-5" />
-                  <span>KÍCH HOẠT QUY TRÌNH VÀO EMAIL</span>
+                  <span>TIẾN HÀNH ĐẶT MUA (297.000đ)</span>
                 </button>
               </div>
             </div>

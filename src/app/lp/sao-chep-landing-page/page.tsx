@@ -100,8 +100,12 @@ export default function CopyLandingPage() {
 
   const handleOpenCheckout = () => {
     trackLandingPageCtaClick('sao-chep-landing-page');
-    setFormError('');
-    setModalOpen(true);
+    let refParam = '';
+    if (typeof window !== 'undefined') {
+      const ref = localStorage.getItem('tuhocai_aff_ref');
+      if (ref) refParam = `&ref=${encodeURIComponent(ref)}`;
+    }
+    window.location.href = `/thanh-toan?pid=SKILL-CLONE-099${refParam}`;
   };
 
   const handleCopy = (text: string, type: 'bank' | 'amount' | 'content') => {
@@ -567,14 +571,14 @@ export default function CopyLandingPage() {
                 </dl>
 
                 <p className="mt-4 text-xs sm:text-sm text-slate-300">
-                  Sau khi chuyển khoản, bấm <strong className="text-white">NHẬN QUY TRÌNH</strong> để điền email nhận link kích hoạt tài liệu ngay lập tức.
+                  Bấm <strong className="text-cyan-300">TIẾN HÀNH ĐẶT MUA</strong> để hệ thống tạo mã đơn hàng & mã VietQR riêng biệt kích hoạt tự động 100%.
                 </p>
 
                 <button 
                   onClick={handleOpenCheckout}
                   className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-teal-400 py-4 px-6 font-black text-[#050811] hover:opacity-95 transition-all shadow-[0_10px_30px_rgba(6,182,212,0.3)] cursor-pointer text-base uppercase"
                 >
-                  <span>NHẬN QUY TRÌNH VÀO EMAIL</span>
+                  <span>TIẾN HÀNH ĐẶT MUA (99.000đ)</span>
                   <Sparkles className="w-5 h-5" />
                 </button>
 
