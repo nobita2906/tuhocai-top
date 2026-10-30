@@ -389,7 +389,7 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
                 Tải Trọn Bộ 100+ Prompt FLUX & App Flow Tự Động
               </h2>
               <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
-                Nhập tên và email để hệ thống tự động gửi link Google Drive chứa file template và tài liệu hướng dẫn vào hòm thư của bạn.
+                Nhập tên và email để hệ thống tự động kích hoạt file template và tài liệu hướng dẫn vào tài khoản của bạn.
               </p>
 
               <form onSubmit={handleLeadSubmit} className="space-y-3 pt-2">

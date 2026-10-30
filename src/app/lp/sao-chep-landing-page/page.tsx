@@ -410,7 +410,7 @@ export default function CopyLandingPage() {
                 },
                 {
                   id: '04',
-                  text: 'Kích hoạt tài liệu trực tiếp vào tài khoản email của bạn trên hệ thống Tự Học AI kèm link Google Drive tải ngay.',
+                  text: 'Kích hoạt tài liệu trực tiếp vào tài khoản của bạn trên hệ thống Tự Học AI trong mục Kho Của Tôi.',
                 },
               ].map((item) => (
                 <article 

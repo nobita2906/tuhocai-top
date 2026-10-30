@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, CheckCircle2, Download, MessageCircle, ArrowRight, Loader2, ShieldCheck, Sparkles } from 'lucide-react';
+import { X, CheckCircle2, Download, MessageCircle, ArrowRight, Loader2, ShieldCheck, Sparkles, PackageCheck } from 'lucide-react';
 
 interface LeadMagnetModalProps {
   isOpen: boolean;
@@ -89,13 +89,11 @@ export default function LeadMagnetModal({
 
             <div className="space-y-3 pt-2">
               <a
-                href={result.downloadUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/dashboard"
                 className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-85 text-white font-bold text-sm shadow-xl shadow-indigo-950/25 transition-all active:scale-[0.98]"
               >
-                <Download className="w-4 h-4" />
-                Mở Link Tải Trực Tiếp (Google Drive)
+                <PackageCheck className="w-4 h-4" />
+                🚀 Vào Xem Trong Kho Tài Liệu Của Tôi
               </a>
 
               <a
@@ -110,7 +108,7 @@ export default function LeadMagnetModal({
             </div>
 
             <p className="text-xs text-slate-500 dark:text-slate-400 pt-2 font-mono">
-              Link tài liệu cũng đã được tự động lưu vào hệ thống của Tự Học AI.
+              Tài liệu đã được kích hoạt vĩnh viễn trong tài khoản Tự Học AI của bạn.
             </p>
           </div>
         ) : (
@@ -125,7 +123,7 @@ export default function LeadMagnetModal({
                 Tải Ngay: {resourceName}
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                Nhập thông tin bên dưới để nhận ngay link tải qua Google Drive và lời mời tham gia nhóm hỗ trợ Zalo.
+                Nhập thông tin bên dưới để kích hoạt tài liệu vào Kho Của Tôi và nhận lời mời tham gia nhóm hỗ trợ Zalo.
               </p>
             </div>
 
