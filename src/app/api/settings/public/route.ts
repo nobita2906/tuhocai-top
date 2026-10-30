@@ -5,6 +5,9 @@ export async function GET() {
   try {
     const s = await getSiteSettings();
     return NextResponse.json({
+      bank_id: s.bank_id || 'ACB',
+      account_no: s.account_no || '4747827',
+      account_name: s.account_name || 'NGUYEN VAN DANG',
       banner_enabled: Boolean(s.banner_enabled),
       banner_text: s.banner_text || '',
       banner_url: s.banner_url || '/san-pham',
@@ -14,6 +17,9 @@ export async function GET() {
     });
   } catch (error) {
     return NextResponse.json({
+      bank_id: 'ACB',
+      account_no: '4747827',
+      account_name: 'NGUYEN VAN DANG',
       banner_enabled: false,
       banner_text: '',
       banner_url: '/san-pham',

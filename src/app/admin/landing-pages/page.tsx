@@ -228,7 +228,7 @@ export default function AdminLandingPagesPage() {
           <p className="mt-1 text-xl sm:text-2xl font-black text-rose-600 dark:text-rose-400 truncate">
             {new Intl.NumberFormat('vi-VN').format(data?.totals?.totalRevenue || 0)} đ
           </p>
-          <span className="text-[10px] text-slate-400 mt-0.5 block">Khớp SePay VIB</span>
+          <span className="text-[10px] text-slate-400 mt-0.5 block">Khớp SePay Auto</span>
         </div>
       </div>
 
@@ -440,7 +440,7 @@ export default function AdminLandingPagesPage() {
               Tạo Landing Page Khóa Học Mới
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">
-              Hệ thống sẽ tự động khởi tạo Landing Page chuẩn Mobile CRO kèm cổng thanh toán SePay VIB và bộ theo dõi chuyển đổi.
+              Hệ thống sẽ tự động khởi tạo Landing Page chuẩn Mobile CRO kèm cổng thanh toán SePay Auto và bộ theo dõi chuyển đổi.
             </p>
 
             <form onSubmit={handleCreateLp} className="space-y-4 text-left text-xs sm:text-sm">

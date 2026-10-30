@@ -42,6 +42,28 @@ export default function CopyLandingPage() {
   // Urgency Countdown 14:59
   const [timeLeft, setTimeLeft] = useState({ minutes: 14, seconds: 59 });
 
+  // Dynamic Bank Settings from Admin (default ACB)
+  const [bankSettings, setBankSettings] = useState({
+    bankId: 'ACB',
+    accountNo: '4747827',
+    accountName: 'NGUYEN VAN DANG',
+  });
+
+  useEffect(() => {
+    fetch('/api/settings/public')
+      .then(res => res.json())
+      .then(data => {
+        if (data.bank_id && data.account_no) {
+          setBankSettings({
+            bankId: data.bank_id,
+            accountNo: data.account_no,
+            accountName: data.account_name || 'NGUYEN VAN DANG',
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft(prev => {
@@ -56,8 +78,8 @@ export default function CopyLandingPage() {
     return () => clearInterval(timer);
   }, []);
 
-  // VietQR VIB 99K
-  const qrUrl = "https://img.vietqr.io/image/VIB-0934434101-compact2.png?amount=99000&addInfo=copy%20landing%20page&accountName=NGUYEN%20VAN%20DANG";
+  // VietQR Dynamic
+  const qrUrl = `https://img.vietqr.io/image/${bankSettings.bankId}-${bankSettings.accountNo}-compact2.png?amount=99000&addInfo=copy%20landing%20page&accountName=${encodeURIComponent(bankSettings.accountName)}`;
 
   // Track pageview & affiliate
   useEffect(() => {
@@ -448,7 +470,7 @@ export default function CopyLandingPage() {
               Nhận toàn bộ quy trình
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-slate-200 text-sm sm:text-base leading-relaxed">
-              Quét mã QR ngân hàng VIB, nhập số tiền 99.000đ và nội dung “copy landing page”. Sau đó bấm nút kích hoạt để nhận tài liệu trực tiếp vào Email.
+              Quét mã QR ngân hàng {bankSettings.bankId}, nhập số tiền 99.000đ và nội dung “copy landing page”. Sau đó bấm nút kích hoạt để nhận tài liệu trực tiếp vào Email.
             </p>
 
             <div className="mx-auto mt-8 grid max-w-4xl gap-6 rounded-2xl border border-slate-800 bg-[#0c1427] p-5 sm:p-8 text-left shadow-2xl md:grid-cols-[20rem_1fr]">
@@ -456,11 +478,11 @@ export default function CopyLandingPage() {
               <div className="overflow-hidden rounded-xl bg-white p-4 shadow-inner flex flex-col items-center justify-center">
                 <img 
                   src={qrUrl} 
-                  alt="QR VietQR VIB 99.000đ" 
+                  alt={`QR VietQR ${bankSettings.bankId} 99.000đ`} 
                   className="mx-auto w-full max-w-60 object-contain"
                 />
                 <span className="text-xs font-mono text-slate-700 mt-2 font-semibold">
-                  Mã VietQR Ngân Hàng VIB
+                  Mã VietQR Ngân Hàng {bankSettings.bankId}
                 </span>
                 <span className="text-[11px] text-slate-500 text-center mt-1">
                   (Dùng mọi App Ngân Hàng để quét)
@@ -482,10 +504,10 @@ export default function CopyLandingPage() {
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <button
-                      onClick={() => handleCopy('0934434101', 'bank')}
+                      onClick={() => handleCopy(bankSettings.accountNo, 'bank')}
                       className="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs sm:text-sm font-semibold text-white flex items-center justify-between cursor-pointer transition-all active:scale-95"
                     >
-                      <span>STK: <strong className="text-yellow-400 font-mono">0934434101</strong></span>
+                      <span>STK: <strong className="text-yellow-400 font-mono">{bankSettings.accountNo}</strong></span>
                       {copiedBank ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-slate-400" />}
                     </button>
 
@@ -510,18 +532,18 @@ export default function CopyLandingPage() {
                 <dl className="mt-4 divide-y divide-slate-800 border-y border-slate-800">
                   <div className="grid gap-1 py-2.5 sm:grid-cols-[8rem_1fr] items-center text-sm">
                     <dt className="text-slate-400">Ngân hàng</dt>
-                    <dd className="font-bold text-white">VIB (Ngân hàng Quốc Tế)</dd>
+                    <dd className="font-bold text-white">{bankSettings.bankId}</dd>
                   </div>
                   <div className="grid gap-1 py-2.5 sm:grid-cols-[8rem_1fr] items-center text-sm">
                     <dt className="text-slate-400">Chủ tài khoản</dt>
-                    <dd className="font-bold text-white">NGUYEN VAN DANG</dd>
+                    <dd className="font-bold text-white">{bankSettings.accountName}</dd>
                   </div>
                   <div className="grid gap-1 py-2.5 sm:grid-cols-[8rem_1fr] items-center text-sm">
                     <dt className="text-slate-400">Số tài khoản</dt>
                     <dd className="font-mono font-bold text-yellow-400 text-base sm:text-lg flex items-center justify-between">
-                      <span>0934434101</span>
+                      <span>{bankSettings.accountNo}</span>
                       <button 
-                        onClick={() => handleCopy('0934434101', 'bank')}
+                        onClick={() => handleCopy(bankSettings.accountNo, 'bank')}
                         className="text-xs sm:text-sm text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer bg-white/5 px-2.5 py-1 rounded"
                       >
                         {copiedBank ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -606,7 +628,7 @@ export default function CopyLandingPage() {
 
         {/* FOOTER */}
         <footer className="border-t border-slate-800 px-4 py-8 text-center text-xs sm:text-sm text-slate-400 bg-[#03050a]">
-          <p>© 2026 NGUYỄN ĐĂNG AI · TỰ HỌC AI (tuhocai.top) · STK VIB: 0934434101 · Zalo: 0938.494.303</p>
+          <p>© 2026 NGUYỄN ĐĂNG AI · TỰ HỌC AI (tuhocai.top) · STK {bankSettings.bankId}: {bankSettings.accountNo} · Zalo: 0938.494.303</p>
         </footer>
       </main>
 
@@ -661,7 +683,7 @@ export default function CopyLandingPage() {
             <div className="inline-flex p-2.5 bg-white rounded-xl shadow-md my-1">
               <img 
                 src={qrUrl} 
-                alt="QR Code thanh toán VIB 99K" 
+                alt={`QR Code thanh toán ${bankSettings.bankId} 99K`} 
                 className="w-44 h-auto object-contain"
               />
             </div>
@@ -670,7 +692,7 @@ export default function CopyLandingPage() {
             <div className="grid grid-cols-3 gap-1.5 my-2">
               <button
                 type="button"
-                onClick={() => handleCopy('0934434101', 'bank')}
+                onClick={() => handleCopy(bankSettings.accountNo, 'bank')}
                 className="p-2 rounded bg-white/10 hover:bg-white/20 text-xs font-bold text-yellow-400 flex items-center justify-center gap-1 cursor-pointer"
               >
                 {copiedBank ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -695,9 +717,9 @@ export default function CopyLandingPage() {
             </div>
 
             <div className="text-xs sm:text-sm text-slate-300 bg-white/5 p-3 rounded-lg border border-white/10 my-2 text-left space-y-1">
-              <div>Ngân hàng: <strong className="text-white">VIB</strong></div>
-              <div>Số TK: <strong className="text-yellow-400">0934434101</strong></div>
-              <div>Chủ TK: <strong className="text-white">NGUYEN VAN DANG</strong></div>
+              <div>Ngân hàng: <strong className="text-white">{bankSettings.bankId}</strong></div>
+              <div>Số TK: <strong className="text-yellow-400">{bankSettings.accountNo}</strong></div>
+              <div>Chủ TK: <strong className="text-white">{bankSettings.accountName}</strong></div>
               <div>Nội dung: <strong className="text-white">copy landing page</strong></div>
             </div>
 

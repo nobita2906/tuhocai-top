@@ -47,14 +47,36 @@ export default function VideoDramaLandingPage() {
     return () => clearInterval(timer);
   }, []);
 
+  // Dynamic Bank Settings from Admin (default ACB)
+  const [bankSettings, setBankSettings] = useState({
+    bankId: 'ACB',
+    accountNo: '4747827',
+    accountName: 'NGUYEN VAN DANG',
+  });
+
+  useEffect(() => {
+    fetch('/api/settings/public')
+      .then(res => res.json())
+      .then(data => {
+        if (data.bank_id && data.account_no) {
+          setBankSettings({
+            bankId: data.bank_id,
+            accountNo: data.account_no,
+            accountName: data.account_name || 'NGUYEN VAN DANG',
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const formatTimer = (sec: number) => {
     const m = Math.floor(sec / 60);
     const s = sec % 60;
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-  // VietQR VIB 69K
-  const qrUrl = "https://img.vietqr.io/image/VIB-0934434101-compact2.png?amount=69000&addInfo=1%20ly%20tra%20sua&accountName=NGUYEN%20VAN%20DANG";
+  // VietQR Dynamic
+  const qrUrl = `https://img.vietqr.io/image/${bankSettings.bankId}-${bankSettings.accountNo}-compact2.png?amount=69000&addInfo=1%20ly%20tra%20sua&accountName=${encodeURIComponent(bankSettings.accountName)}`;
 
   // Funnel & Affiliate tracking
   useEffect(() => {
@@ -431,7 +453,7 @@ export default function VideoDramaLandingPage() {
               <div className="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-inner">
                 <img 
                   src={qrUrl} 
-                  alt="QR VietQR VIB NGUYEN VAN DANG 69.000đ" 
+                  alt={`QR VietQR ${bankSettings.bankId} NGUYEN VAN DANG 69.000đ`} 
                   className="w-full max-w-56 h-auto object-contain"
                 />
                 <span className="text-xs font-mono text-slate-800 mt-2 font-bold flex items-center gap-1">
@@ -444,7 +466,7 @@ export default function VideoDramaLandingPage() {
               <div className="space-y-4">
                 <h3 className="text-base sm:text-lg font-bold uppercase text-[#ffc400] flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 flex-shrink-0" />
-                  <span>Thông tin chuyển khoản VIB chính thức</span>
+                  <span>Thông tin chuyển khoản {bankSettings.bankId} chính thức</span>
                 </h3>
 
                 {/* 3 ONE-TAP QUICK COPY BUTTONS */}
@@ -452,11 +474,11 @@ export default function VideoDramaLandingPage() {
                   {/* Copy STK */}
                   <div className="flex items-center justify-between p-3.5 rounded-xl bg-white/5 border border-white/10 hover:border-[#ffc400]/50 transition-colors">
                     <div>
-                      <p className="text-xs text-slate-300 uppercase font-bold">Số tài khoản VIB</p>
-                      <p className="text-lg sm:text-xl font-mono font-black text-[#ffc400]">0934434101</p>
+                      <p className="text-xs text-slate-300 uppercase font-bold">Số tài khoản {bankSettings.bankId}</p>
+                      <p className="text-lg sm:text-xl font-mono font-black text-[#ffc400]">{bankSettings.accountNo}</p>
                     </div>
                     <button 
-                      onClick={() => handleCopy('0934434101', 'bank')}
+                      onClick={() => handleCopy(bankSettings.accountNo, 'bank')}
                       className="px-3.5 py-2 rounded-lg bg-[#ffc400] text-black font-black text-xs sm:text-sm flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer shadow"
                     >
                       {copiedBank ? <Check className="w-4 h-4 stroke-[3]" /> : <Copy className="w-4 h-4" />}
@@ -530,7 +552,7 @@ export default function VideoDramaLandingPage() {
 
         {/* FOOTER */}
         <footer className="border-t border-[#27303d] px-4 py-8 text-center text-xs sm:text-sm text-slate-400 bg-[#02050b]">
-          <p>© 2026 NGUYỄN ĐĂNG AI · TỰ HỌC AI (tuhocai.top) · STK VIB: 0934434101 · Zalo: 0938.494.303</p>
+          <p>© 2026 NGUYỄN ĐĂNG AI · TỰ HỌC AI (tuhocai.top) · STK {bankSettings.bankId}: {bankSettings.accountNo} · Zalo: 0938.494.303</p>
         </footer>
       </main>
 
@@ -584,7 +606,7 @@ export default function VideoDramaLandingPage() {
             <div className="inline-flex p-3 bg-white rounded-xl shadow-md my-1">
               <img 
                 src={qrUrl} 
-                alt="QR Code thanh toán VIB" 
+                alt={`QR Code thanh toán ${bankSettings.bankId}`} 
                 className="w-44 h-auto object-contain"
               />
             </div>
@@ -593,7 +615,7 @@ export default function VideoDramaLandingPage() {
             <div className="grid grid-cols-3 gap-1.5 my-2">
               <button
                 type="button"
-                onClick={() => handleCopy('0934434101', 'bank')}
+                onClick={() => handleCopy(bankSettings.accountNo, 'bank')}
                 className="p-2 rounded bg-white/10 hover:bg-white/20 text-xs font-bold text-yellow-400 flex items-center justify-center gap-1 cursor-pointer"
               >
                 {copiedBank ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -618,8 +640,8 @@ export default function VideoDramaLandingPage() {
             </div>
 
             <div className="text-xs sm:text-sm text-slate-300 bg-white/5 p-3 rounded-lg border border-white/10 my-2 text-left space-y-1">
-              <div>Ngân hàng: <strong className="text-white">VIB</strong> · Số TK: <strong className="text-[#ffc400]">0934434101</strong></div>
-              <div>Chủ TK: <strong className="text-white">NGUYEN VAN DANG</strong> · Nội dung: <strong className="text-white">1 ly tra sua</strong></div>
+              <div>Ngân hàng: <strong className="text-white">{bankSettings.bankId}</strong> · Số TK: <strong className="text-[#ffc400]">{bankSettings.accountNo}</strong></div>
+              <div>Chủ TK: <strong className="text-white">{bankSettings.accountName}</strong> · Nội dung: <strong className="text-white">1 ly tra sua</strong></div>
             </div>
 
             <form onSubmit={handleConfirmPayment} className="mt-3 space-y-3 text-left">

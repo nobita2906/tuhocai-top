@@ -221,7 +221,7 @@ export async function POST(req: Request) {
         `UPDATE orders 
          SET payment_status = 'APPROVED', 
              approved_at = NOW(), 
-             approved_by = 'SePay VIB Auto' 
+             approved_by = 'SePay Auto' 
          WHERE id = ?`,
         [orderId]
       );

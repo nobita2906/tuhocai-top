@@ -212,7 +212,7 @@ function ThankYouContent() {
 
       {/* Footer */}
       <footer className="border-t border-[#27303d] pt-8 pb-4 text-center text-xs sm:text-sm text-slate-400">
-        <p>© 2026 NGUYỄN ĐĂNG AI · TỰ HỌC AI (tuhocai.top) · STK VIB: 0934434101 · Zalo: 0938.494.303</p>
+        <p>© 2026 NGUYỄN ĐĂNG AI · TỰ HỌC AI (tuhocai.top) · STK ACB: 4747827 · Zalo: 0938.494.303</p>
       </footer>
     </div>
   );

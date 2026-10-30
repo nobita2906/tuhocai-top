@@ -47,14 +47,36 @@ export default function VideoAiTu1AnhPage() {
     return () => clearInterval(timer);
   }, []);
 
+  // Dynamic Bank Settings from Admin (default ACB)
+  const [bankSettings, setBankSettings] = useState({
+    bankId: 'ACB',
+    accountNo: '4747827',
+    accountName: 'NGUYEN VAN DANG',
+  });
+
+  useEffect(() => {
+    fetch('/api/settings/public')
+      .then(res => res.json())
+      .then(data => {
+        if (data.bank_id && data.account_no) {
+          setBankSettings({
+            bankId: data.bank_id,
+            accountNo: data.account_no,
+            accountName: data.account_name || 'NGUYEN VAN DANG',
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const formatTimer = (sec: number) => {
     const m = Math.floor(sec / 60);
     const s = sec % 60;
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-  // VietQR VIB 297K
-  const qrUrl = "https://img.vietqr.io/image/VIB-0934434101-compact2.png?amount=297000&addInfo=video%20ai%201%20anh&accountName=NGUYEN%20VAN%20DANG";
+  // VietQR Dynamic
+  const qrUrl = `https://img.vietqr.io/image/${bankSettings.bankId}-${bankSettings.accountNo}-compact2.png?amount=297000&addInfo=video%20ai%201%20anh&accountName=${encodeURIComponent(bankSettings.accountName)}`;
 
   // Track pageview & affiliate
   useEffect(() => {
@@ -421,11 +443,11 @@ export default function VideoAiTu1AnhPage() {
                 <div className="space-y-2.5 pt-2">
                   <div className="flex items-center justify-between p-3.5 rounded-xl bg-white/5 border border-white/10 hover:border-[#eab84e]/50 transition-colors">
                     <div>
-                      <p className="text-xs text-slate-300 uppercase font-bold">Số tài khoản VIB</p>
-                      <p className="text-lg sm:text-xl font-mono font-black text-[#eab84e]">0934434101</p>
+                      <p className="text-xs text-slate-300 uppercase font-bold">Số tài khoản {bankSettings.bankId}</p>
+                      <p className="text-lg sm:text-xl font-mono font-black text-[#eab84e]">{bankSettings.accountNo}</p>
                     </div>
                     <button 
-                      onClick={() => handleCopy('0934434101', 'bank')}
+                      onClick={() => handleCopy(bankSettings.accountNo, 'bank')}
                       className="px-3.5 py-2 rounded-lg bg-[#eab84e] text-black font-black text-xs sm:text-sm flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer shadow"
                     >
                       {copiedBank ? <Check className="w-4 h-4 stroke-[3]" /> : <Copy className="w-4 h-4" />}
@@ -463,7 +485,7 @@ export default function VideoAiTu1AnhPage() {
                 </div>
 
                 <div className="text-sm text-slate-300 pt-1 space-y-1">
-                  <p>Chủ TK: <strong className="text-white font-bold">NGUYEN VAN DANG</strong> · Ngân hàng: <strong className="text-white">VIB</strong></p>
+                  <p>Chủ TK: <strong className="text-white font-bold">{bankSettings.accountName}</strong> · Ngân hàng: <strong className="text-white">{bankSettings.bankId}</strong></p>
                 </div>
 
                 {/* HỖ TRỢ KỸ THUẬT QUA ZALO */}
@@ -484,7 +506,7 @@ export default function VideoAiTu1AnhPage() {
               <div className="flex flex-col items-center justify-center p-6 bg-white rounded-2xl shadow-xl">
                 <img 
                   src={qrUrl} 
-                  alt="VietQR VIB 297K NGUYEN VAN DANG" 
+                  alt={`VietQR ${bankSettings.bankId} 297K ${bankSettings.accountName}`} 
                   className="w-full max-w-56 h-auto object-contain"
                 />
                 <button 
@@ -501,7 +523,7 @@ export default function VideoAiTu1AnhPage() {
 
         {/* FOOTER */}
         <footer className="border-t border-[#2a2015] py-8 px-4 text-center text-xs sm:text-sm text-slate-400 bg-[#0a0704]">
-          <p>© 2026 NGUYỄN ĐĂNG AI · TỰ HỌC AI (tuhocai.top) · STK VIB: 0934434101 · Zalo: 0938.494.303</p>
+          <p>© 2026 NGUYỄN ĐĂNG AI · TỰ HỌC AI (tuhocai.top) · STK {bankSettings.bankId}: {bankSettings.accountNo} · Zalo: 0938.494.303</p>
         </footer>
       </main>
 
@@ -555,7 +577,7 @@ export default function VideoAiTu1AnhPage() {
             <div className="inline-flex p-3 bg-white rounded-xl shadow-md my-1">
               <img 
                 src={qrUrl} 
-                alt="QR Code thanh toán VIB 297K" 
+                alt={`QR Code thanh toán ${bankSettings.bankId} 297K`} 
                 className="w-44 h-auto object-contain"
               />
             </div>
@@ -564,7 +586,7 @@ export default function VideoAiTu1AnhPage() {
             <div className="grid grid-cols-3 gap-1.5 my-2">
               <button
                 type="button"
-                onClick={() => handleCopy('0934434101', 'bank')}
+                onClick={() => handleCopy(bankSettings.accountNo, 'bank')}
                 className="p-2 rounded bg-white/10 hover:bg-white/20 text-xs font-bold text-yellow-400 flex items-center justify-center gap-1 cursor-pointer"
               >
                 {copiedBank ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -589,8 +611,8 @@ export default function VideoAiTu1AnhPage() {
             </div>
 
             <div className="text-xs sm:text-sm text-slate-300 bg-white/5 p-3 rounded-lg border border-white/10 my-2 text-left space-y-1">
-              <div>Ngân hàng: <strong className="text-white">VIB</strong> · Số TK: <strong className="text-[#eab84e]">0934434101</strong></div>
-              <div>Chủ TK: <strong className="text-white">NGUYEN VAN DANG</strong> · Nội dung: <strong className="text-white">video ai 1 anh</strong></div>
+              <div>Ngân hàng: <strong className="text-white">{bankSettings.bankId}</strong> · Số TK: <strong className="text-[#eab84e]">{bankSettings.accountNo}</strong></div>
+              <div>Chủ TK: <strong className="text-white">{bankSettings.accountName}</strong> · Nội dung: <strong className="text-white">video ai 1 anh</strong></div>
             </div>
 
             <form onSubmit={handleConfirmPayment} className="mt-3 space-y-3 text-left">
