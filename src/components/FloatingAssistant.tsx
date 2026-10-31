@@ -29,10 +29,6 @@ export default function FloatingAssistant() {
   const [inputVal, setInputVal] = useState('');
   const [userInteracted, setUserInteracted] = useState(false);
 
-  // Không hiển thị widget chat trong trang quản trị admin
-  if (pathname?.startsWith('/admin')) {
-    return null;
-  }
 
   const handleQuickAsk = (key: string, label: string) => {
     setUserInteracted(true);
@@ -66,6 +62,10 @@ export default function FloatingAssistant() {
       { sender: 'bot', text: reply },
     ]);
   };
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   return (
     <>

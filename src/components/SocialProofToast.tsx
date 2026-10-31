@@ -56,12 +56,10 @@ export default function SocialProofToast() {
   const [visible, setVisible] = useState(false);
   const [index, setIndex] = useState(0);
 
-  // Không hiển thị toast trên trang quản trị admin
-  if (pathname?.startsWith('/admin')) {
-    return null;
-  }
+  const isAdmin = pathname?.startsWith('/admin');
 
   useEffect(() => {
+    if (isAdmin) return;
     // Show first toast after 4s
     const firstTimer = setTimeout(() => {
       setCurrent(SAMPLE_EVENTS[0]);
@@ -82,18 +80,18 @@ export default function SocialProofToast() {
       clearTimeout(firstTimer);
       clearInterval(interval);
     };
-  }, []);
+  }, [isAdmin]);
 
   // Auto-hide toast after 7s
   useEffect(() => {
-    if (!visible) return;
+    if (isAdmin || !visible) return;
     const hideTimer = setTimeout(() => {
       setVisible(false);
     }, 7000);
     return () => clearTimeout(hideTimer);
-  }, [visible, current]);
+  }, [visible, current, isAdmin]);
 
-  if (!current || !visible) return null;
+  if (isAdmin || !current || !visible) return null;
 
   return (
     <aside
