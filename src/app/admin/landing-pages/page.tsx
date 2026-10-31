@@ -36,6 +36,8 @@ export default function AdminLandingPagesPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({
     slug: '',
+    subdomain: '',
+    facebookPixelId: '',
     title: '',
     headline: '',
     subheadline: '',
@@ -44,6 +46,24 @@ export default function AdminLandingPagesPage() {
     videoUrl: '',
     ctaText: '⚡ NHẬN QUY TRÌNH NGAY',
     heroBadge: '✦ QUY TRÌNH THỰC CHIẾN TỰ HỌC AI',
+  });
+
+  // Modal Chỉnh Sửa LP
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [editForm, setEditForm] = useState({
+    id: '',
+    title: '',
+    slug: '',
+    subdomain: '',
+    facebookPixelId: '',
+    headline: '',
+    subheadline: '',
+    price: 99000,
+    originalPrice: 499000,
+    videoUrl: '',
+    ctaText: '⚡ NHẬN QUY TRÌNH NGAY',
+    isPublished: true,
   });
 
   const fetchData = async () => {
@@ -65,6 +85,47 @@ export default function AdminLandingPagesPage() {
     fetchData();
   }, []);
 
+  const handleOpenEditModal = (lp: any) => {
+    setEditForm({
+      id: lp.id,
+      title: lp.title || '',
+      slug: lp.slug || '',
+      subdomain: lp.subdomain || '',
+      facebookPixelId: lp.facebookPixelId || '',
+      headline: lp.headline || '',
+      subheadline: lp.subheadline || '',
+      price: lp.price || 99000,
+      originalPrice: lp.originalPrice || 499000,
+      videoUrl: lp.videoUrl || '',
+      ctaText: lp.ctaText || '⚡ NHẬN QUY TRÌNH NGAY',
+      isPublished: lp.isPublished !== false,
+    });
+    setEditModalOpen(true);
+  };
+
+  const handleUpdateLp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsUpdating(true);
+    try {
+      const res = await fetch('/api/admin/landing-pages', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editForm),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setEditModalOpen(false);
+        await fetchData();
+      } else {
+        alert(json.error || 'Có lỗi xảy ra khi cập nhật');
+      }
+    } catch (e: any) {
+      alert(e.message || 'Lỗi kết nối máy chủ');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   const handleCreateLp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -79,6 +140,8 @@ export default function AdminLandingPagesPage() {
         setModalOpen(false);
         setForm({
           slug: '',
+          subdomain: '',
+          facebookPixelId: '',
           title: '',
           headline: '',
           subheadline: '',
@@ -284,29 +347,54 @@ export default function AdminLandingPagesPage() {
                 filteredLps.map((lp: any) => {
                   return (
                     <tr key={lp.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-                      {/* Name & Slug */}
+                      {/* Name, Slug, Subdomain & Pixel */}
                       <td className="py-3.5 px-4">
                         <div className="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
                           <span>{lp.title}</span>
                           {!lp.isPublished && (
-                            <span className="text-[10px] bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded">
+                            <span className="text-[10px] bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded font-normal">
                               Tạm ẩn
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <code className="text-xs text-indigo-600 dark:text-indigo-400 font-mono">
-                            /lp/{lp.slug}
-                          </code>
-                          <a
-                            href={`/lp/${lp.slug}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-slate-400 hover:text-indigo-500"
-                            title="Mở xem trực tiếp"
-                          >
-                            <ExternalLink className="w-3.5 h-3.5" />
-                          </a>
+                        <div className="flex flex-wrap items-center gap-2 mt-1">
+                          <div className="flex items-center gap-1">
+                            <code className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                              /lp/{lp.slug}
+                            </code>
+                            <a
+                              href={`/lp/${lp.slug}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-slate-400 hover:text-indigo-500"
+                              title="Mở xem trực tiếp link gốc"
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                            </a>
+                          </div>
+
+                          {lp.subdomain ? (
+                            <a
+                              href={`https://${lp.subdomain}.tuhocai.top`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/60 text-indigo-700 dark:text-indigo-300 font-mono text-[11px] font-bold hover:bg-indigo-100 transition"
+                              title="Click mở Subdomain Ads thực tế"
+                            >
+                              <span>🌐 {lp.subdomain}.tuhocai.top</span>
+                              <ExternalLink className="w-2.5 h-2.5" />
+                            </a>
+                          ) : (
+                            <span className="text-[10px] text-slate-400 italic">
+                              (Chưa gắn subdomain)
+                            </span>
+                          )}
+
+                          {lp.facebookPixelId && (
+                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-mono text-[10px]">
+                              <span>🎯 {lp.facebookPixelId}</span>
+                            </span>
+                          )}
                         </div>
                       </td>
 
@@ -372,6 +460,14 @@ export default function AdminLandingPagesPage() {
                       {/* Actions */}
                       <td className="py-3.5 px-4 text-center">
                         <div className="flex items-center justify-center gap-1.5">
+                          <button
+                            onClick={() => handleOpenEditModal(lp)}
+                            className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-xs flex items-center gap-1 transition cursor-pointer"
+                            title="Chỉnh sửa Subdomain, Facebook Pixel, Giá bán..."
+                          >
+                            <Edit3 className="w-3.5 h-3.5 text-indigo-500" />
+                            <span>Sửa</span>
+                          </button>
                           <Link
                             href={`/admin/don-hang?landing_slug=${lp.slug}`}
                             className="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 font-bold text-xs"
@@ -418,6 +514,176 @@ export default function AdminLandingPagesPage() {
           ))}
         </div>
       </div>
+
+      {/* MODAL: CHỈNH SỬA LANDING PAGE & SUBDOMAIN */}
+      {editModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in">
+          <div className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-2xl text-slate-900 dark:text-white">
+            <button
+              onClick={() => setEditModalOpen(false)}
+              className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 dark:hover:text-white p-2 cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-2 mb-1">
+              <Edit3 className="w-5 h-5 text-indigo-500" />
+              <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+                Cập Nhật Cấu Hình Landing Page
+              </span>
+            </div>
+            <h2 className="text-xl font-black uppercase text-slate-900 dark:text-white">
+              Chỉnh Sửa Subdomain & Quảng Cáo
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">
+              Thay đổi Subdomain cho Facebook Ads, cấu hình Facebook Pixel riêng hoặc điều chỉnh giá bán và nội dung.
+            </p>
+
+            <form onSubmit={handleUpdateLp} className="space-y-4 text-left text-xs sm:text-sm">
+              <div>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  Tên Khóa Học / Landing Page:
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editForm.title}
+                  onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                />
+              </div>
+
+              {/* Subdomain & Facebook Pixel ID */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-3.5 rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40">
+                <div>
+                  <label className="block font-bold text-indigo-950 dark:text-indigo-200 mb-1">
+                    🌐 Tên Miền Con (Subdomain):
+                  </label>
+                  <div className="flex items-center">
+                    <input
+                      type="text"
+                      placeholder="copypage"
+                      value={editForm.subdomain}
+                      onChange={(e) => setEditForm({ ...editForm, subdomain: e.target.value.toLowerCase().trim() })}
+                      className="w-full px-3 py-2 rounded-l-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono text-xs font-bold text-indigo-600 focus:ring-2 focus:ring-indigo-500 outline-none"
+                    />
+                    <span className="px-2.5 py-2 rounded-r-xl bg-slate-200 dark:bg-slate-700 border border-l-0 border-slate-300 dark:border-slate-700 text-[11px] text-slate-600 dark:text-slate-300 font-mono font-medium whitespace-nowrap">
+                      .tuhocai.top
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 block">
+                    Ví dụ: nhập <code className="text-indigo-500 font-bold">copypage</code> ➔ link chạy ads là <code className="text-indigo-500 font-bold">copypage.tuhocai.top</code>
+                  </span>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-indigo-950 dark:text-indigo-200 mb-1">
+                    🎯 Facebook Pixel ID (Riêng LP này):
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ví dụ: 104592019402918"
+                    value={editForm.facebookPixelId}
+                    onChange={(e) => setEditForm({ ...editForm, facebookPixelId: e.target.value.trim() })}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono text-xs focus:ring-2 focus:ring-indigo-500 outline-none"
+                  />
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 block">
+                    Tự động kích hoạt PageView, InitiateCheckout, Purchase cho tài khoản Ads riêng.
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Đường Dẫn Slug mặc định:
+                  </label>
+                  <div className="flex items-center">
+                    <span className="px-3 py-2 rounded-l-xl bg-slate-100 dark:bg-slate-800 border border-r-0 border-slate-300 dark:border-slate-700 text-xs text-slate-500 font-mono">
+                      /lp/
+                    </span>
+                    <input
+                      type="text"
+                      required
+                      value={editForm.slug}
+                      onChange={(e) => setEditForm({ ...editForm, slug: e.target.value })}
+                      className="w-full px-3 py-2 rounded-r-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono text-xs focus:ring-2 focus:ring-indigo-500 outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Trạng Thái Hoạt Động:
+                  </label>
+                  <select
+                    value={editForm.isPublished ? 'true' : 'false'}
+                    onChange={(e) => setEditForm({ ...editForm, isPublished: e.target.value === 'true' })}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs focus:ring-2 focus:ring-indigo-500 outline-none"
+                  >
+                    <option value="true">✅ Đang Xuất Bản (Hoạt động bình thường)</option>
+                    <option value="false">⏸️ Tạm Ẩn (Không nhận truy cập)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Giá Bán Ưu Đãi (đ):
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    step={1000}
+                    value={editForm.price}
+                    onChange={(e) => setEditForm({ ...editForm, price: Number(e.target.value) })}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono font-bold text-emerald-600 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Giá Gốc Gạch Đi (đ):
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    step={1000}
+                    value={editForm.originalPrice}
+                    onChange={(e) => setEditForm({ ...editForm, originalPrice: Number(e.target.value) })}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono text-slate-400 line-through text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-3 flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setEditModalOpen(false)}
+                  className="px-5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-semibold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                >
+                  Hủy Bỏ
+                </button>
+                <button
+                  type="submit"
+                  disabled={isUpdating}
+                  className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-lg transition"
+                >
+                  {isUpdating ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Đang lưu thay đổi...</span>
+                    </>
+                  ) : (
+                    <span>Lưu Cấu Hình</span>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* MODAL: TẠO LANDING PAGE MỚI */}
       {modalOpen && (
@@ -476,6 +742,39 @@ export default function AdminLandingPagesPage() {
                       className="w-full px-3.5 py-2.5 rounded-r-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono text-xs focus:ring-2 focus:ring-indigo-500 outline-none"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    🌐 Subdomain Tùy Chọn (Chạy Ads):
+                  </label>
+                  <div className="flex items-center">
+                    <input
+                      type="text"
+                      placeholder="prompt"
+                      value={form.subdomain}
+                      onChange={(e) => setForm({ ...form, subdomain: e.target.value.toLowerCase().trim() })}
+                      className="w-full px-3 py-2.5 rounded-l-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono text-xs focus:ring-2 focus:ring-indigo-500 outline-none"
+                    />
+                    <span className="px-2.5 py-2.5 rounded-r-xl bg-slate-200 dark:bg-slate-700 border border-l-0 border-slate-300 dark:border-slate-700 text-[11px] text-slate-600 dark:text-slate-300 font-mono font-medium whitespace-nowrap">
+                      .tuhocai.top
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    🎯 Facebook Pixel ID (Tùy chọn):
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="104592019402918"
+                    value={form.facebookPixelId}
+                    onChange={(e) => setForm({ ...form, facebookPixelId: e.target.value.trim() })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-mono focus:ring-2 focus:ring-indigo-500 outline-none"
+                  />
                 </div>
 
                 <div>

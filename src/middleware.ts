@@ -30,27 +30,21 @@ export function middleware(req: NextRequest) {
     subdomain = hostParts[0].toLowerCase();
   }
 
-  // 3. Mapping subdomain to landing page routes
-  const subdomainMap: Record<string, string> = {
-    copypage: '/lp/sao-chep-landing-page',
-    drama: '/lp/video-drama-gia-dinh-nho',
-    vip: '/lp/video-ai-tu-1-anh',
-  };
-
-  if (subdomain && subdomainMap[subdomain]) {
-    const targetBase = subdomainMap[subdomain];
-
-    // Root of subdomain: copypage.tuhocai.top/ -> /lp/sao-chep-landing-page
+  // 3. Dynamic Subdomain Routing:
+  // Any subdomain is automatically forwarded to /lp/{subdomain}
+  // Next.js dynamic route (/lp/[slug]/page.tsx) automatically queries the DB by (slug = ? OR subdomain = ?)
+  if (subdomain) {
+    // Root of subdomain: e.g. copypage.tuhocai.top/ -> /lp/copypage
     if (pathname === '/' || pathname === '') {
       const url = req.nextUrl.clone();
-      url.pathname = targetBase;
+      url.pathname = `/lp/${subdomain}`;
       return NextResponse.rewrite(url);
     }
 
-    // Thank you page on subdomain: copypage.tuhocai.top/cam-on -> /lp/sao-chep-landing-page/cam-on
+    // Thank you page on subdomain: e.g. copypage.tuhocai.top/cam-on -> /lp/copypage/cam-on
     if (pathname === '/cam-on') {
       const url = req.nextUrl.clone();
-      url.pathname = `${targetBase}/cam-on`;
+      url.pathname = `/lp/${subdomain}/cam-on`;
       return NextResponse.rewrite(url);
     }
   }
@@ -60,13 +54,6 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };
