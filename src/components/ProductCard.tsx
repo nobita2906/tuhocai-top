@@ -105,29 +105,34 @@ export default function ProductCard({ product, onFreeClick }: ProductCardProps) 
         </p>
 
         {/* 3. PRICING & GUARANTEE */}
-        <div className="mt-3 pt-2.5 border-t border-slate-300 dark:border-white/[0.08] flex items-baseline justify-between">
-          <div>
+        <div className="mt-3 pt-2.5 border-t border-slate-300 dark:border-white/[0.08] flex items-baseline justify-between gap-1.5">
+          <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 min-w-0">
             {isFree ? (
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-xl font-black text-emerald-700 dark:text-emerald-400 font-mono">0 đ</span>
-                <span className="text-[11px] text-slate-400 line-through font-mono">99.000 đ</span>
-              </div>
+              <>
+                <span className="text-lg sm:text-xl font-black text-emerald-700 dark:text-emerald-400 font-mono tracking-tight whitespace-nowrap">
+                  0&nbsp;đ
+                </span>
+                <span className="text-[11px] text-slate-400 line-through font-mono whitespace-nowrap">
+                  99.000&nbsp;đ
+                </span>
+              </>
             ) : (
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-xl font-black text-indigo-800 dark:text-indigo-400 font-mono">
-                  {new Intl.NumberFormat('vi-VN').format(product.price)} đ
+              <>
+                <span className="text-lg sm:text-xl font-black text-indigo-800 dark:text-indigo-400 font-mono tracking-tight whitespace-nowrap">
+                  {new Intl.NumberFormat('vi-VN').format(product.price)}&nbsp;đ
                 </span>
                 {product.original_price > product.price && (
-                  <span className="text-[11px] text-slate-400 line-through font-mono font-medium">
-                    {new Intl.NumberFormat('vi-VN').format(product.original_price)} đ
+                  <span className="text-[11px] text-slate-400 dark:text-slate-500 line-through font-mono font-medium whitespace-nowrap">
+                    {new Intl.NumberFormat('vi-VN').format(product.original_price)}&nbsp;đ
                   </span>
                 )}
-              </div>
+              </>
             )}
           </div>
-          <span className="text-[10px] text-slate-600 dark:text-slate-400 flex items-center gap-1 font-mono font-semibold">
-            <ShieldCheck className="w-3.5 h-3.5 text-indigo-700 dark:text-indigo-400" />
-            Đã bán: <strong className="text-slate-900 dark:text-white font-mono">{product.sales_count || 15}+</strong>
+          <span className="shrink-0 whitespace-nowrap text-[10px] text-slate-600 dark:text-slate-400 inline-flex items-center gap-1 font-mono font-semibold">
+            <ShieldCheck className="w-3.5 h-3.5 text-indigo-700 dark:text-indigo-400 shrink-0" />
+            <span>Đã bán:</span>
+            <strong className="text-slate-900 dark:text-white font-mono">{product.sales_count || 15}+</strong>
           </span>
         </div>
       </div>
@@ -137,25 +142,25 @@ export default function ProductCard({ product, onFreeClick }: ProductCardProps) 
         {isFree ? (
           <button
             onClick={() => onFreeClick?.(product)}
-            className="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-700 hover:opacity-85 hover:shadow-xs text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-950/25 transition-all duration-200 active:scale-[0.98]"
+            className="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-700 hover:opacity-85 hover:shadow-xs text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-950/25 transition-all duration-200 active:scale-[0.98] whitespace-nowrap"
           >
-            <Download className="w-3.5 h-3.5" />
+            <Download className="w-3.5 h-3.5 shrink-0" />
             Tải Miễn Phí Ngay
           </button>
         ) : (
           <div className="flex items-center gap-2">
             <Link
               href={`/san-pham/${product.slug}`}
-              className="flex-1 py-2 px-2.5 rounded-xl bg-white hover:opacity-80 hover:border-slate-300 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] text-slate-900 dark:text-slate-200 text-center font-bold text-xs sm:text-sm border-2 border-slate-300 dark:border-white/[0.1] shadow-xs transition-all"
+              className="flex-1 py-2 px-2 sm:px-2.5 rounded-xl bg-white hover:opacity-80 hover:border-slate-300 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] text-slate-900 dark:text-slate-200 text-center font-bold text-xs sm:text-sm border-2 border-slate-300 dark:border-white/[0.1] shadow-xs transition-all whitespace-nowrap truncate"
             >
               Chi tiết
             </Link>
             <Link
               href={`/thanh-toan?pid=${product.pid}`}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-85 hover:shadow-xs text-white font-bold text-xs sm:text-sm shadow-md shadow-indigo-950/25 transition-all active:scale-[0.98]"
+              className="flex-1 flex items-center justify-center gap-1 sm:gap-1.5 py-2 px-2 sm:px-2.5 rounded-xl bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-85 hover:shadow-xs text-white font-bold text-xs sm:text-sm shadow-md shadow-indigo-950/25 transition-all active:scale-[0.98] whitespace-nowrap truncate"
             >
-              <ShoppingCart className="w-3.5 h-3.5" />
-              Mua ngay
+              <ShoppingCart className="w-3.5 h-3.5 shrink-0" />
+              <span>Mua ngay</span>
             </Link>
           </div>
         )}

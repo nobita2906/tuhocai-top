@@ -160,21 +160,21 @@ export default async function ProductDetailPage({
           <div className="space-y-2 border-b border-slate-200 dark:border-white/[0.08] pb-5">
             <p className="text-xs text-slate-500 dark:text-slate-400 font-mono font-semibold">Giá sở hữu trọn đời</p>
             {isFree ? (
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-black text-emerald-700 dark:text-emerald-400 font-mono">0 đ</span>
-                <span className="text-sm text-slate-400 line-through font-mono">99.000 đ</span>
-                <span className="px-2.5 py-0.5 rounded-md text-[10px] font-black font-mono bg-emerald-700 text-white">
+              <div className="flex items-baseline gap-2 flex-wrap">
+                <span className="text-3xl font-black text-emerald-700 dark:text-emerald-400 font-mono whitespace-nowrap">0&nbsp;đ</span>
+                <span className="text-sm text-slate-400 line-through font-mono whitespace-nowrap">99.000&nbsp;đ</span>
+                <span className="px-2.5 py-0.5 rounded-md text-[10px] font-black font-mono bg-emerald-700 text-white shrink-0 whitespace-nowrap">
                   MIỄN PHÍ
                 </span>
               </div>
             ) : (
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-black text-indigo-800 dark:text-indigo-400 font-mono">
-                  {new Intl.NumberFormat('vi-VN').format(product.price)} đ
+              <div className="flex items-baseline gap-2 flex-wrap">
+                <span className="text-3xl font-black text-indigo-800 dark:text-indigo-400 font-mono whitespace-nowrap">
+                  {new Intl.NumberFormat('vi-VN').format(product.price)}&nbsp;đ
                 </span>
                 {product.original_price > product.price && (
-                  <span className="text-sm text-slate-400 line-through font-mono font-semibold">
-                    {new Intl.NumberFormat('vi-VN').format(product.original_price)} đ
+                  <span className="text-sm text-slate-400 line-through font-mono font-semibold whitespace-nowrap">
+                    {new Intl.NumberFormat('vi-VN').format(product.original_price)}&nbsp;đ
                   </span>
                 )}
               </div>

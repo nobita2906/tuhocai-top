@@ -352,9 +352,9 @@ export default function CustomerAffiliateHub() {
                   </h4>
                 </div>
                 <div className="text-right shrink-0">
-                  <span className="text-xs text-slate-400 font-mono">Giá: {new Intl.NumberFormat('vi-VN').format(p.price)} đ</span>
-                  <p className="text-base font-black font-mono text-emerald-700 dark:text-emerald-400">
-                    +{new Intl.NumberFormat('vi-VN').format(p.commissionAmount)} đ
+                  <span className="text-xs text-slate-400 font-mono whitespace-nowrap">Giá: {new Intl.NumberFormat('vi-VN').format(p.price)}&nbsp;đ</span>
+                  <p className="text-base font-black font-mono text-emerald-700 dark:text-emerald-400 whitespace-nowrap">
+                    +{new Intl.NumberFormat('vi-VN').format(p.commissionAmount)}&nbsp;đ
                   </p>
                 </div>
               </div>

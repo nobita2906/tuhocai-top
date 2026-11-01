@@ -121,20 +121,20 @@ export default function ReferralShareCard({
 
             <p className="mt-2 text-slate-300 text-sm sm:text-base leading-relaxed max-w-3xl">
               Nhận ngay hoa hồng thực chiến{' '}
-              <strong className="text-amber-400 font-black">
-                +{new Intl.NumberFormat('vi-VN').format(commissionAmount)} đ ({rate}%)
+              <strong className="text-amber-400 font-black whitespace-nowrap">
+                +{new Intl.NumberFormat('vi-VN').format(commissionAmount)}&nbsp;đ ({rate}%)
               </strong>{' '}
               trên mỗi đơn hàng giới thiệu khóa học này. Chỉ cần chia sẻ cho{' '}
               <strong className="text-cyan-300 font-bold">2 người bạn</strong> cùng mua là bạn đã hoàn lại{' '}
-              <strong className="text-emerald-400 font-black">120% học phí</strong> (vừa học không mất tiền vừa có thêm nguồn thu nhập thụ động bền vững). Tiền về VietQR tự động trong 24h!
+              <strong className="text-emerald-400 font-black whitespace-nowrap">120% học phí</strong> (vừa học không mất tiền vừa có thêm nguồn thu nhập thụ động bền vững). Tiền về VietQR tự động trong 24h!
             </p>
           </div>
 
           {/* 4 Khối Chỉ Số Vàng Chuẩn Style Affiliate */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
             <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
-              <div className="text-xl sm:text-2xl font-black text-amber-400 font-mono">
-                +{new Intl.NumberFormat('vi-VN').format(commissionAmount)} đ
+              <div className="text-xl sm:text-2xl font-black text-amber-400 font-mono whitespace-nowrap">
+                +{new Intl.NumberFormat('vi-VN').format(commissionAmount)}&nbsp;đ
               </div>
               <div className="text-xs text-slate-300 mt-0.5">Tiền thưởng / 1 đơn</div>
             </div>

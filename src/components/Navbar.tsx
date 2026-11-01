@@ -69,10 +69,10 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav - Luôn nằm trên 1 dòng duy nhất, không bao giờ rớt dòng trên Chrome */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5 shrink-0">
+          <nav className="hidden xl:flex items-center gap-1 shrink-0">
             <Link
               href="/"
-              className={`whitespace-nowrap shrink-0 px-2.5 py-1.5 rounded-lg text-xs xl:text-sm font-bold transition-all ${
+              className={`whitespace-nowrap shrink-0 px-2 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 pathname === '/'
                   ? 'text-indigo-900 dark:text-indigo-400 bg-indigo-100/90 dark:bg-indigo-500/10 border border-indigo-300 dark:border-indigo-500/30'
                   : 'text-slate-800 dark:text-slate-200 hover:opacity-75 hover:bg-slate-100 dark:hover:bg-white/[0.04]'
@@ -83,39 +83,36 @@ export default function Navbar() {
 
             <Link
               href="/san-pham"
-              className={`whitespace-nowrap shrink-0 px-2.5 py-1.5 rounded-lg text-xs xl:text-sm font-bold transition-all ${
+              className={`whitespace-nowrap shrink-0 px-2 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 pathname.startsWith('/san-pham')
                   ? 'text-indigo-900 dark:text-indigo-400 bg-indigo-100/90 dark:bg-indigo-500/10 border border-indigo-300 dark:border-indigo-500/30'
                   : 'text-slate-800 dark:text-slate-200 hover:opacity-75 hover:bg-slate-100 dark:hover:bg-white/[0.04]'
               }`}
             >
-              <span className="hidden xl:inline">Kho Workflow & Skill</span>
-              <span className="xl:hidden">Workflow & Skill</span>
+              Workflow & Skill
             </Link>
 
             <Link
               href="/#tai-lieu-free"
-              className="whitespace-nowrap shrink-0 px-2.5 py-1.5 rounded-lg text-xs xl:text-sm font-bold text-slate-800 dark:text-slate-200 hover:opacity-75 hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-all"
+              className="whitespace-nowrap shrink-0 px-2 py-1.5 rounded-lg text-xs font-bold text-slate-800 dark:text-slate-200 hover:opacity-75 hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-all"
             >
-              <span className="hidden xl:inline">Tài liệu Miễn Phí</span>
-              <span className="xl:hidden">Tài liệu 0đ</span>
+              Tài liệu 0đ
             </Link>
 
             <Link
               href="/bai-viet"
-              className={`whitespace-nowrap shrink-0 px-2.5 py-1.5 rounded-lg text-xs xl:text-sm font-bold transition-all ${
+              className={`whitespace-nowrap shrink-0 px-2 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 pathname.startsWith('/bai-viet')
                   ? 'text-indigo-900 dark:text-indigo-400 bg-indigo-100/90 dark:bg-indigo-500/10 border border-indigo-300 dark:border-indigo-500/30'
                   : 'text-slate-800 dark:text-slate-200 hover:opacity-75 hover:bg-slate-100 dark:hover:bg-white/[0.04]'
               }`}
             >
-              <span className="hidden xl:inline">Tin tức & Hướng dẫn</span>
-              <span className="xl:hidden">Tin tức</span>
+              Tin tức
             </Link>
 
             <Link
               href="/affiliate"
-              className={`whitespace-nowrap shrink-0 px-2.5 py-1.5 rounded-lg text-xs xl:text-sm font-bold transition-all ${
+              className={`whitespace-nowrap shrink-0 px-2 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 pathname.startsWith('/affiliate')
                   ? 'text-indigo-900 dark:text-indigo-400 bg-indigo-100/90 dark:bg-indigo-500/10 border border-indigo-300 dark:border-indigo-500/30'
                   : 'text-slate-800 dark:text-slate-200 hover:opacity-75 hover:bg-slate-100 dark:hover:bg-white/[0.04]'
@@ -127,7 +124,7 @@ export default function Navbar() {
             {/* Kho Của Tôi button - Đậm đà mặc định, hover mờ lại */}
             <button
               onClick={() => setVaultOpen(true)}
-              className="whitespace-nowrap shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs xl:text-sm font-bold text-indigo-950 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-500/20 hover:opacity-75 border-2 border-indigo-400 dark:border-indigo-500/40 transition-all shadow-xs"
+              className="whitespace-nowrap shrink-0 flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-bold text-indigo-950 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-500/20 hover:opacity-75 border-2 border-indigo-400 dark:border-indigo-500/40 transition-all shadow-xs"
               title="Tra cứu & tải lại tài nguyên đã mua"
             >
               <PackageCheck className="w-4 h-4 shrink-0 text-indigo-800 dark:text-indigo-400" />
@@ -139,17 +136,16 @@ export default function Navbar() {
               href="https://zalo.me/g/tuhocai"
               target="_blank"
               rel="noopener noreferrer"
-              className="whitespace-nowrap shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs xl:text-sm font-bold text-emerald-950 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-500/20 hover:opacity-75 border-2 border-emerald-400 dark:border-emerald-500/40 transition-all shadow-xs ml-0.5"
+              className="whitespace-nowrap shrink-0 flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-bold text-emerald-950 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-500/20 hover:opacity-75 border-2 border-emerald-400 dark:border-emerald-500/40 transition-all shadow-xs ml-0.5"
             >
               <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse shrink-0" />
               <MessageCircle className="w-4 h-4 shrink-0 text-emerald-800 dark:text-emerald-400" />
-              <span className="hidden xl:inline">Nhóm Zalo VIP</span>
-              <span className="xl:hidden">Zalo VIP</span>
+              <span>Zalo VIP</span>
             </a>
           </nav>
 
           {/* User Auth, Theme Toggle, Actions - Giữ nguyên hàng */}
-          <div className="hidden lg:flex items-center gap-2 xl:gap-2.5 shrink-0 whitespace-nowrap">
+          <div className="hidden xl:flex items-center gap-2 shrink-0 whitespace-nowrap">
             {/* Theme Toggle Button */}
             <ThemeToggle />
 
@@ -157,7 +153,7 @@ export default function Navbar() {
               <div className="relative shrink-0">
                 <button
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/[0.04] border border-slate-300 dark:border-white/[0.08] hover:border-slate-400 dark:hover:border-white/[0.16] text-xs xl:text-sm text-slate-900 dark:text-slate-200 transition-colors shadow-xs shrink-0 whitespace-nowrap"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/[0.04] border border-slate-300 dark:border-white/[0.08] hover:border-slate-400 dark:hover:border-white/[0.16] text-xs text-slate-900 dark:text-slate-200 transition-colors shadow-xs shrink-0 whitespace-nowrap"
                 >
                   <div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-500/20 dark:text-indigo-400 font-bold flex items-center justify-center text-xs shrink-0">
                     {user.name.charAt(0).toUpperCase()}
@@ -214,13 +210,13 @@ export default function Navbar() {
               <div className="flex items-center gap-2 shrink-0 whitespace-nowrap">
                 <Link
                   href="/login"
-                  className="px-3 py-1.5 text-xs xl:text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-indigo-800 dark:hover:text-white transition-colors whitespace-nowrap"
+                  className="px-2.5 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-indigo-800 dark:hover:text-white transition-colors whitespace-nowrap"
                 >
                   Đăng nhập
                 </Link>
                 <Link
                   href="/register"
-                  className="px-4 py-1.5 text-xs xl:text-sm font-bold text-white bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-85 rounded-xl shadow-md shadow-indigo-900/30 transition-all hover:scale-[0.99] whitespace-nowrap shrink-0"
+                  className="px-3.5 py-1.5 text-xs font-bold text-white bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-85 rounded-xl shadow-md shadow-indigo-900/30 transition-all hover:scale-[0.99] whitespace-nowrap shrink-0"
                 >
                   Tạo tài khoản
                 </Link>
@@ -228,8 +224,8 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Actions: Theme toggle & Hamburger (Hiện khi dưới 1024px) */}
-          <div className="lg:hidden flex items-center gap-2 shrink-0">
+          {/* Mobile Actions: Theme toggle & Hamburger (Hiện khi dưới 1280px) */}
+          <div className="xl:hidden flex items-center gap-2 shrink-0">
             <ThemeToggle />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -241,9 +237,9 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Drawer (Hiện dưới 1024px) */}
+        {/* Mobile Drawer (Hiện dưới 1280px) */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-b border-slate-300 dark:border-white/[0.08] bg-white/98 dark:bg-[#09090b]/98 backdrop-blur-2xl px-4 py-4 space-y-3 shadow-lg">
+          <div className="xl:hidden border-b border-slate-300 dark:border-white/[0.08] bg-white/98 dark:bg-[#09090b]/98 backdrop-blur-2xl px-4 py-4 space-y-3 shadow-lg">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
