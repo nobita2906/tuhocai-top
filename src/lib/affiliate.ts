@@ -3,6 +3,25 @@ import { query, execute } from '@/lib/db';
 import { AffiliatePartner, AffiliateCommission } from '@/types';
 
 /**
+ * Mức chiết khấu hoa hồng mặc định của hệ thống Đối tác Tiếp thị (Affiliate / CTV) Tự Học AI
+ * Có thể tùy chỉnh linh hoạt qua biến môi trường hoặc trong cơ sở dữ liệu cho từng đối tác.
+ * Mặc định hiện tại: 60%
+ */
+export const DEFAULT_COMMISSION_RATE = Number(process.env.DEFAULT_COMMISSION_RATE || 60);
+
+/**
+ * Lấy mức chiết khấu áp dụng cho đối tác:
+ * - Ưu tiên mức chiết khấu riêng đã được admin tùy chỉnh trong partner.commission_rate
+ * - Nếu chưa thiết lập hoặc giá trị mặc định, áp dụng DEFAULT_COMMISSION_RATE (60%)
+ */
+export function getPartnerCommissionRate(partner?: { commission_rate?: number | null } | null): number {
+  if (partner && partner.commission_rate && Number(partner.commission_rate) > 0) {
+    return Number(partner.commission_rate);
+  }
+  return DEFAULT_COMMISSION_RATE;
+}
+
+/**
  * Tìm kiếm đối tác Affiliate theo mã ref (code)
  */
 export async function getAffiliateByCode(code: string): Promise<AffiliatePartner | null> {
@@ -79,13 +98,16 @@ export async function attachAffiliateToOrder(params: {
   orderCode: string;
   orderAmount: number;
   affiliateCode?: string | null;
+  productId?: string | null;
 }) {
   if (!params.affiliateCode || params.orderAmount <= 0) return null;
 
   const partner = await getAffiliateByCode(params.affiliateCode);
   if (!partner) return null;
 
-  const rate = partner.commission_rate || 30;
+  // Mức chiết khấu hoa hồng: có thể tùy chỉnh theo từng đối tác, mặc định hệ thống là 60%
+  const rate = getPartnerCommissionRate(partner);
+
   const commissionAmount = Math.round((params.orderAmount * rate) / 100);
 
   // Cập nhật thông tin affiliate vào bảng orders

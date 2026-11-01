@@ -169,6 +169,7 @@ export async function POST(req: Request) {
         orderCode,
         orderAmount: product.price,
         affiliateCode: finalAffiliateCode,
+        productId: product.id,
       });
     }
 

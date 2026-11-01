@@ -62,15 +62,31 @@ export default function AffiliateClient() {
   const [payoutNotes, setPayoutNotes] = useState('');
   const [isPayoutSubmitting, setIsPayoutSubmitting] = useState(false);
 
-  // Auto-load if code saved locally
+  // Auto-load partner code: ưu tiên lấy theo phiên đăng nhập của học viên
   useEffect(() => {
-    try {
-      const savedCode = localStorage.getItem('my_aff_code') || 'dangai';
-      if (savedCode) {
-        setSearchCode(savedCode);
-        fetchStats(savedCode);
-      }
-    } catch (_) {}
+    async function initPartner() {
+      try {
+        const authRes = await fetch('/api/auth/me');
+        const authData = await authRes.json();
+        if (authData.authenticated && authData.user) {
+          const refRes = await fetch('/api/dashboard/referral');
+          const refData = await refRes.json();
+          if (refData.success && refData.partner?.code) {
+            setSearchCode(refData.partner.code);
+            fetchStats(refData.partner.code);
+            return;
+          }
+        }
+
+        const savedCode = localStorage.getItem('my_aff_code') || 'dangai';
+        if (savedCode) {
+          setSearchCode(savedCode);
+          fetchStats(savedCode);
+        }
+      } catch (_) {}
+    }
+
+    initPartner();
   }, []);
 
   const fetchStats = async (codeOrEmail: string) => {
@@ -155,7 +171,11 @@ export default function AffiliateClient() {
   };
 
   const copyRefLink = (code: string) => {
-    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://www.tuhocai.top';
+    let origin = process.env.NEXT_PUBLIC_APP_URL || 'https://www.tuhocai.top';
+    if (origin.includes('localhost')) {
+      origin = 'https://www.tuhocai.top';
+    }
+    origin = origin.replace(/\/+$/, '');
     const link = `${origin}/?ref=${code}`;
     navigator.clipboard.writeText(link);
     setCopiedLink(true);
@@ -171,23 +191,24 @@ export default function AffiliateClient() {
       <div className="max-w-6xl mx-auto space-y-10">
 
         {/* Hero Section */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-900 via-slate-900 to-indigo-950 text-white p-8 sm:p-12 shadow-2xl border border-indigo-700/40">
-          <div className="absolute top-0 right-0 -mt-10 -mr-10 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-slate-900 to-[#0b0e1e] text-white p-8 sm:p-12 shadow-2xl border-2 border-indigo-700/50">
+          <div className="absolute top-0 right-0 -mt-10 -mr-10 w-96 h-96 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="relative z-10 max-w-3xl space-y-5">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs sm:text-sm font-semibold border border-indigo-400/30">
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              CHƯƠNG TRÌNH ĐỐI TÁC CHIẾN LƯỢC TỰ HỌC AI
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs sm:text-sm font-bold border border-indigo-400/30">
+              <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
+              CHƯƠNG TRÌNH ĐỐI TÁC TIẾP THỊ (AFFILIATE / CTV) TỰ HỌC AI
             </div>
             <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
               Kiếm Tiền Cùng <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-indigo-300 to-cyan-300">Tự Học AI</span>
             </h1>
             <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
-              Nhận hoa hồng thực chiến <strong className="text-amber-400 font-bold">30% - 50%</strong> trên mỗi đơn hàng công cụ, workflow n8n và skill AI. Theo dõi minh bạch từng lượt click, nhận tiền về tài khoản ngân hàng trong 24h.
+              Nhận hoa hồng thực chiến <strong className="text-amber-400 font-bold">60%</strong> trên mỗi đơn hàng công cụ, workflow n8n và skill AI. Theo dõi minh bạch từng lượt click, nhận tiền về tài khoản ngân hàng trong 24h.
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-3">
               <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
-                <div className="text-2xl font-black text-amber-400">30% - 50%</div>
+                <div className="text-2xl font-black text-amber-400">60%</div>
                 <div className="text-xs text-slate-300 mt-0.5">Hoa hồng trọn đời</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
@@ -536,7 +557,7 @@ export default function AffiliateClient() {
                 Đăng Ký Đối Tác Affiliate
               </h2>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                Chỉ mất 30 giây để bắt đầu nhận hoa hồng 30% - 50% cùng Tự Học AI
+                Chỉ mất 30 giây để bắt đầu nhận hoa hồng 60% trọn đời cùng Tự Học AI
               </p>
             </div>
 

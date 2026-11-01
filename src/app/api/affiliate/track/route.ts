@@ -4,7 +4,7 @@ import { recordAffiliateClick } from '@/lib/affiliate';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const ref = body.ref || body.aff;
+    const ref = body.ref || body.aff || body.code;
     const { landingPath, referrer } = body;
 
     if (!ref || typeof ref !== 'string') {

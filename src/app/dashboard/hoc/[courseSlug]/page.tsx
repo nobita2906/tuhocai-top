@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import ReferralShareCard from '@/components/ReferralShareCard';
 import {
   ArrowLeft,
   ArrowRight,
@@ -460,6 +461,14 @@ export default function CourseLearningRoomPage({
                   </button>
                 </div>
               </div>
+
+              {/* REFERRAL SHARE CARD - 60% COMMISSION */}
+              <ReferralShareCard
+                courseSlug={course.slug}
+                courseTitle={course.title}
+                coursePrice={course.price}
+                isUnlocked={course.isUnlocked}
+              />
 
               {/* TABS: Hướng Dẫn & Checklist | Tài Nguyên File | Thảo Luận */}
               <div className="bento-card border-2 border-slate-300 dark:border-white/15 overflow-hidden shadow-md">

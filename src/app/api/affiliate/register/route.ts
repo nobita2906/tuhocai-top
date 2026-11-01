@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
 import { query, execute } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth';
+import { DEFAULT_COMMISSION_RATE } from '@/lib/affiliate';
 
 export async function POST(req: Request) {
   try {
@@ -39,7 +40,7 @@ export async function POST(req: Request) {
       `INSERT INTO affiliate_partners (
         id, user_id, code, name, email, phone, commission_rate, balance, total_earned,
         bank_name, bank_account_no, bank_account_name, status, notes
-      ) VALUES (?, ?, ?, ?, ?, ?, 30, 0, 0, ?, ?, ?, 'ACTIVE', 'Đăng ký trực tuyến')`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, ?, ?, ?, 'ACTIVE', 'Đăng ký đối tác trực tuyến')`,
       [
         partnerId,
         session?.id || null,
@@ -47,6 +48,7 @@ export async function POST(req: Request) {
         name.trim(),
         cleanEmail,
         phone?.trim() || null,
+        DEFAULT_COMMISSION_RATE,
         bankName?.trim() || null,
         bankAccountNo?.trim() || null,
         bankAccountName?.trim()?.toUpperCase() || null,
@@ -55,13 +57,13 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      message: 'Đăng ký đối tác Affiliate thành công! Bạn có thể bắt đầu chia sẻ link ngay.',
+      message: 'Đăng ký đối tác thành công! Mức chiết khấu mặc định của bạn là 60%.',
       partner: {
         id: partnerId,
         code: cleanCode,
         name: name.trim(),
         email: cleanEmail,
-        commissionRate: 30,
+        commissionRate: DEFAULT_COMMISSION_RATE,
         refUrl: `https://www.tuhocai.top/?ref=${cleanCode}`,
       },
     });

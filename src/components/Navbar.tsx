@@ -41,7 +41,7 @@ export default function Navbar() {
     { label: 'Kho Workflow & Skill', href: '/san-pham' },
     { label: 'Tài liệu Miễn Phí', href: '/#tai-lieu-free' },
     { label: 'Tin tức & Hướng dẫn', href: '/bai-viet' },
-    { label: 'Affiliate', href: '/affiliate' },
+    { label: 'Affiliate / CTV', href: '/affiliate' },
   ];
 
   return (
@@ -121,7 +121,7 @@ export default function Navbar() {
                   : 'text-slate-800 dark:text-slate-200 hover:opacity-75 hover:bg-slate-100 dark:hover:bg-white/[0.04]'
               }`}
             >
-              Affiliate
+              Affiliate / CTV
             </Link>
 
             {/* Kho Của Tôi button - Đậm đà mặc định, hover mờ lại */}

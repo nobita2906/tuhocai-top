@@ -21,7 +21,9 @@ import {
   ExternalLink,
   ShieldCheck,
   Zap,
+  Gift,
 } from 'lucide-react';
+import CustomerAffiliateHub from '@/components/CustomerAffiliateHub';
 
 interface CourseItem {
   slug: string;
@@ -57,7 +59,7 @@ export default function DashboardPage() {
   const [library, setLibrary] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'classroom' | 'library' | 'orders'>('classroom');
+  const [activeTab, setActiveTab] = useState<'classroom' | 'library' | 'orders' | 'referral'>('classroom');
   const [courseFilter, setCourseFilter] = useState<'all' | 'unlocked' | 'free' | 'vip'>('all');
 
   useEffect(() => {
@@ -235,6 +237,21 @@ export default function DashboardPage() {
         >
           <FileText className="w-4 h-4" />
           🧾 Lịch Sử Đơn Hàng ({orders.length})
+        </button>
+
+        <button
+          onClick={() => setActiveTab('referral')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap ${
+            activeTab === 'referral'
+              ? 'bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white shadow-md shadow-emerald-950/20'
+              : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.06] border border-emerald-500/20'
+          }`}
+        >
+          <Gift className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+          🤝 Đối Tác Affiliate & CTV (60%)
+          <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-full font-black bg-amber-400 text-slate-950 shadow-xs">
+            HOT
+          </span>
         </button>
 
         <a
@@ -518,6 +535,13 @@ export default function DashboardPage() {
               <p className="text-xs text-slate-500 dark:text-slate-400">Lịch sử thanh toán VietQR sẽ được lưu lại tự động tại đây.</p>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Tab: Referral / CTV Kiếm Tiền 60% */}
+      {activeTab === 'referral' && (
+        <div className="pt-2">
+          <CustomerAffiliateHub />
         </div>
       )}
     </div>
