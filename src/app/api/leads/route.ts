@@ -7,16 +7,17 @@ export async function POST(req: Request) {
   try {
     const { name, email, phone, resource_id, resource_name } = await req.json();
 
-    if (!email || !name) {
-      return NextResponse.json({ error: 'Vui lòng cung cấp họ tên và email để nhận tài liệu.' }, { status: 400 });
-    }
-
-    const cleanEmail = email.trim().toLowerCase();
-    const cleanName = name.trim();
-
     // Check if user is logged in
     const session = await getCurrentUser();
     let userId = session?.id || null;
+
+    const cleanEmail = (email || session?.email || '').trim().toLowerCase();
+    const cleanName = (name || session?.name || 'Khách hàng Tự Học AI').trim();
+    const cleanPhone = (phone || session?.phone || '').trim();
+
+    if (!cleanEmail) {
+      return NextResponse.json({ error: 'Vui lòng cung cấp email để nhận tài liệu.' }, { status: 400 });
+    }
 
     if (!userId) {
       // Find if email is already in users table
@@ -31,7 +32,7 @@ export async function POST(req: Request) {
     await execute(
       `INSERT INTO leads (id, user_id, name, email, phone, resource_id, resource_name, source)
        VALUES (?, ?, ?, ?, ?, ?, ?, 'free_download')`,
-      [leadId, userId, cleanName, cleanEmail, phone || null, resource_id || 'FREE-ALL', resource_name || 'Bộ Tài Liệu AI Miễn Phí']
+      [leadId, userId, cleanName, cleanEmail, cleanPhone || null, resource_id || 'FREE-ALL', resource_name || 'Bộ Tài Liệu AI Miễn Phí']
     );
 
     // If resource_id corresponds to a product in products table, find its download link

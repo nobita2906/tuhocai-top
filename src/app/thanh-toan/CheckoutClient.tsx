@@ -444,87 +444,118 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
             <form onSubmit={handleCreateOrder} className="space-y-4">
               <h3 className="text-base font-extrabold text-slate-900 dark:text-white mb-2">1. Thông tin người nhận tài liệu</h3>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-800 dark:text-slate-300 mb-1.5">
-                  Họ và tên của bạn <span className="text-indigo-700 dark:text-indigo-400">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Ví dụ: Nguyễn Văn Đăng"
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-indigo-700 shadow-xs"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-800 dark:text-slate-300 mb-1.5">
-                  Địa chỉ Email (Nhận mã kích hoạt & link tải) <span className="text-indigo-700 dark:text-indigo-400">*</span>
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    if (recognizedCustomer) setRecognizedCustomer(false);
-                  }}
-                  onBlur={handleEmailBlur}
-                  placeholder="name@gmail.com"
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-indigo-700 shadow-xs"
-                />
-                {recognizedCustomer && (
-                  <p className="mt-1.5 text-[11px] text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1.5 animate-in fade-in duration-200">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Chào mừng bạn quay lại! Đã tự động nhận diện thông tin của bạn.</span>
-                  </p>
-                )}
-              </div>
-
-              {isLoggedIn ? (
-                <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border-2 border-emerald-300 dark:border-emerald-500/20 text-emerald-800 dark:text-emerald-400 text-xs flex items-center justify-between font-semibold">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Tài khoản nhận: <strong>{email}</strong></span>
+              {product.price === 0 && isLoggedIn ? (
+                <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border-2 border-emerald-300 dark:border-emerald-500/25 space-y-2 text-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-sm text-emerald-800 dark:text-emerald-400 flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4" />
+                      Tài nguyên miễn phí 100%
+                    </span>
+                    <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-200/60 dark:bg-emerald-500/30 px-2 py-0.5 rounded text-emerald-900 dark:text-emerald-300">
+                      ✓ ĐÃ ĐĂNG NHẬP
+                    </span>
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-200/60 dark:bg-emerald-500/30 px-2 py-0.5 rounded">
-                    ĐÃ ĐĂNG NHẬP
-                  </span>
+                  <p className="text-slate-700 dark:text-slate-300">
+                    Tài khoản nhận: <strong className="text-slate-900 dark:text-white font-mono">{email}</strong> {name ? `(${name})` : ''}
+                  </p>
+                  <p className="text-slate-500 dark:text-slate-400 text-[11px]">
+                    Tài liệu sẽ được kích hoạt trực tiếp vào mục &quot;Kho Của Tôi&quot; và gửi link tải về email của bạn mà không cần điền thêm thông tin.
+                  </p>
                 </div>
               ) : (
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs font-bold text-slate-800 dark:text-slate-300">
-                      Số điện thoại (Đúng 10 số) <span className="text-indigo-700 dark:text-indigo-400">*</span>
+                <>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-800 dark:text-slate-300 mb-1.5">
+                      Họ và tên của bạn <span className="text-indigo-700 dark:text-indigo-400">*</span>
                     </label>
-                    <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold">Mật khẩu Kho Của Tôi</span>
+                    <input
+                      type="text"
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Ví dụ: Nguyễn Văn Đăng"
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-indigo-700 shadow-xs"
+                    />
                   </div>
-                  <input
-                    type="tel"
-                    required
-                    maxLength={10}
-                    pattern="0[0-9]{9}"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="Ví dụ: 0912345678"
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-indigo-700 shadow-xs"
-                  />
-                  <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
-                    *SĐT này sẽ là mật khẩu mặc định để bạn tra cứu và tải tài nguyên trong mục &quot;Kho Của Tôi&quot;.
-                  </p>
-                </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-800 dark:text-slate-300 mb-1.5">
+                      Địa chỉ Email (Nhận mã kích hoạt & link tải) <span className="text-indigo-700 dark:text-indigo-400">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        if (recognizedCustomer) setRecognizedCustomer(false);
+                      }}
+                      onBlur={handleEmailBlur}
+                      placeholder="name@gmail.com"
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-indigo-700 shadow-xs"
+                    />
+                    {recognizedCustomer && (
+                      <p className="mt-1.5 text-[11px] text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1.5 animate-in fade-in duration-200">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>Chào mừng bạn quay lại! Đã tự động nhận diện thông tin của bạn.</span>
+                      </p>
+                    )}
+                  </div>
+
+                  {isLoggedIn ? (
+                    <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border-2 border-emerald-300 dark:border-emerald-500/20 text-emerald-800 dark:text-emerald-400 text-xs flex items-center justify-between font-semibold">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <span>Tài khoản nhận: <strong>{email}</strong></span>
+                      </div>
+                      <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-200/60 dark:bg-emerald-500/30 px-2 py-0.5 rounded">
+                        ĐÃ ĐĂNG NHẬP
+                      </span>
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className="block text-xs font-bold text-slate-800 dark:text-slate-300">
+                          Số điện thoại (Đúng 10 số) <span className="text-indigo-700 dark:text-indigo-400">*</span>
+                        </label>
+                        <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold">Mật khẩu Kho Của Tôi</span>
+                      </div>
+                      <input
+                        type="tel"
+                        required
+                        maxLength={10}
+                        pattern="0[0-9]{9}"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="Ví dụ: 0912345678"
+                        className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-indigo-700 shadow-xs"
+                      />
+                      <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                        *SĐT này sẽ là mật khẩu mặc định để bạn tra cứu và tải tài nguyên trong mục &quot;Kho Của Tôi&quot;.
+                      </p>
+                    </div>
+                  )}
+                </>
               )}
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-4 flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-85 text-white font-extrabold text-sm shadow-xl shadow-indigo-950/30 transition-all active:scale-[0.98]"
+                className={`w-full mt-4 flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl text-white font-extrabold text-sm shadow-xl transition-all active:scale-[0.98] ${
+                  product.price === 0
+                    ? 'bg-gradient-to-r from-emerald-600 via-emerald-700 to-teal-700 hover:opacity-90 shadow-emerald-950/25 border border-emerald-400/30'
+                    : 'bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-85 shadow-indigo-950/30'
+                }`}
               >
                 {loading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Đang khởi tạo đơn hàng...
+                    {product.price === 0 ? 'Đang kích hoạt tài liệu...' : 'Đang khởi tạo đơn hàng...'}
+                  </>
+                ) : product.price === 0 ? (
+                  <>
+                    <Download className="w-4 h-4" />
+                    ⚡ Kích Hoạt Vào Kho & Tải Ngay (Miễn Phí 0đ)
                   </>
                 ) : (
                   <>

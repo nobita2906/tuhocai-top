@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Product, Post } from '@/types';
@@ -18,7 +18,6 @@ import {
   Loader2,
   Cpu,
   Sparkles,
-  ShieldCheck,
 } from 'lucide-react';
 
 interface HomePageClientProps {
@@ -47,6 +46,20 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
   const [leadLoading, setLeadLoading] = useState(false);
   const [leadSuccess, setLeadSuccess] = useState<string | null>(null);
   const [leadError, setLeadError] = useState('');
+  const [currentUser, setCurrentUser] = useState<{ name: string; email: string } | null>(null);
+
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          setCurrentUser(data.user);
+          setLeadName((prev) => prev || data.user.name || '');
+          setLeadEmail((prev) => prev || data.user.email || '');
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Filter products & Ưu tiên hiển thị sản phẩm 0Đ lên đầu
   const filteredProducts = initialProducts
@@ -383,7 +396,7 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7 space-y-4">
               <span className="font-mono text-xs uppercase font-bold tracking-wider text-indigo-800 dark:text-cyan-400">
-                // MIỄN PHÍ DÀNH CHO BẠN
+                {'// MIỄN PHÍ DÀNH CHO BẠN'}
               </span>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                 Tải Trọn Bộ 100+ Prompt FLUX & App Flow Tự Động
@@ -393,6 +406,16 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
               </p>
 
               <form onSubmit={handleLeadSubmit} className="space-y-3 pt-2">
+                {currentUser && (
+                  <div className="p-2.5 px-3.5 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/30 text-xs flex items-center justify-between text-indigo-950 dark:text-indigo-300">
+                    <span className="font-semibold">
+                      Tài khoản nhận: <strong className="font-bold">{currentUser.email}</strong>
+                    </span>
+                    <span className="text-[10px] font-black uppercase tracking-wider bg-indigo-200/60 dark:bg-indigo-500/30 px-2 py-0.5 rounded text-indigo-800 dark:text-cyan-300">
+                      ✓ ĐÃ ĐĂNG NHẬP
+                    </span>
+                  </div>
+                )}
                 <div className="flex flex-col sm:flex-row gap-3">
                   <input
                     type="text"
