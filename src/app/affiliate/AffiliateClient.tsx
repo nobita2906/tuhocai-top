@@ -25,9 +25,13 @@ import {
   FileText,
   MessageSquare,
 } from 'lucide-react';
+import AffiliateGuideSection from '@/components/AffiliateGuideSection';
 
 export default function AffiliateClient() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'register' | 'toolkit'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'guide' | 'dashboard' | 'register' | 'toolkit'>('guide');
+
+  // Current logged in user (if any)
+  const [currentUser, setCurrentUser] = useState<{ id: string; email: string; name?: string; phone?: string } | null>(null);
 
   // Search/Lookup state
   const [searchCode, setSearchCode] = useState('');
@@ -49,6 +53,7 @@ export default function AffiliateClient() {
     name: '',
     email: '',
     phone: '',
+    password: '',
     code: '',
     bankName: 'VPBank',
     bankAccountNo: '',
@@ -62,13 +67,32 @@ export default function AffiliateClient() {
   const [payoutNotes, setPayoutNotes] = useState('');
   const [isPayoutSubmitting, setIsPayoutSubmitting] = useState(false);
 
-  // Auto-load partner code: ưu tiên lấy theo phiên đăng nhập của học viên
+  // Auto-load partner code & parse URL query parameter ?tab=
   useEffect(() => {
     async function initPartner() {
+      // 1. Check URL query params for initial tab
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const tabParam = params.get('tab');
+        if (tabParam === 'dashboard' || tabParam === 'register' || tabParam === 'toolkit' || tabParam === 'guide') {
+          setActiveTab(tabParam as any);
+        }
+      }
+
+      // 2. Check logged-in user session
       try {
         const authRes = await fetch('/api/auth/me');
         const authData = await authRes.json();
         if (authData.authenticated && authData.user) {
+          setCurrentUser(authData.user);
+          // Prefill reg form if not filled
+          setRegForm((prev) => ({
+            ...prev,
+            name: prev.name || authData.user.name || '',
+            email: prev.email || authData.user.email || '',
+            phone: prev.phone || authData.user.phone || '',
+          }));
+
           const refRes = await fetch('/api/dashboard/referral');
           const refData = await refRes.json();
           if (refData.success && refData.partner?.code) {
@@ -228,50 +252,92 @@ export default function AffiliateClient() {
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex border-b border-slate-200 dark:border-slate-800 gap-4">
+        <div className="flex border-b border-slate-200 dark:border-slate-800 gap-2 sm:gap-4 overflow-x-auto no-scrollbar scrollbar-none whitespace-nowrap pb-px">
+          <button
+            onClick={() => setActiveTab('guide')}
+            data-tab="guide"
+            className={`pb-3.5 px-3 sm:px-4 font-bold text-sm sm:text-base transition-all relative flex items-center gap-2 shrink-0 ${
+              activeTab === 'guide'
+                ? 'text-indigo-600 dark:text-cyan-400'
+                : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+            }`}
+          >
+            <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-500" />
+            <span>Giới Thiệu & Hướng Dẫn</span>
+            {activeTab === 'guide' && (
+              <span className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-600 to-cyan-500 rounded-full" />
+            )}
+          </button>
+
           <button
             onClick={() => setActiveTab('dashboard')}
-            className={`pb-4 px-4 font-bold text-base sm:text-lg transition-all relative flex items-center gap-2 ${
+            data-tab="dashboard"
+            className={`pb-3.5 px-3 sm:px-4 font-bold text-sm sm:text-base transition-all relative flex items-center gap-2 shrink-0 ${
               activeTab === 'dashboard'
-                ? 'text-indigo-600 dark:text-indigo-400'
+                ? 'text-indigo-600 dark:text-cyan-400'
                 : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
-            <TrendingUp className="w-5 h-5" />
-            Bảng Điều Khiển Đối Tác
+            <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" />
+            <span>Bảng Điều Khiển Đối Tác</span>
             {activeTab === 'dashboard' && (
-              <span className="absolute bottom-0 left-0 right-0 h-1 bg-indigo-600 dark:bg-indigo-400 rounded-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-600 to-cyan-500 rounded-full" />
             )}
           </button>
+
           <button
             onClick={() => setActiveTab('register')}
-            className={`pb-4 px-4 font-bold text-base sm:text-lg transition-all relative flex items-center gap-2 ${
+            data-tab="register"
+            className={`pb-3.5 px-3 sm:px-4 font-bold text-sm sm:text-base transition-all relative flex items-center gap-2 shrink-0 ${
               activeTab === 'register'
-                ? 'text-indigo-600 dark:text-indigo-400'
+                ? 'text-indigo-600 dark:text-cyan-400'
                 : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
-            <Users className="w-5 h-5" />
-            Đăng Ký Tham Gia Mới
+            <Users className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" />
+            <span>Đăng Ký Đối Tác (Tạo Tài Khoản)</span>
             {activeTab === 'register' && (
-              <span className="absolute bottom-0 left-0 right-0 h-1 bg-indigo-600 dark:bg-indigo-400 rounded-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-600 to-cyan-500 rounded-full" />
             )}
           </button>
+
           <button
             onClick={() => setActiveTab('toolkit')}
-            className={`pb-4 px-4 font-bold text-base sm:text-lg transition-all relative flex items-center gap-2 ${
+            data-tab="toolkit"
+            className={`pb-3.5 px-3 sm:px-4 font-bold text-sm sm:text-base transition-all relative flex items-center gap-2 shrink-0 ${
               activeTab === 'toolkit'
-                ? 'text-indigo-600 dark:text-indigo-400'
+                ? 'text-indigo-600 dark:text-cyan-400'
                 : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
-            <Sparkles className="w-5 h-5 text-amber-500" />
-            Tài Nguyên Tiếp Thị (Media Kit)
+            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
+            <span>Tài Nguyên Tiếp Thị (Media Kit)</span>
             {activeTab === 'toolkit' && (
-              <span className="absolute bottom-0 left-0 right-0 h-1 bg-indigo-600 dark:bg-indigo-400 rounded-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-600 to-cyan-500 rounded-full" />
             )}
           </button>
         </div>
+
+        {/* Tab 0: Comprehensive Guide & Introduction View */}
+        {activeTab === 'guide' && (
+          <AffiliateGuideSection
+            onGoToRegister={() => {
+              setActiveTab('register');
+              window.scrollTo({ top: 350, behavior: 'smooth' });
+            }}
+            onGoToDashboard={() => {
+              setActiveTab('dashboard');
+              window.scrollTo({ top: 350, behavior: 'smooth' });
+            }}
+            onGoToToolkit={() => {
+              setActiveTab('toolkit');
+              window.scrollTo({ top: 350, behavior: 'smooth' });
+            }}
+            isLoggedIn={!!currentUser}
+            userEmail={currentUser?.email}
+            userCode={statsData?.partner?.code || searchCode}
+          />
+        )}
 
         {/* Tab 1: Dashboard View */}
         {activeTab === 'dashboard' && (
@@ -548,28 +614,56 @@ export default function AffiliateClient() {
 
         {/* Tab 2: Register Form */}
         {activeTab === 'register' && (
-          <div className="max-w-2xl mx-auto bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 sm:p-10 shadow-lg">
-            <div className="text-center space-y-2 mb-8">
-              <div className="inline-flex p-3 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 mb-2">
+          <div className="max-w-2xl mx-auto bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 sm:p-10 shadow-lg space-y-6">
+            <div className="text-center space-y-2">
+              <div className="inline-flex p-3 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-cyan-400 mb-1">
                 <Users className="w-8 h-8" />
               </div>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
-                Đăng Ký Đối Tác Affiliate
+                Đăng Ký Đối Tác & Tạo Tài Khoản
               </h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                Chỉ mất 30 giây để bắt đầu nhận hoa hồng 60% trọn đời cùng Tự Học AI
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                Chỉ mất 30 giây để bắt đầu nhận hoa hồng thực chiến 60% trọn đời cùng Tự Học AI
               </p>
             </div>
 
+            {/* Unified Account Policy Banner */}
+            <div className="p-4 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/70 text-xs sm:text-sm text-slate-700 dark:text-slate-300 space-y-1.5">
+              <div className="font-bold text-indigo-700 dark:text-cyan-300 flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-amber-500" />
+                Chính Sách 1 Tài Khoản Duy Nhất (All-in-One):
+              </div>
+              <p className="leading-relaxed">
+                Đăng ký làm đối tác Affiliate cũng chính là <strong>tạo tài khoản thành viên trong hệ thống Tự Học AI</strong>. Sau khi hoàn tất, hệ thống tự động đăng nhập và cấp ngay <strong>Mã Ref độc quyền</strong> với mức hoa hồng <strong>60% trọn đời</strong>.
+              </p>
+            </div>
+
+            {/* Logged in state hint */}
+            {currentUser && (
+              <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-800 dark:text-emerald-300 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>
+                    Bạn đang đăng nhập: <strong>{currentUser.email}</strong>
+                  </span>
+                </div>
+                <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-200 dark:bg-emerald-900 text-emerald-900 dark:text-emerald-200 font-bold shrink-0">
+                  Tài khoản học viên
+                </span>
+              </div>
+            )}
+
             {errorMsg && (
-              <div className="mb-6 p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-sm">
-                {errorMsg}
+              <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-sm flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{errorMsg}</span>
               </div>
             )}
 
             {successMsg && (
-              <div className="mb-6 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900 text-emerald-700 dark:text-emerald-300 text-sm">
-                {successMsg}
+              <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900 text-emerald-700 dark:text-emerald-300 text-sm flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500" />
+                <span>{successMsg}</span>
               </div>
             )}
 
@@ -616,6 +710,27 @@ export default function AffiliateClient() {
                   />
                 </div>
               </div>
+
+              {/* Password field if not logged in */}
+              {!currentUser && (
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                    Mật khẩu tài khoản Tự Học AI <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={regForm.password}
+                    onChange={(e) => setRegForm({ ...regForm, password: e.target.value })}
+                    placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)..."
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    Dùng để đăng nhập vào Kho của tôi và Bảng điều khiển đối tác
+                  </p>
+                </div>
+              )}
 
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
@@ -689,8 +804,20 @@ export default function AffiliateClient() {
                 disabled={isSubmitting}
                 className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-indigo-800 hover:from-indigo-700 hover:to-indigo-900 text-white font-bold text-base shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/50 transition-all flex items-center justify-center gap-2"
               >
-                {isSubmitting ? 'Đang tạo đối tác...' : '⚡ Đăng Ký Làm Đối Tác Ngay'}
+                {isSubmitting ? 'Đang kích hoạt đối tác...' : '⚡ Kích Hoạt Tài Khoản & Nhận Mã Ref (Hoa Hồng 60%)'}
               </button>
+
+              {!currentUser && (
+                <div className="text-center pt-2">
+                  <p className="text-xs text-slate-500">
+                    Đã có tài khoản học viên tại Tự Học AI?{' '}
+                    <Link href="/login" className="text-indigo-600 dark:text-cyan-400 font-bold hover:underline">
+                      Đăng nhập tại đây
+                    </Link>{' '}
+                    để tự động liên kết đối tác!
+                  </p>
+                </div>
+              )}
             </form>
           </div>
         )}

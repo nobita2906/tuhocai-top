@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { getProductCover } from '@/lib/productImages';
 import ProductCard from '@/components/ProductCard';
+import ProductAffiliatePromoCard from '@/components/ProductAffiliatePromoCard';
 import {
   Zap,
   ShieldCheck,
@@ -155,75 +156,80 @@ export default async function ProductDetailPage({
           </div>
         </div>
 
-        {/* Right Column: Checkout Purchase Box */}
-        <div className="lg:col-span-5 sticky top-24 bento-card p-6 sm:p-8 space-y-6 shadow-xl border-2 border-slate-300 dark:border-white/15">
-          <div className="space-y-2 border-b border-slate-200 dark:border-white/[0.08] pb-5">
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-mono font-semibold">Giá sở hữu trọn đời</p>
-            {isFree ? (
-              <div className="flex items-baseline gap-2 flex-wrap">
-                <span className="text-3xl font-black text-emerald-700 dark:text-emerald-400 font-mono whitespace-nowrap">0&nbsp;đ</span>
-                <span className="text-sm text-slate-400 line-through font-mono whitespace-nowrap">99.000&nbsp;đ</span>
-                <span className="px-2.5 py-0.5 rounded-md text-[10px] font-black font-mono bg-emerald-700 text-white shrink-0 whitespace-nowrap">
-                  MIỄN PHÍ
-                </span>
-              </div>
-            ) : (
-              <div className="flex items-baseline gap-2 flex-wrap">
-                <span className="text-3xl font-black text-indigo-800 dark:text-indigo-400 font-mono whitespace-nowrap">
-                  {new Intl.NumberFormat('vi-VN').format(product.price)}&nbsp;đ
-                </span>
-                {product.original_price > product.price && (
-                  <span className="text-sm text-slate-400 line-through font-mono font-semibold whitespace-nowrap">
-                    {new Intl.NumberFormat('vi-VN').format(product.original_price)}&nbsp;đ
+        {/* Right Column: Checkout Purchase Box & Affiliate CTV Recruitment */}
+        <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
+          <div className="bento-card p-6 sm:p-8 space-y-6 shadow-xl border-2 border-slate-300 dark:border-white/15">
+            <div className="space-y-2 border-b border-slate-200 dark:border-white/[0.08] pb-5">
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-mono font-semibold">Giá sở hữu trọn đời</p>
+              {isFree ? (
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-3xl font-black text-emerald-700 dark:text-emerald-400 font-mono whitespace-nowrap">0&nbsp;đ</span>
+                  <span className="text-sm text-slate-400 line-through font-mono whitespace-nowrap">99.000&nbsp;đ</span>
+                  <span className="px-2.5 py-0.5 rounded-md text-[10px] font-black font-mono bg-emerald-700 text-white shrink-0 whitespace-nowrap">
+                    MIỄN PHÍ
                   </span>
-                )}
+                </div>
+              ) : (
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-3xl font-black text-indigo-800 dark:text-indigo-400 font-mono whitespace-nowrap">
+                    {new Intl.NumberFormat('vi-VN').format(product.price)}&nbsp;đ
+                  </span>
+                  {product.original_price > product.price && (
+                    <span className="text-sm text-slate-400 line-through font-mono font-semibold whitespace-nowrap">
+                      {new Intl.NumberFormat('vi-VN').format(product.original_price)}&nbsp;đ
+                    </span>
+                  )}
+                </div>
+              )}
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                * Nhận file ngay lập tức sau khi thanh toán hoặc đăng ký.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              {isFree ? (
+                <Link
+                  href={`/thanh-toan?pid=${product.pid}`}
+                  className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-emerald-700 hover:opacity-85 text-white font-black text-sm border-2 border-emerald-500 shadow-xl shadow-emerald-950/25 transition-all active:scale-[0.98]"
+                >
+                  <Download className="w-4 h-4" />
+                  Tải Xuống Miễn Phí Ngay
+                </Link>
+              ) : (
+                <Link
+                  href={`/thanh-toan?pid=${product.pid}`}
+                  className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-85 text-white font-black text-sm shadow-xl shadow-indigo-950/30 transition-all active:scale-[0.98]"
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  Mua Ngay Bằng VietQR ({new Intl.NumberFormat('vi-VN').format(product.price)} đ)
+                </Link>
+              )}
+
+              <a
+                href="https://zalo.me/0938494303"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-white dark:bg-white/[0.04] hover:opacity-80 text-slate-800 dark:text-slate-200 font-bold text-xs border-2 border-slate-300 dark:border-white/[0.1] transition-all shadow-xs"
+              >
+                <MessageCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                Chat Zalo Tư Vấn Trực Tiếp (0938 494 303)
+              </a>
+            </div>
+
+            <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-white/[0.08] text-[11px] text-slate-600 dark:text-slate-400 font-medium">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                <span>Duyệt tự động qua Bot Telegram & nhận link tức thì</span>
               </div>
-            )}
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">
-              * Nhận file ngay lập tức sau khi thanh toán hoặc đăng ký.
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            {isFree ? (
-              <Link
-                href={`/thanh-toan?pid=${product.pid}`}
-                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-emerald-700 hover:opacity-85 text-white font-black text-sm border-2 border-emerald-500 shadow-xl shadow-emerald-950/25 transition-all active:scale-[0.98]"
-              >
-                <Download className="w-4 h-4" />
-                Tải Xuống Miễn Phí Ngay
-              </Link>
-            ) : (
-              <Link
-                href={`/thanh-toan?pid=${product.pid}`}
-                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-85 text-white font-black text-sm shadow-xl shadow-indigo-950/30 transition-all active:scale-[0.98]"
-              >
-                <ShoppingCart className="w-4 h-4" />
-                Mua Ngay Bằng VietQR ({new Intl.NumberFormat('vi-VN').format(product.price)} đ)
-              </Link>
-            )}
-
-            <a
-              href="https://zalo.me/0938494303"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-white dark:bg-white/[0.04] hover:opacity-80 text-slate-800 dark:text-slate-200 font-bold text-xs border-2 border-slate-300 dark:border-white/[0.1] transition-all shadow-xs"
-            >
-              <MessageCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              Chat Zalo Tư Vấn Trực Tiếp (0938 494 303)
-            </a>
-          </div>
-
-          <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-white/[0.08] text-[11px] text-slate-600 dark:text-slate-400 font-medium">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
-              <span>Duyệt tự động qua Bot Telegram & nhận link tức thì</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-indigo-700 dark:text-indigo-400 flex-shrink-0" />
-              <span>Được lưu vĩnh viễn vào Kho tài liệu cá nhân</span>
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-indigo-700 dark:text-indigo-400 flex-shrink-0" />
+                <span>Được lưu vĩnh viễn vào Kho tài liệu cá nhân</span>
+              </div>
             </div>
           </div>
+
+          {/* Promotion / CTV Recruitment Banner */}
+          <ProductAffiliatePromoCard product={product} />
         </div>
       </div>
 
