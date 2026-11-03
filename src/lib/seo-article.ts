@@ -35,9 +35,20 @@ export function prepareArticleContent(content: string): PreparedArticle {
   const toc: TocItem[] = [];
   const idCounts: Record<string, number> = {};
 
+  const decodeHtmlEntities = (str: string) => {
+    return str
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&apos;/g, "'")
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(dec));
+  };
+
   const processedHtml = rawHtml.replace(/<h([23])(.*?)>(.*?)<\/h\1>/gi, (match, levelStr, attrs, innerText) => {
     const level = parseInt(levelStr, 10);
-    const cleanText = innerText.replace(/<[^>]+>/g, '').trim();
+    const cleanText = decodeHtmlEntities(innerText.replace(/<[^>]+>/g, '').trim());
     if (!cleanText) return match;
 
     let baseId = slugifyVietnamese(cleanText);
