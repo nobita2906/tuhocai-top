@@ -18,6 +18,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { prepareArticleContent, generateArticleSchema } from '@/lib/seo-article';
+import ArticleBody from '@/components/ArticleBody';
 
 export const revalidate = 60;
 
@@ -206,11 +207,8 @@ export default async function SingleArticlePage({
           )}
         </header>
 
-        {/* Main Article Body - High Contrast, Crystal Clear */}
-        <div
-          className="markdown-body max-w-none text-base sm:text-lg leading-relaxed space-y-6 pt-2"
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
+        {/* Main Article Body - High Contrast, Crystal Clear with 1-click Quick Copy */}
+        <ArticleBody html={html} />
 
         {/* Tags */}
         {post.tags && (
