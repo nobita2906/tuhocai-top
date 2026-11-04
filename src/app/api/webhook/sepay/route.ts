@@ -90,8 +90,9 @@ export async function POST(req: Request) {
       }
       console.log('[SePay Webhook] Xác thực chữ ký HMAC-SHA256 thành công!');
     } else if (configuredApiKey) {
-      const token = authHeader.replace(/^Apikey\s+/i, '').trim();
-      if (token !== configuredApiKey) {
+      const token = authHeader.replace(/^(?:Apikey|Bearer)\s+/i, '').trim();
+      const cleanConfigured = configuredApiKey.replace(/^(?:Apikey|Bearer)\s+/i, '').trim();
+      if (token !== cleanConfigured) {
         console.warn('[SePay Webhook] Sai hoặc thiếu API Key xác thực:', authHeader);
         return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
       }

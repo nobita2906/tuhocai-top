@@ -197,7 +197,7 @@ export default function AdminSettingsPage() {
       if (!res.ok || !data.success) {
         throw new Error(data.error || 'Không thể xác thực API Token SePay');
       }
-      alert('🎉 THÀNH CÔNG: Token SePay hợp lệ và đã kết nối máy chủ SePay hoàn hảo!');
+      alert(data.message || '🎉 THÀNH CÔNG: Token SePay hợp lệ và đã kết nối máy chủ SePay hoàn hảo!');
     } catch (err: any) {
       alert('⚠️ ' + (err.message || 'Lỗi kiểm tra SePay'));
     } finally {

@@ -44,8 +44,10 @@ export async function POST(req: Request) {
 
     // 1. Kiểm tra kết nối SePay API Token
     if (action === 'test_sepay') {
-      const apiKey = body.apiKey || siteSettings.sepay_api_key;
-      if (!apiKey || !apiKey.trim()) {
+      const rawKey = body.apiKey || siteSettings.sepay_api_key || '';
+      const cleanKey = rawKey.replace(/^(?:Bearer|Apikey)\s+/i, '').trim();
+
+      if (!cleanKey) {
         return NextResponse.json(
           { error: 'Vui lòng nhập API Token SePay trước khi kiểm tra kết nối' },
           { status: 400 }
@@ -53,23 +55,34 @@ export async function POST(req: Request) {
       }
 
       try {
-        const sepayRes = await fetch('https://my.sepay.vn/userapi/transactions/list?limit=1', {
+        // Gọi endpoint chính thức SePay v2 với Authorization: Bearer
+        let sepayRes = await fetch('https://userapi.sepay.vn/v2/transactions?per_page=1', {
           headers: {
-            Authorization: `Apikey ${apiKey.trim()}`,
+            Authorization: `Bearer ${cleanKey}`,
             'Content-Type': 'application/json',
           },
         });
+
+        // Fallback sang endpoint my.sepay.vn nếu cần
+        if (sepayRes.status === 401) {
+          sepayRes = await fetch('https://my.sepay.vn/userapi/transactions/list?limit=1', {
+            headers: {
+              Authorization: `Bearer ${cleanKey}`,
+              'Content-Type': 'application/json',
+            },
+          });
+        }
 
         if (sepayRes.status === 200) {
           const resData = await sepayRes.json().catch(() => null);
           return NextResponse.json({
             success: true,
-            message: '🎉 KẾT NỐI SEPAY THÀNH CÔNG! Token API hợp lệ và đã sẵn sàng tự động khớp tiền.',
+            message: '🎉 KẾT NỐI SEPAY THÀNH CÔNG! Token API của anh Đăng hoàn toàn chính xác và đã liên kết tài khoản SePay.',
             data: resData,
           });
         } else if (sepayRes.status === 401 || sepayRes.status === 403) {
           return NextResponse.json(
-            { error: 'Mã lỗi 401: Token SePay không hợp lệ hoặc đã hết hạn. Vui lòng kiểm tra lại Token trên my.sepay.vn.' },
+            { error: 'Mã lỗi 401: Token SePay không hợp lệ hoặc đã hết hạn trên my.sepay.vn. Vui lòng kiểm tra lại token đã sao chép.' },
             { status: 400 }
           );
         } else {
