@@ -14,6 +14,9 @@ export interface SiteSettings {
   banner_url: string;
   gemini_api_key?: string;
   openai_api_key?: string;
+  sepay_api_key?: string;
+  sepay_webhook_secret?: string;
+  sepay_auto_approve?: boolean;
 }
 
 export const DEFAULT_SETTINGS: SiteSettings = {
@@ -30,6 +33,9 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   banner_url: '/san-pham',
   gemini_api_key: process.env.GEMINI_API_KEY || '',
   openai_api_key: process.env.OPENAI_API_KEY || '',
+  sepay_api_key: process.env.SEPAY_API_KEY || '',
+  sepay_webhook_secret: process.env.SEPAY_WEBHOOK_SECRET || 'whsec_Mb3fdTLikFj3RKluA4iyHRyMYxyXITZB',
+  sepay_auto_approve: true,
 };
 
 let tableChecked = false;
@@ -77,6 +83,9 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       banner_url: map.banner_url || DEFAULT_SETTINGS.banner_url,
       gemini_api_key: map.gemini_api_key || DEFAULT_SETTINGS.gemini_api_key || '',
       openai_api_key: map.openai_api_key || DEFAULT_SETTINGS.openai_api_key || '',
+      sepay_api_key: map.sepay_api_key !== undefined ? map.sepay_api_key : (DEFAULT_SETTINGS.sepay_api_key || ''),
+      sepay_webhook_secret: map.sepay_webhook_secret !== undefined ? map.sepay_webhook_secret : (DEFAULT_SETTINGS.sepay_webhook_secret || ''),
+      sepay_auto_approve: map.sepay_auto_approve !== undefined ? (map.sepay_auto_approve === 'true' || map.sepay_auto_approve === '1') : DEFAULT_SETTINGS.sepay_auto_approve,
     };
   } catch (err) {
     console.error('Error reading site_settings:', err);

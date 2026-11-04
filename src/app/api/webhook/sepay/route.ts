@@ -74,12 +74,13 @@ export async function POST(req: Request) {
 
     console.log('[SePay Webhook] Nhận dữ liệu biến động số dư:', JSON.stringify(payload));
 
-    // 1. Kiểm tra xác thực SePay (HMAC-SHA256 hoặc API Key)
-    const sepaySecret = process.env.SEPAY_WEBHOOK_SECRET || 'whsec_Mb3fdTLikFj3RKluA4iyHRyMYxyXITZB';
+    // 1. Kiểm tra xác thực SePay (HMAC-SHA256 hoặc API Key từ Cài đặt Quản trị / Env)
+    const siteSettings = await getSiteSettings();
+    const sepaySecret = siteSettings.sepay_webhook_secret || process.env.SEPAY_WEBHOOK_SECRET || 'whsec_Mb3fdTLikFj3RKluA4iyHRyMYxyXITZB';
     const signatureHeader = req.headers.get('x-sepay-signature') || req.headers.get('x-signature') || '';
     const timestampHeader = req.headers.get('x-sepay-timestamp') || '';
     const authHeader = req.headers.get('authorization') || '';
-    const configuredApiKey = process.env.SEPAY_API_KEY;
+    const configuredApiKey = siteSettings.sepay_api_key || process.env.SEPAY_API_KEY;
 
     if (signatureHeader) {
       const isValid = verifySepaySignature(rawBody, signatureHeader, timestampHeader, sepaySecret);
@@ -209,7 +210,6 @@ export async function POST(req: Request) {
     }
 
     // Load site settings để lấy cấu hình Telegram
-    const siteSettings = await getSiteSettings();
     const telegramToken = siteSettings.telegram_bot_token || process.env.TELEGRAM_BOT_TOKEN;
     const telegramChatId = siteSettings.telegram_chat_id;
 
