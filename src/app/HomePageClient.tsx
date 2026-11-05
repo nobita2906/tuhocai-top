@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Product, Post } from '@/types';
 import ProductCard from '@/components/ProductCard';
 import LeadMagnetModal from '@/components/LeadMagnetModal';
+import WorkflowDemoModal from '@/components/WorkflowDemoModal';
 import {
   Zap,
   Clock,
@@ -18,6 +19,7 @@ import {
   Loader2,
   Cpu,
   Sparkles,
+  Play,
 } from 'lucide-react';
 
 interface HomePageClientProps {
@@ -38,6 +40,7 @@ function getPostCover(post: Post): string {
 export default function HomePageClient({ initialProducts, initialPosts }: HomePageClientProps) {
   const [activeTab, setActiveTab] = useState<'all' | 'workflow' | 'skill' | 'prompt' | 'free'>('all');
   const [leadModalOpen, setLeadModalOpen] = useState(false);
+  const [demoModalOpen, setDemoModalOpen] = useState(false);
   const [selectedResource, setSelectedResource] = useState<{ id: string; name: string; url?: string } | null>(null);
 
   // Email Lead Magnet Section state
@@ -171,8 +174,17 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
             </Link>
 
             <button
+              type="button"
+              onClick={() => setDemoModalOpen(true)}
+              className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl bg-purple-50 dark:bg-purple-500/10 hover:opacity-85 text-purple-900 dark:text-purple-300 border-2 border-purple-300 dark:border-purple-500/30 font-bold text-sm transition-all shadow-xs cursor-pointer"
+            >
+              <Play className="w-4 h-4 fill-purple-700 dark:fill-purple-300" />
+              Xem Demo Vận Hành (45s)
+            </button>
+
+            <button
               onClick={() => handleOpenFreeModal()}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white dark:bg-white/[0.05] hover:opacity-85 text-slate-900 dark:text-white border-2 border-slate-400 dark:border-white/20 font-bold text-sm transition-all shadow-xs"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white dark:bg-white/[0.05] hover:opacity-85 text-slate-900 dark:text-white border-2 border-slate-400 dark:border-white/20 font-bold text-sm transition-all shadow-xs cursor-pointer"
             >
               <Download className="w-4 h-4 text-indigo-800 dark:text-cyan-400" />
               Nhận Bộ Tài Liệu 0đ
@@ -316,24 +328,38 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
               </div>
             </div>
 
-            {/* Interactive n8n Canvas Mockup */}
+            {/* Interactive n8n Canvas Mockup with Video/Interactive Demo Button */}
             <div className="lg:col-span-6 space-y-3">
-              <div className="relative rounded-2xl overflow-hidden border-2 border-slate-300 dark:border-indigo-500/25 bg-slate-100 dark:bg-[#111116] aspect-video shadow-md p-1">
+              <div
+                onClick={() => setDemoModalOpen(true)}
+                className="group relative rounded-2xl overflow-hidden border-2 border-slate-300 dark:border-indigo-500/25 bg-slate-100 dark:bg-[#111116] aspect-video shadow-md p-1 cursor-pointer transition-all hover:border-indigo-500 dark:hover:border-indigo-400"
+              >
                 <Image
                   src="/images/n8n-workflow-demo.jpg"
                   alt="Sơ đồ thực tế n8n workflow tự động đăng bài đa kênh"
                   fill
-                  className="object-cover rounded-xl"
+                  className="object-cover rounded-xl transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   priority
                 />
-                <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900/90 backdrop-blur-md border border-white/20 text-[11px] font-mono text-cyan-300 shadow-sm">
+                
+                {/* Play Button Overlay */}
+                <div className="absolute inset-0 bg-slate-950/40 group-hover:bg-slate-950/25 backdrop-blur-[1px] transition-colors flex items-center justify-center">
+                  <div className="flex items-center gap-2.5 px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl bg-indigo-600/90 group-hover:bg-indigo-600 text-white font-bold text-xs sm:text-sm shadow-2xl shadow-indigo-600/50 backdrop-blur-md border border-white/20 group-hover:scale-105 transition-transform">
+                    <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
+                      <Play className="w-3.5 h-3.5 fill-white ml-0.5" />
+                    </div>
+                    <span>Xem Demo Vận Hành Thực Tế (45s)</span>
+                  </div>
+                </div>
+
+                <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900/90 backdrop-blur-md border border-white/20 text-[11px] font-mono text-cyan-300 shadow-sm z-10">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   <span>STATUS: 200 OK</span>
                 </div>
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400 text-center font-mono">
-                Giao diện Canvas n8n thực tế: Kích hoạt tự động • GPT-4o biên tập • Bắn bài đa kênh
+                Bấm vào hình để xem mô phỏng hoạt động chi tiết từng bước của hệ thống n8n
               </p>
             </div>
           </div>
@@ -569,6 +595,12 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
         resourceId={selectedResource?.id || 'FREE-RESOURCE'}
         resourceName={selectedResource?.name || 'Tài liệu Tự Học AI'}
         defaultDownloadUrl={selectedResource?.url}
+      />
+
+      {/* Interactive Workflow Demo Modal */}
+      <WorkflowDemoModal
+        isOpen={demoModalOpen}
+        onClose={() => setDemoModalOpen(false)}
       />
     </div>
   );

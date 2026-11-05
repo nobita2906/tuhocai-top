@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { X, Sparkles, ShoppingBag } from 'lucide-react';
+import { X, ShoppingBag } from 'lucide-react';
 
 interface ToastItem {
   name: string;
@@ -54,7 +54,7 @@ export default function SocialProofToast() {
   const pathname = usePathname();
   const [current, setCurrent] = useState<ToastItem | null>(null);
   const [visible, setVisible] = useState(false);
-  const [index, setIndex] = useState(0);
+  const [dismissedUntil, setDismissedUntil] = useState<number>(0);
 
   const isAdmin = pathname?.startsWith('/admin');
 
@@ -62,66 +62,78 @@ export default function SocialProofToast() {
     if (isAdmin) return;
     // Show first toast after 4s
     const firstTimer = setTimeout(() => {
-      setCurrent(SAMPLE_EVENTS[0]);
-      setVisible(true);
+      if (Date.now() > dismissedUntil) {
+        setCurrent(SAMPLE_EVENTS[0]);
+        setVisible(true);
+      }
     }, 4000);
 
-    // Rotate every 24 seconds
+    // Rotate every 22 seconds
     const interval = setInterval(() => {
-      setIndex((prev) => {
-        const next = (prev + 1) % SAMPLE_EVENTS.length;
-        setCurrent(SAMPLE_EVENTS[next]);
+      if (Date.now() > dismissedUntil) {
+        setCurrent((prev) => {
+          const currentIndex = prev ? SAMPLE_EVENTS.findIndex((e) => e.product === prev.product) : -1;
+          const nextIndex = (currentIndex + 1) % SAMPLE_EVENTS.length;
+          return SAMPLE_EVENTS[nextIndex];
+        });
         setVisible(true);
-        return next;
-      });
-    }, 24000);
+      }
+    }, 22000);
 
     return () => {
       clearTimeout(firstTimer);
       clearInterval(interval);
     };
-  }, [isAdmin]);
+  }, [isAdmin, dismissedUntil]);
 
-  // Auto-hide toast after 7s
+  // Auto-hide toast: 4.5s on mobile, 6.5s on desktop
   useEffect(() => {
     if (isAdmin || !visible) return;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+    const duration = isMobile ? 4500 : 6500;
     const hideTimer = setTimeout(() => {
       setVisible(false);
-    }, 7000);
+    }, duration);
     return () => clearTimeout(hideTimer);
   }, [visible, current, isAdmin]);
+
+  const handleDismiss = () => {
+    setVisible(false);
+    // Don't show toast for the next 90 seconds if user manually closed it
+    setDismissedUntil(Date.now() + 90000);
+  };
 
   if (isAdmin || !current || !visible) return null;
 
   return (
     <aside
       aria-label="Thông báo giao dịch gần đây"
-      className="fixed left-4 bottom-5 z-40 max-w-[340px] p-3.5 rounded-2xl bg-white/95 dark:bg-[#111116]/95 backdrop-blur-md border-2 border-slate-300 dark:border-white/20 shadow-xl shadow-slate-900/10 dark:shadow-black/40 text-slate-900 dark:text-slate-100 flex items-start gap-3 transition-all hover:opacity-90 animate-in slide-in-from-bottom-5 duration-300"
+      className="fixed left-3 sm:left-4 bottom-22 sm:bottom-5 z-40 w-auto max-w-[275px] sm:max-w-[340px] p-2.5 sm:p-3.5 rounded-2xl bg-white/95 dark:bg-[#111116]/95 backdrop-blur-md border-2 border-slate-300 dark:border-white/20 shadow-xl shadow-slate-900/10 dark:shadow-black/40 text-slate-900 dark:text-slate-100 flex items-start gap-2 sm:gap-3 transition-all hover:opacity-95 animate-in slide-in-from-bottom-5 duration-300 pointer-events-auto select-none"
     >
-      <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-800 via-indigo-700 to-blue-700 flex items-center justify-center text-white shrink-0 shadow-md shadow-indigo-950/30 border border-indigo-400/40">
-        <ShoppingBag className="w-4 h-4" />
+      <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-indigo-800 via-indigo-700 to-blue-700 flex items-center justify-center text-white shrink-0 shadow-md shadow-indigo-950/30 border border-indigo-400/40">
+        <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
       </div>
 
-      <div className="flex-1 min-w-0 pr-4">
-        <div className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+      <div className="flex-1 min-w-0 pr-3 sm:pr-4">
+        <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400">
           <span className="font-bold text-slate-900 dark:text-white truncate">{current.name}</span>
-          <span>({current.location})</span>
+          <span className="truncate">({current.location})</span>
         </div>
-        <p className="text-xs text-slate-700 dark:text-slate-300 mt-0.5 line-clamp-2 leading-snug">
+        <p className="text-[11px] sm:text-xs text-slate-700 dark:text-slate-300 mt-0.5 line-clamp-2 leading-snug">
           {current.action} <strong className="text-indigo-800 dark:text-indigo-400 font-bold">{current.product}</strong>
         </p>
-        <div className="flex items-center gap-1 text-[10px] text-slate-500 dark:text-slate-400 font-mono mt-1 font-semibold">
+        <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 font-mono mt-1 font-semibold">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
           <span>{current.time}</span>
         </div>
       </div>
 
       <button
-        onClick={() => setVisible(false)}
-        className="absolute top-2.5 right-2.5 p-1 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+        onClick={handleDismiss}
+        className="absolute top-2 right-2 p-1 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors cursor-pointer"
         aria-label="Đóng thông báo"
       >
-        <X className="w-3.5 h-3.5" />
+        <X className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
       </button>
     </aside>
   );
