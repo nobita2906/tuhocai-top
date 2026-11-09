@@ -1,0 +1,52 @@
+{
+  "title": "Bộ Mega-Prompt Tạo Video AI Bán Hàng Triệu View Từ 1 Ảnh Tĩnh",
+  "author": "Nguyễn Đăng AI (Tự Học AI - tuhocai.top)",
+  "version": "2026.1",
+  "product_id": "WF-VIP-297",
+  "prompts": {
+    "script_writing": [
+      {
+        "id": "hook_curiosity",
+        "name": "Kịch bản Hook tò mò & Nghịch lý 3s đầu",
+        "target_model": "Claude 3.7 Sonnet / ChatGPT-4o",
+        "prompt": "Bạn là đạo diễn kịch bản video ngắn TikTok đạt triệu view. Viết kịch bản 45 giây cho sản phẩm [TÊN_SẢN_PHẨM]. Hook 3s đầu: '99% mọi người đang mất tiền oan vì không biết bí mật này...' Cấu trúc: Hook -> Vấn đề -> Giải pháp 3 bước -> Kêu gọi hành động (CTA) dứt khoát."
+      },
+      {
+        "id": "story_transformation",
+        "name": "Kịch bản Câu chuyện chuyển đổi từ thất bại đến thành công",
+        "target_model": "Claude 3.7 Sonnet",
+        "prompt": "Viết kịch bản video dạng tâm sự: '3 tháng trước tôi vẫn loay hoay với việc quay video cả ngày không ra đơn...' Tiếp nối bằng khoảnh khắc khám phá ra công nghệ AI từ 1 ảnh tĩnh, tiết kiệm 90% thời gian và đạt 333K views sau 24h."
+      }
+    ],
+    "image_generation": [
+      {
+        "id": "portrait_female_ceo",
+        "name": "Chân dung Nữ Doanh Nhân Studio 9:16",
+        "target_model": "Midjourney v6 / FLUX.1 [dev]",
+        "prompt": "ultra-realistic medium close-up portrait of an attractive confident 28yo Vietnamese female entrepreneur in modern minimalist studio, subtle confident smile, sharp eye contact looking directly into the camera, soft cinematic warm rim lighting, 8k resolution, authentic skin texture with natural pores, shot on 85mm lens f/1.8 --ar 9:16 --v 6.0 --style raw",
+        "aspect_ratio": "9:16"
+      },
+      {
+        "id": "portrait_male_tech",
+        "name": "Chân dung Nam Chuyên Gia Công Nghệ & AI",
+        "target_model": "Midjourney v6",
+        "prompt": "hyper-realistic portrait of a smart 32yo Asian tech expert, wearing dark polo shirt, sitting in a stylish neon ambient workspace, direct eye contact, speaking expression, dramatic split lighting, high fidelity details, photorealistic 8k --ar 9:16 --v 6.0 --style raw",
+        "aspect_ratio": "9:16"
+      }
+    ],
+    "motion_control_kling": {
+      "motion_brush_strength": 4,
+      "camera_movement": "Slow zoom in (speed 2)",
+      "lip_sync_model": "Kling 1.5 Pro Lip-Sync",
+      "tips": "Khoanh vùng nhẹ ở lông mày và khóe môi để tránh hiện tượng co giật khuôn mặt (jitter). Đặt End Frame để chuyển cảnh mượt mà."
+    },
+    "elevenlabs_settings": {
+      "model": "Eleven Multilingual v2",
+      "recommended_voices": ["Adam", "Rachel", "Custom Vietnamese Cloned Voice"],
+      "stability": 0.45,
+      "similarity_boost": 0.85,
+      "style_exaggeration": 0.10
+    }
+  }
+}
+

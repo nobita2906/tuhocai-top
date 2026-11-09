@@ -24,6 +24,7 @@ import {
   Share2,
   Layers,
   Send,
+  GraduationCap,
 } from 'lucide-react';
 
 import ThemeToggle from '@/components/ThemeToggle';
@@ -71,6 +72,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const navItems = [
     { label: 'Tổng quan', href: '/admin', icon: LayoutDashboard },
+    { label: 'Khu vực học tập', href: '/admin/khoa-hoc', icon: GraduationCap },
     { label: 'Landing Pages & Phễu', href: '/admin/landing-pages', icon: Layers },
     { label: 'Đơn hàng & VietQR', href: '/admin/don-hang', icon: CreditCard },
     { label: 'Kho sản phẩm', href: '/admin/san-pham', icon: Package },

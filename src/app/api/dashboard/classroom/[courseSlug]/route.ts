@@ -14,14 +14,76 @@ export async function GET(
     }
 
     const { courseSlug } = await params;
-    const course = getCourseBySlug(courseSlug);
 
-    if (!course) {
-      return NextResponse.json({ error: 'Không tìm thấy khóa học' }, { status: 404 });
+    // 1. Thử tìm khóa học trong Database trước
+    const dbCourses = await query<any>(
+      'SELECT * FROM courses WHERE slug = ? AND is_published = TRUE LIMIT 1',
+      [courseSlug]
+    );
+
+    let course: any = null;
+    let modules: any[] = [];
+
+    if (dbCourses.length > 0) {
+      const dbCourse = dbCourses[0];
+
+      // Lấy modules từ DB
+      const dbModules = await query<any>(
+        'SELECT * FROM course_modules WHERE course_id = ? ORDER BY sort_order ASC, created_at ASC',
+        [dbCourse.id]
+      );
+
+      // Lấy lessons từ DB
+      const dbLessons = await query<any>(
+        'SELECT * FROM course_lessons WHERE course_id = ? ORDER BY sort_order ASC, created_at ASC',
+        [dbCourse.id]
+      );
+
+      // Parse JSON
+      const parsedLessons = dbLessons.map((l: any) => ({
+        id: l.id,
+        course_id: l.course_id,
+        module_id: l.module_id,
+        title: l.title,
+        duration: l.duration || '10:00',
+        videoUrl: l.video_url || '',
+        summary: l.summary || '',
+        contentMarkdown: l.content_markdown || '',
+        actionChecklist: typeof l.action_checklist === 'string' ? JSON.parse(l.action_checklist || '[]') : (l.action_checklist || []),
+        resources: typeof l.resources === 'string' ? JSON.parse(l.resources || '[]') : (l.resources || []),
+        sortOrder: l.sort_order || 1,
+        isFreePreview: Boolean(l.is_free_preview),
+      }));
+
+      modules = dbModules.map((m: any) => ({
+        id: m.id,
+        title: m.title,
+        lessons: parsedLessons.filter((l: any) => l.module_id === m.id),
+      }));
+
+      course = {
+        slug: dbCourse.slug,
+        pid: dbCourse.pid,
+        title: dbCourse.title,
+        headline: dbCourse.headline,
+        category: dbCourse.category,
+        price: dbCourse.price,
+        level: dbCourse.level,
+        thumbnail: dbCourse.thumbnail,
+        instructor: dbCourse.instructor,
+      };
+    } else {
+      // Fallback tĩnh
+      const staticCourse = getCourseBySlug(courseSlug);
+      if (!staticCourse) {
+        return NextResponse.json({ error: 'Không tìm thấy khóa học' }, { status: 404 });
+      }
+      course = staticCourse;
+      modules = staticCourse.modules;
     }
 
-    // Check if unlocked
-    let isUnlocked = course.price === 0;
+    // 2. Kiểm tra quyền mở khóa (Unlocked status)
+    let isUnlocked = course.price === 0 || session.role === 'ADMIN';
 
     if (!isUnlocked) {
       const unlocked = await query<any>(
@@ -37,7 +99,7 @@ export async function GET(
       }
     }
 
-    // Get completed lessons
+    // 3. Lấy tiến độ các bài đã học của user
     const progressRows = await query<any>(
       `SELECT lesson_id 
        FROM user_lesson_progress 
@@ -47,37 +109,29 @@ export async function GET(
 
     const completedLessonIds = new Set(progressRows.map((r) => r.lesson_id));
 
-    // Enrich modules & lessons
-    const modules = course.modules.map((mod) => ({
+    // Enrich modules & lessons với trạng thái isCompleted
+    const enrichedModules = modules.map((mod: any) => ({
       ...mod,
-      lessons: mod.lessons.map((lesson) => ({
+      lessons: mod.lessons.map((lesson: any) => ({
         ...lesson,
         isCompleted: completedLessonIds.has(lesson.id),
       })),
     }));
 
-    const allLessons = modules.flatMap((m) => m.lessons);
+    const allLessons = enrichedModules.flatMap((m: any) => m.lessons);
     const totalLessons = allLessons.length;
-    const completedLessons = allLessons.filter((l) => l.isCompleted).length;
+    const completedLessons = allLessons.filter((l: any) => l.isCompleted).length;
     const progressPercent = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
     return NextResponse.json({
       success: true,
       course: {
-        slug: course.slug,
-        pid: course.pid,
-        title: course.title,
-        headline: course.headline,
-        category: course.category,
-        price: course.price,
-        level: course.level,
-        thumbnail: course.thumbnail,
-        instructor: course.instructor,
+        ...course,
         isUnlocked,
         totalLessons,
         completedLessons,
         progressPercent,
-        modules,
+        modules: enrichedModules,
       },
     });
   } catch (err: any) {
@@ -85,4 +139,3 @@ export async function GET(
     return NextResponse.json({ error: 'Lỗi tải bài học' }, { status: 500 });
   }
 }
-

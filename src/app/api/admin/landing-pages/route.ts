@@ -43,6 +43,16 @@ export async function GET(req: Request) {
       LIMIT 10
     `);
 
+    const parseJsonSafe = (val: any) => {
+      if (!val) return null;
+      if (typeof val === 'object') return val;
+      try {
+        return JSON.parse(val);
+      } catch (_) {
+        return null;
+      }
+    };
+
     // 3. Tính toán các chỉ số phễu chuyển đổi cho từng Landing Page
     const formattedLps = landingPages.map((lp: any) => {
       const views = Number(lp.views || 0);
@@ -67,6 +77,13 @@ export async function GET(req: Request) {
         originalPrice: Number(lp.original_price || 0),
         ctaText: lp.cta_text,
         videoUrl: lp.video_url,
+        heroBadge: lp.hero_badge || '✦ QUY TRÌNH THỰC CHIẾN TỰ HỌC AI',
+        features: parseJsonSafe(lp.features) || [],
+        modules: parseJsonSafe(lp.modules) || [],
+        bonusItems: parseJsonSafe(lp.bonus_items) || [],
+        testimonials: parseJsonSafe(lp.testimonials) || [],
+        faq: parseJsonSafe(lp.faq) || [],
+        showcase: parseJsonSafe(lp.showcase) || null,
         isPublished: Boolean(lp.is_published),
         views,
         ctaClicks,
@@ -208,26 +225,80 @@ export async function PUT(req: Request) {
     }
 
     const body = await req.json();
-    const { id, title, headline, subheadline, price, originalPrice, videoUrl, ctaText, isPublished, subdomain, facebookPixelId } = body;
+    const {
+      id,
+      title,
+      slug,
+      headline,
+      subheadline,
+      price,
+      originalPrice,
+      videoUrl,
+      ctaText,
+      heroBadge,
+      features,
+      modules,
+      bonusItems,
+      testimonials,
+      faq,
+      showcase,
+      isPublished,
+      subdomain,
+      facebookPixelId,
+    } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'Missing landing page ID' }, { status: 400 });
     }
 
     const cleanSubdomain = subdomain ? String(subdomain).trim().toLowerCase().replace(/[^a-z0-9-]/g, '') : null;
+    const cleanSlug = slug ? String(slug).trim().toLowerCase().replace(/[^a-z0-9-]/g, '-') : null;
+
+    // Kiểm tra trùng slug với LP khác (nếu đổi slug)
+    if (cleanSlug) {
+      const duplicateSlug = await query<any>('SELECT id FROM landing_pages WHERE slug = ? AND id != ? LIMIT 1', [cleanSlug, id]);
+      if (duplicateSlug.length > 0) {
+        return NextResponse.json({ error: 'Đường dẫn slug này đã được sử dụng bởi trang khác' }, { status: 400 });
+      }
+    }
 
     await execute(
       `UPDATE landing_pages 
-       SET title = ?, headline = ?, subheadline = ?, price = ?, original_price = ?, video_url = ?, cta_text = ?, is_published = ?, subdomain = ?, facebook_pixel_id = ?
+       SET title = ?, 
+           slug = COALESCE(?, slug),
+           headline = ?, 
+           subheadline = ?, 
+           price = ?, 
+           original_price = ?, 
+           video_url = ?, 
+           cta_text = ?, 
+           hero_badge = ?,
+           features = ?,
+           modules = ?,
+           bonus_items = ?,
+           testimonials = ?,
+           faq = ?,
+           showcase = ?,
+           is_published = ?, 
+           subdomain = ?, 
+           facebook_pixel_id = ?
        WHERE id = ?`,
       [
         title,
+        cleanSlug,
         headline,
         subheadline,
         Number(price),
         Number(originalPrice),
         videoUrl,
         ctaText,
+        heroBadge || '✦ QUY TRÌNH THỰC CHIẾN TỰ HỌC AI',
+        features ? JSON.stringify(features) : null,
+        modules ? JSON.stringify(modules) : null,
+        bonusItems ? JSON.stringify(bonusItems) : null,
+        testimonials ? JSON.stringify(testimonials) : null,
+        faq ? JSON.stringify(faq) : null,
+        showcase ? JSON.stringify(showcase) : null,
         Boolean(isPublished),
         cleanSubdomain,
         facebookPixelId?.trim() || null,

@@ -47,4 +47,5 @@ next-env.d.ts
 
 # Local temp files
 temp/
+.temp_edge_*
 .taste-skill/

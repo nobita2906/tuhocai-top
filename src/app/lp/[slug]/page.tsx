@@ -2,9 +2,9 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { query, execute } from '@/lib/db';
 import LandingPageClient from './LandingPageClient';
-import CopyLandingPage from '../sao-chep-landing-page/page';
-import VideoDramaLandingPage from '../video-drama-gia-dinh-nho/page';
-import VideoAiTu1AnhPage from '../video-ai-tu-1-anh/page';
+import CopyLandingClient from '../sao-chep-landing-page/CopyLandingClient';
+import VideoDramaLandingClient from '../video-drama-gia-dinh-nho/VideoDramaLandingClient';
+import VideoAiTu1AnhClient from '../video-ai-tu-1-anh/VideoAiTu1AnhClient';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -54,35 +54,37 @@ export default async function LandingPageRoute({ params }: Props) {
   // Tăng lượt view cho trang landing page
   await execute('UPDATE landing_pages SET views = views + 1 WHERE id = ?', [lp.id]).catch(() => {});
 
-  // Nếu là các Landing Page đặc biệt có giao diện custom
-  if (lp.slug === 'sao-chep-landing-page') {
-    return <CopyLandingPage />;
-  }
-  if (lp.slug === 'video-drama-gia-dinh-nho') {
-    return <VideoDramaLandingPage />;
-  }
-  if (lp.slug === 'video-ai-tu-1-anh') {
-    return <VideoAiTu1AnhPage />;
-  }
-
-  // Parse JSON fields cho các trang Landing Page động tạo từ Admin
+  // Parse JSON fields cho các trang Landing Page
   const parseJsonSafe = (val: any) => {
-    if (!val) return [];
+    if (!val) return null;
     if (typeof val === 'object') return val;
     try {
       return JSON.parse(val);
     } catch (_) {
-      return [];
+      return null;
     }
   };
 
   const parsedLp = {
     ...lp,
-    features: parseJsonSafe(lp.features),
-    modules: parseJsonSafe(lp.modules),
-    testimonials: parseJsonSafe(lp.testimonials),
-    bonus_items: parseJsonSafe(lp.bonus_items),
+    features: parseJsonSafe(lp.features) || [],
+    modules: parseJsonSafe(lp.modules) || [],
+    testimonials: parseJsonSafe(lp.testimonials) || [],
+    bonus_items: parseJsonSafe(lp.bonus_items) || [],
+    faq: parseJsonSafe(lp.faq) || [],
+    showcase: parseJsonSafe(lp.showcase) || null,
   };
+
+  // Nếu là các Landing Page đặc biệt có giao diện custom
+  if (lp.slug === 'sao-chep-landing-page') {
+    return <CopyLandingClient lp={parsedLp} />;
+  }
+  if (lp.slug === 'video-drama-gia-dinh-nho') {
+    return <VideoDramaLandingClient lp={parsedLp} />;
+  }
+  if (lp.slug === 'video-ai-tu-1-anh') {
+    return <VideoAiTu1AnhClient lp={parsedLp} />;
+  }
 
   return <LandingPageClient lp={parsedLp} />;
 }

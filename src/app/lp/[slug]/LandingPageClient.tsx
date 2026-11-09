@@ -98,6 +98,25 @@ export default function LandingPageClient({ lp }: Props) {
     setTimeout(() => setCopiedCode(false), 2000);
   };
 
+  const getEmbedVideoUrl = (url?: string) => {
+    if (!url) return null;
+    try {
+      if (url.includes('youtube.com/embed/')) return url;
+      if (url.includes('youtu.be/')) {
+        const id = url.split('youtu.be/')[1]?.split('?')[0];
+        return id ? `https://www.youtube.com/embed/${id}` : null;
+      }
+      if (url.includes('youtube.com/watch')) {
+        const urlObj = new URL(url);
+        const v = urlObj.searchParams.get('v');
+        return v ? `https://www.youtube.com/embed/${v}` : null;
+      }
+      return url;
+    } catch (_) {
+      return null;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#09090b] text-slate-900 dark:text-slate-100 selection:bg-indigo-600 selection:text-white transition-colors duration-200">
       
@@ -176,39 +195,53 @@ export default function LandingPageClient({ lp }: Props) {
               Đánh giá 4.9/5 sao
             </span>
           </div>
+
+          {/* VIDEO EMBED DEMO */}
+          {lp.video_url && getEmbedVideoUrl(lp.video_url) && (
+            <div className="pt-4 max-w-4xl mx-auto">
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-indigo-500/30 aspect-video bg-slate-950">
+                <iframe
+                  src={getEmbedVideoUrl(lp.video_url)!}
+                  title={lp.title || 'Video Demo'}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* WORKFLOW SHOWCASE BOX */}
         <div className="relative rounded-3xl overflow-hidden border-2 border-indigo-500/30 bg-gradient-to-br from-indigo-950/80 via-slate-900 to-indigo-950 text-white p-6 sm:p-10 shadow-2xl">
           <div className="space-y-4 max-w-2xl">
             <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
-              KIẾN TRÚC TỰ ĐỘNG HÓA HOÀN CHỈNH
+              {lp.showcase?.badge || 'KIẾN TRÚC TỰ ĐỘNG HÓA HOÀN CHỈNH'}
             </span>
             <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Tất cả những gì bạn cần: Cắm vào là chạy, không cần viết lại từ đầu!
+              {lp.showcase?.title || 'Tất cả những gì bạn cần: Cắm vào là chạy, không cần viết lại từ đầu!'}
             </h3>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-              Toàn bộ các file Workflow JSON mẫu, tài liệu hướng dẫn từng bước và mã kết nối API đã được đóng gói sẵn. Bạn chỉ cần tải về, nhấn nút Import vào n8n là hệ thống bắt đầu tự hoạt động.
+              {lp.showcase?.desc || 'Toàn bộ các file Workflow JSON mẫu, tài liệu hướng dẫn từng bước và mã kết nối API đã được đóng gói sẵn. Bạn chỉ cần tải về, nhấn nút Import vào n8n là hệ thống bắt đầu tự hoạt động.'}
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md space-y-1">
-              <div className="font-bold text-amber-400 text-sm">✓ Tiết kiệm 4-5 tiếng mỗi ngày</div>
-              <div className="text-xs text-slate-300">Không còn phải ngồi gõ từng bài viết hay lên lịch thủ công.</div>
-            </div>
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md space-y-1">
-              <div className="font-bold text-cyan-400 text-sm">✓ Chi phí vận hành gần như 0đ</div>
-              <div className="text-xs text-slate-300">Sử dụng n8n bản tự host hoàn toàn miễn phí, không mất phí hàng tháng.</div>
-            </div>
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md space-y-1">
-              <div className="font-bold text-emerald-400 text-sm">✓ Báo cáo về Telegram tức thì</div>
-              <div className="text-xs text-slate-300">Kiểm tra kết quả đăng bài trực tiếp ngay trên điện thoại của bạn.</div>
-            </div>
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md space-y-1">
-              <div className="font-bold text-purple-400 text-sm">✓ Nhóm Zalo hỗ trợ kỹ thuật 1-1</div>
-              <div className="text-xs text-slate-300">Được admin và đội ngũ Tự Học AI trực tiếp giải đáp mọi thắc mắc.</div>
-            </div>
+            {(lp.showcase?.highlights && lp.showcase.highlights.length > 0 ? lp.showcase.highlights : [
+              { title: '✓ Tiết kiệm 4-5 tiếng mỗi ngày', desc: 'Không còn phải ngồi gõ từng bài viết hay lên lịch thủ công.' },
+              { title: '✓ Chi phí vận hành gần như 0đ', desc: 'Sử dụng n8n bản tự host hoàn toàn miễn phí, không mất phí hàng tháng.' },
+              { title: '✓ Báo cáo về Telegram tức thì', desc: 'Kiểm tra kết quả đăng bài trực tiếp ngay trên điện thoại của bạn.' },
+              { title: '✓ Nhóm Zalo hỗ trợ kỹ thuật 1-1', desc: 'Được admin và đội ngũ Tự Học AI trực tiếp giải đáp mọi thắc mắc.' }
+            ]).map((item: any, idx: number) => {
+              const colors = ['text-amber-400', 'text-cyan-400', 'text-emerald-400', 'text-purple-400'];
+              const color = colors[idx % colors.length];
+              return (
+                <div key={idx} className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md space-y-1">
+                  <div className={`font-bold text-sm ${color}`}>{item.title}</div>
+                  <div className="text-xs text-slate-300">{item.desc}</div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -268,7 +301,7 @@ export default function LandingPageClient({ lp }: Props) {
                   </div>
                   <div className="space-y-1">
                     <h4 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-                      {m.name}
+                      {m.name || m.title}
                     </h4>
                     <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                       {m.desc}
@@ -340,6 +373,37 @@ export default function LandingPageClient({ lp }: Props) {
                     </div>
                   </div>
                 </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* FAQ SECTION */}
+        {lp.faq && lp.faq.length > 0 && (
+          <div className="space-y-6 max-w-3xl mx-auto">
+            <div className="text-center space-y-2">
+              <h2 className="text-2xl sm:text-4xl font-black text-slate-900 dark:text-white">
+                Câu Hỏi Thường Gặp
+              </h2>
+              <p className="text-sm text-slate-500">
+                Giải đáp thắc mắc giúp bạn hoàn toàn an tâm khi sở hữu quy trình
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              {lp.faq.map((item: any, idx: number) => (
+                <details
+                  key={idx}
+                  className="group p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm transition-all open:ring-2 open:ring-indigo-500"
+                >
+                  <summary className="font-bold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer list-none flex items-center justify-between gap-3">
+                    <span>{item.q}</span>
+                    <ChevronDown className="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform shrink-0" />
+                  </summary>
+                  <p className="mt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-800 pt-3">
+                    {item.a}
+                  </p>
+                </details>
               ))}
             </div>
           </div>

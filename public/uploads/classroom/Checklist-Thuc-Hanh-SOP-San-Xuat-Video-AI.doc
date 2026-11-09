@@ -1,0 +1,29 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head><title>SOP Thực Hành Video AI 1 Ảnh</title></head>
+<body style="font-family: Arial, sans-serif; line-height: 1.5; color: #111;">
+  <h2 style="color: #c28815;">BẢNG CHECKLIST KIỂM TRA THỰC HÀNH SẢN XUẤT VIDEO AI (SOP 2026)</h2>
+  <p><strong>Dành cho học viên khóa:</strong> Khóa Học & Quy Trình Làm Video AI Bán Hàng Triệu View Từ 1 Ảnh (WF-VIP-297)</p>
+  <p><strong>Tác giả:</strong> Nguyễn Đăng AI - tuhocai.top</p>
+  <hr />
+  <h3>GIAI ĐOẠN 1: CHUẨN BỊ (5 PHÚT)</h3>
+  <ul>
+    <li>[ ] Kịch bản đã qua bộ lọc Hook 3s của Claude 3.7 chưa?</li>
+    <li>[ ] Ảnh nhân vật đã đúng chuẩn 9:16 (1080x1920) và ánh mắt nhìn thẳng camera chưa?</li>
+    <li>[ ] File âm thanh ElevenLabs đã được lọc sạch tiếng ồn nền chưa?</li>
+  </ul>
+  <h3>GIAI ĐOẠN 2: TẠO CHUYỂN ĐỘNG & LIP-SYNC (5 PHÚT)</h3>
+  <ul>
+    <li>[ ] Motion Brush đã khoanh vùng chính xác khóe môi và mắt chưa?</li>
+    <li>[ ] Đã bật chế độ khử nhòe (Anti-blur) trên Kling AI chưa?</li>
+    <li>[ ] Khẩu hình nói có khớp từng âm tiết với voiceover không?</li>
+  </ul>
+  <h3>GIAI ĐOẠN 3: DỰNG CAPCUT & XUẤT BẢN (7 PHÚT)</h3>
+  <ul>
+    <li>[ ] Đã xóa hết các khoảng lặng trên 0.3s chưa?</li>
+    <li>[ ] Phụ đề chữ nảy màu vàng neon đã đặt ở 1/3 dưới màn hình (tránh bị che bởi nút Like/Share) chưa?</li>
+    <li>[ ] Âm lượng nhạc nền đã giảm xuống -24dB chưa?</li>
+    <li>[ ] Đã ghim bình luận điều hướng link Bio sau khi đăng bài chưa?</li>
+  </ul>
+</body>
+</html>
+

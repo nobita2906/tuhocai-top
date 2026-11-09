@@ -34,47 +34,94 @@ export async function GET() {
       progressRows.map((r) => `${r.course_slug}:${r.lesson_id}`)
     );
 
-    // 3. Map courses with unlock status & progress
-    let totalLessonsCount = 0;
+    // 3. Query courses from Database first
+    const dbCourses = await query<any>(`
+      SELECT c.*,
+        (SELECT COUNT(*) FROM course_lessons WHERE course_id = c.id) as total_lessons_count
+      FROM courses c
+      WHERE c.is_published = TRUE
+      ORDER BY c.sort_order ASC, c.created_at DESC
+    `);
+
+    let mappedCourses: any[] = [];
     let completedLessonsCount = 0;
 
-    const mappedCourses = COURSES.map((course) => {
-      // Course is unlocked if price === 0 OR user owns it in user_library
-      const isUnlocked = course.price === 0 || unlockedPids.has(course.pid) || unlockedSlugs.has(course.slug);
+    if (dbCourses.length > 0) {
+      // Load all lessons from DB for progress mapping
+      const allDbLessons = await query<any>(`
+        SELECT id, course_id, module_id 
+        FROM course_lessons
+      `);
 
-      const allLessons = course.modules.flatMap((m) => m.lessons);
-      const courseTotalLessons = allLessons.length;
-      totalLessonsCount += courseTotalLessons;
+      for (const course of dbCourses) {
+        const isUnlocked = course.price === 0 || session.role === 'ADMIN' || unlockedPids.has(course.pid) || unlockedSlugs.has(course.slug);
+        const courseLessons = allDbLessons.filter((l) => l.course_id === course.id);
+        const courseTotalLessons = courseLessons.length;
 
-      const courseCompletedLessons = allLessons.filter((l) =>
-        completedLessonSet.has(`${course.slug}:${l.id}`)
-      ).length;
+        const courseCompletedLessons = courseLessons.filter((l) =>
+          completedLessonSet.has(`${course.slug}:${l.id}`)
+        ).length;
 
-      if (isUnlocked) {
-        completedLessonsCount += courseCompletedLessons;
-      }
+        if (isUnlocked) {
+          completedLessonsCount += courseCompletedLessons;
+        }
 
-      const progressPercent =
-        courseTotalLessons > 0
+        const progressPercent = courseTotalLessons > 0
           ? Math.round((courseCompletedLessons / courseTotalLessons) * 100)
           : 0;
 
-      return {
-        slug: course.slug,
-        pid: course.pid,
-        title: course.title,
-        headline: course.headline,
-        category: course.category,
-        price: course.price,
-        level: course.level,
-        thumbnail: course.thumbnail,
-        instructor: course.instructor,
-        totalLessons: courseTotalLessons,
-        completedLessons: courseCompletedLessons,
-        progressPercent,
-        isUnlocked,
-      };
-    });
+        mappedCourses.push({
+          slug: course.slug,
+          pid: course.pid,
+          title: course.title,
+          headline: course.headline,
+          category: course.category,
+          price: course.price,
+          level: course.level,
+          thumbnail: course.thumbnail,
+          instructor: course.instructor,
+          totalLessons: courseTotalLessons,
+          completedLessons: courseCompletedLessons,
+          progressPercent,
+          isUnlocked,
+        });
+      }
+    } else {
+      // Fallback to static COURSES
+      mappedCourses = COURSES.map((course) => {
+        const isUnlocked = course.price === 0 || unlockedPids.has(course.pid) || unlockedSlugs.has(course.slug);
+        const allLessons = course.modules.flatMap((m) => m.lessons);
+        const courseTotalLessons = allLessons.length;
+
+        const courseCompletedLessons = allLessons.filter((l) =>
+          completedLessonSet.has(`${course.slug}:${l.id}`)
+        ).length;
+
+        if (isUnlocked) {
+          completedLessonsCount += courseCompletedLessons;
+        }
+
+        const progressPercent = courseTotalLessons > 0
+          ? Math.round((courseCompletedLessons / courseTotalLessons) * 100)
+          : 0;
+
+        return {
+          slug: course.slug,
+          pid: course.pid,
+          title: course.title,
+          headline: course.headline,
+          category: course.category,
+          price: course.price,
+          level: course.level,
+          thumbnail: course.thumbnail,
+          instructor: course.instructor,
+          totalLessons: courseTotalLessons,
+          completedLessons: courseCompletedLessons,
+          progressPercent,
+          isUnlocked,
+        };
+      });
+    }
 
     // 4. Calculate Level & Points (Skool Gamification)
     const points = completedLessonsCount * 10;
@@ -99,28 +146,16 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       courses: mappedCourses,
-      stats: {
-        totalLessonsCompleted: completedLessonsCount,
-        totalLessonsAvailable: totalLessonsCount,
-        overallProgress:
-          totalLessonsCount > 0
-            ? Math.round((completedLessonsCount / totalLessonsCount) * 100)
-            : 0,
+      userStats: {
         points,
         levelName,
         levelBadge,
         nextLevelPoints,
-      },
-      user: {
-        id: session.id,
-        name: session.name,
-        email: session.email,
-        role: session.role,
+        completedLessonsCount,
       },
     });
-  } catch (err: any) {
-    console.error('Classroom list error:', err);
-    return NextResponse.json({ error: 'Lỗi tải danh sách lớp học' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Classroom API error:', error);
+    return NextResponse.json({ error: 'Lỗi tải phòng học' }, { status: 500 });
   }
 }
-

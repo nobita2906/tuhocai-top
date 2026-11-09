@@ -116,7 +116,7 @@ export default function RootLayout({
         <TopBanner />
         <Navbar />
         <AffiliateTracker />
-        <main className="flex-1 relative overflow-hidden">{children}</main>
+        <main className="flex-1 relative overflow-x-clip">{children}</main>
         <Footer />
         <SocialProofToast />
         <FloatingAssistant />

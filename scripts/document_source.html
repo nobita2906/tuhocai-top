@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Quy Trình Làm Video AI Bán Hàng Triệu View Từ 1 Ảnh - Nguyễn Đăng AI</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+    
+    @page {
+      size: A4;
+      margin: 18mm 16mm 18mm 16mm;
+      @bottom-right {
+        content: counter(page);
+      }
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #1e293b;
+      background: #ffffff;
+      line-height: 1.6;
+      font-size: 13.5px;
+    }
+
+    .cover {
+      background: linear-gradient(135deg, #0e0a06 0%, #1f170f 60%, #120d08 100%);
+      color: #ffffff;
+      padding: 40px 36px;
+      border-radius: 16px;
+      margin-bottom: 28px;
+      border: 2px solid #eab84e;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover::after {
+      content: '';
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(234, 184, 78, 0.25) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .brand-tag {
+      display: inline-block;
+      background: rgba(234, 184, 78, 0.2);
+      color: #eab84e;
+      border: 1px solid rgba(234, 184, 78, 0.4);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    h1.main-title {
+      font-size: 24px;
+      font-weight: 900;
+      line-height: 1.25;
+      text-transform: uppercase;
+      color: #ffffff;
+      margin-bottom: 10px;
+      letter-spacing: -0.3px;
+    }
+
+    h1.main-title span {
+      color: #eab84e;
+    }
+
+    .cover-meta {
+      display: flex;
+      gap: 20px;
+      font-size: 11.5px;
+      color: #cbd5e1;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .section {
+      margin-bottom: 24px;
+      page-break-inside: avoid;
+    }
+
+    h2.section-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #0f172a;
+      border-left: 4px solid #eab84e;
+      padding-left: 10px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .highlight-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin: 10px 0;
+    }
+
+    .highlight-box.gold {
+      background: #fffdf5;
+      border-color: #fde68a;
+    }
+
+    .code-box {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 11.5px;
+      line-height: 1.5;
+      margin: 8px 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      border: 1px solid #334155;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .badge-amber {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge-blue {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .badge-green {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 12px;
+    }
+
+    th, td {
+      border: 1px solid #e2e8f0;
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5f9;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    ul, ol {
+      padding-left: 20px;
+      margin: 8px 0;
+    }
+
+    li {
+      margin-bottom: 5px;
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 30px;
+      padding-top: 14px;
+      border-top: 1px solid #e2e8f0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- COVER BANNER -->
+  <div class="cover">
+    <div class="brand-tag">Tự Học AI (tuhocai.top) · Độc Quyền Thực Chiến 2026</div>
+    <h1 class="main-title">
+      Quy Trình Sản Xuất Video AI Bán Hàng Triệu View <span>Từ 1 Ảnh Tĩnh</span>
+    </h1>
+    <p style="color: #fde68a; font-weight: 600; font-size: 13.5px; margin-top: 4px;">
+      Tài liệu hướng dẫn thực chiến từng bước (SOP) không cần lộ mặt · Áp dụng Claude 3.7, Midjourney v6, ElevenLabs & Kling AI
+    </p>
+    <div class="cover-meta">
+      <div><strong>Tác giả:</strong> Nguyễn Văn Đăng (Nguyễn Đăng AI)</div>
+      <div><strong>Mã Sản Phẩm:</strong> WF-VIP-297</div>
+      <div><strong>Hệ Thống:</strong> Kho Khóa Học & Quy Trình Tự Học AI</div>
+      <div><strong>Cập nhật:</strong> Năm 2026</div>
+    </div>
+  </div>
+
+  <!-- PHẦN 1 -->
+  <div class="section">
+    <h2 class="section-title">1. Tổng Quan Lộ Trình 5 Bước "Biến Ảnh Thành Cỗ Máy Bán Hàng"</h2>
+    <p>
+      Quy trình này giải quyết triệt để 3 rào cản lớn nhất của người sáng tạo nội dung: <strong>sợ ống kính</strong>, <strong>không biết viết kịch bản</strong> và <strong>không có phòng quay đắt tiền</strong>. Bạn chỉ cần 1 ảnh tĩnh duy nhất để tạo ra hàng loạt video viral bán hàng chuyển đổi cao.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Giai Đoạn</th>
+          <th>Công Cụ AI</th>
+          <th>Nhiệm Vụ Cốt Lõi</th>
+          <th>Thời Lượng</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Bước 1</strong></td>
+          <td>Claude 3.7 / ChatGPT-4o</td>
+          <td>Viết kịch bản Hook 3 giây giữ chân & chuyển đổi bán hàng</td>
+          <td>5 phút</td>
+        </tr>
+        <tr>
+          <td><strong>Bước 2</strong></td>
+          <td>Midjourney v6 / FLUX</td>
+          <td>Tạo ảnh chân dung thần thái chuẩn studio tỷ lệ dọc 9:16</td>
+          <td>5 phút</td>
+        </tr>
+        <tr>
+          <td><strong>Bước 3</strong></td>
+          <td>ElevenLabs (Multilingual v2)</td>
+          <td>Thu âm giọng đọc truyền cảm, biến thiên cảm xúc tự nhiên</td>
+          <td>3 phút</td>
+        </tr>
+        <tr>
+          <td><strong>Bước 4</strong></td>
+          <td>Kling AI 1.5 / Hedra v2</td>
+          <td>Đồng bộ khẩu hình môi (Lip-sync), cử động mắt & biểu cảm</td>
+          <td>5 phút</td>
+        </tr>
+        <tr>
+          <td><strong>Bước 5</strong></td>
+          <td>CapCut PC Pro</td>
+          <td>Ghép nhạc nền, chữ nhảy neon, hiệu ứng âm thanh SFX viral</td>
+          <td>7 phút</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PHẦN 2 -->
+  <div class="section">
+    <h2 class="section-title">2. Mega-Prompt Viết Kịch Bản Bán Hàng 3 Giây Đầu (Claude / ChatGPT)</h2>
+    <p>
+      Quy tắc vàng: Nếu người xem không dừng lại trong <strong>3 giây đầu tiên</strong>, video của bạn sẽ không bao giờ đạt được đề xuất triệu view. Sử dụng prompt độc quyền bên dưới:
+    </p>
+    <div class="code-box">Bạn là chuyên gia biên kịch video ngắn triệu view và bậc thầy tâm lý học bán hàng trên TikTok & Reels.
+Hãy viết cho tôi 1 kịch bản video ngắn (thời lượng 45 - 60 giây) về chủ đề: [ĐIỀN TÊN SẢN PHẨM / CHỦ ĐỀ - Ví dụ: Khóa học tạo video AI bán hàng triệu view].
+
+Cấu trúc kịch bản bắt buộc:
+1. HOOK (0 - 3 giây): Một phát biểu nghịch lý hoặc câu hỏi đánh trúng sự ức chế/nỗi đau lớn nhất của khách hàng. Không được chào hỏi rườm rà.
+2. VẤN ĐỀ & SAI LẦM (4 - 15 giây): Chỉ ra lý do 95% mọi người làm mãi không ra đơn vì dùng phương pháp cũ kỹ, tốn thời gian.
+3. GIẢI PHÁP ĐỘT PHÁ (16 - 38 giây): Tiết lộ bí kíp 3 bước cực kỳ đơn giản với công nghệ AI giúp giải quyết vấn đề ngay lập tức.
+4. KẾT QUẢ THỰC TẾ (39 - 48 giây): Dẫn chứng con số (view, đơn hàng, thời gian tiết kiệm) tạo sự tin tưởng tuyệt đối.
+5. CALL TO ACTION (49 - 60 giây): Kêu gọi bình luận từ khóa hoặc truy cập link bio để nhận tài liệu/ưu đãi giới hạn.
+
+Yêu cầu ngôn ngữ: Dứt khoát, gần gũi, sử dụng các động từ hành động mạnh, ngắt câu ngắn để AI đọc truyền cảm.</div>
+  </div>
+
+  <!-- PHẦN 3 -->
+  <div class="section">
+    <h2 class="section-title">3. Bộ Prompt Midjourney v6 Tạo Nhân Vật Nhất Quán Chuẩn 9:16</h2>
+    <p>
+      Nhân vật cần có ánh nhìn thẳng vào ống kính (eye contact) với người xem, ánh sáng studio mềm mại và làn da chân thật:
+    </p>
+    <div class="highlight-box gold">
+      <span class="badge badge-amber">Công thức Prompt Chân Dung Nữ Doanh Nhân:</span>
+      <div class="code-box" style="margin-top: 6px;">ultra-realistic medium close-up portrait of an attractive confident 28yo Vietnamese female entrepreneur in modern minimalist studio, subtle confident smile, sharp eye contact looking directly into the camera, soft cinematic warm rim lighting, 8k resolution, authentic skin texture with natural pores, shot on 85mm lens f/1.8 --ar 9:16 --v 6.0 --style raw</div>
+    </div>
+    <div class="highlight-box">
+      <span class="badge badge-blue">Công thức Prompt Chân Dung Nam Chuyên Gia Kỹ Thuật:</span>
+      <div class="code-box" style="margin-top: 6px;">hyper-realistic portrait of a smart 32yo Asian tech expert, wearing dark polo shirt, sitting in a stylish neon ambient workspace, direct eye contact, speaking expression, dramatic split lighting, high fidelity details, photorealistic 8k --ar 9:16 --v 6.0 --style raw</div>
+    </div>
+    <p><em>*Mẹo giữ mặt nhân vật nhất quán: Luôn lưu lại mã <code>--seed</code> của tấm ảnh ưng ý nhất và sử dụng tham số <code>--cref [URL_ANH_GOC] --cw 70</code> khi tạo các bối cảnh mới.</em></p>
+  </div>
+
+  <!-- PHẦN 4 -->
+  <div class="section">
+    <h2 class="section-title">4. Thông Số Vàng Lồng Tiếng ElevenLabs</h2>
+    <p>
+      Tránh tình trạng giọng nói bị bằng phẳng như robot bằng cách cấu hình chuẩn xác bộ thông số sau:
+    </p>
+    <ul>
+      <li><strong>Voice Model:</strong> Chọn <code>Eleven Multilingual v2</code> (hỗ trợ ngữ điệu tiếng Việt mượt nhất).</li>
+      <li><strong>Stability (Độ ổn định):</strong> Đặt từ <code>0.40 - 0.48</code>. (Nếu đặt trên 0.60 giọng sẽ đều đều thiếu cảm xúc; nếu dưới 0.35 giọng dễ bị gắt âm).</li>
+      <li><strong>Clarity + Similarity Enhancement:</strong> Đặt <code>0.80 - 0.85</code> để âm thanh sắc nét, trong trẻo.</li>
+      <li><strong>Style Exaggeration:</strong> Đặt <code>0.08 - 0.12</code> giúp tạo điểm nhấn nhá ở các từ quan trọng.</li>
+    </ul>
+  </div>
+
+  <!-- PHẦN 5 -->
+  <div class="section">
+    <h2 class="section-title">5. Hướng Dẫn Biến Ảnh Thành Video Với Kling AI & Hedra</h2>
+    <p>
+      Đồng bộ khẩu hình miệng và chuyển động mắt thần thái:
+    </p>
+    <ol>
+      <li><strong>Tải ảnh gốc 9:16:</strong> Đảm bảo khuôn mặt chiếm khoảng 45% - 55% diện tích khung hình để tránh bị méo khi cử động.</li>
+      <li><strong>Tải file Voiceover:</strong> Định dạng MP3/WAV xuất từ ElevenLabs.</li>
+      <li><strong>Kling AI Motion Brush:</strong> Khoanh vùng nhẹ khu vực mắt, lông mày và tóc để tạo độ rung nhẹ tự nhiên khi nhân vật nói chuyện.</li>
+      <li><strong>Camera Movement:</strong> Chọn chế độ <code>Slow Zoom In (Zoom chậm vào mắt)</code> với tốc độ 2 để tăng tính lôi cuốn và giữ mắt người xem.</li>
+    </ol>
+  </div>
+
+  <!-- PHẦN 6 -->
+  <div class="section">
+    <h2 class="section-title">6. Checklist Dựng Phim CapCut PC Trong 7 Phút</h2>
+    <div class="highlight-box">
+      <ul>
+        <li>[ ] <strong>Cắt gọt khoảng lặng:</strong> Sử dụng phím tắt <code>Ctrl + B</code> xóa hết các đoạn ngập ngừng quá 0.3s.</li>
+        <li>[ ] <strong>Phụ đề tự động (Auto Captions):</strong> Tạo phụ đề tiếng Việt, chọn font chữ in hoa đậm (VD: <em>Montserrat ExtraBold</em> hoặc <em>The Bold Font</em>).</li>
+        <li>[ ] <strong>Phối màu chữ nảy:</strong> Highlight các từ khóa quan trọng (tiền, view, bí quyết, AI) sang màu <strong>Vàng Neon (#FFE600)</strong> hoặc <strong>Xanh Cyan</strong>.</li>
+        <li>[ ] <strong>Hiệu ứng âm thanh (SFX):</strong> Thêm tiếng <em>Whoosh</em> khi chuyển cảnh, tiếng <em>Pop</em> khi chữ hiện lên, tiếng <em>Cash Register</em> khi nhắc tới doanh thu.</li>
+        <li>[ ] <strong>Nhạc nền (BGM):</strong> Chọn các bài nhạc Lo-Fi hoặc Upbeat có tiết tấu 120 BPM, giảm âm lượng xuống <code>-22dB</code> đến <code>-26dB</code> để không át giọng nói chính.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PHẦN 7 -->
+  <div class="section">
+    <h2 class="section-title">7. Khung Giờ Đăng & Chiến Lược Đẩy Viral Kênh Mới</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Khung Giờ</th>
+          <th>Thời Điểm</th>
+          <th>Mục Đích Khai Thác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Buổi trưa</strong></td>
+          <td>11:30 - 12:45</td>
+          <td>Dân văn phòng lướt điện thoại giờ nghỉ trưa ăn uống</td>
+        </tr>
+        <tr>
+          <td><strong>Buổi chiều</strong></td>
+          <td>18:00 - 19:30</td>
+          <td>Thời gian tan tầm, về nhà, thư giãn</td>
+        </tr>
+        <tr>
+          <td><strong>Buổi tối (Vàng)</strong></td>
+          <td>20:30 - 22:30</td>
+          <td>Lượng truy cập đạt đỉnh cao nhất trong ngày trên TikTok & Reels</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      <strong>Chiến lược ghim Comment:</strong> Ngay sau khi đăng, dùng chính tài khoản kênh đăng 1 comment: <em>"Bộ prompt kịch bản và tài liệu video AI chi tiết mình đã để sẵn trong link bio cá nhân, bấm nhận miễn phí nhé!"</em> rồi nhấn Ghim bình luận.
+    </p>
+  </div>
+
+  <div class="footer-note">
+    © 2026 Bản quyền tài liệu thuộc về <strong>Nguyễn Đăng AI & Hệ Thống Tự Học AI (tuhocai.top)</strong>.<br>
+    Hỗ trợ kỹ thuật học viên qua Zalo VIP: <strong>0938.494.303</strong> · Trang thành viên: <strong>tuhocai.top/dashboard</strong>
+  </div>
+
+</body>
+</html>
+
