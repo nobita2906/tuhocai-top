@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
@@ -19,6 +19,18 @@ const jetBrainsMono = JetBrains_Mono({
   variable: '--font-mono',
   display: 'swap',
 });
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#09090b' },
+  ],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.tuhocai.top'),

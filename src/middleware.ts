@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, userAgent } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(req: NextRequest) {
@@ -14,7 +14,27 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2. Extract subdomain
+  // 2. Nhận diện thiết bị di động (Device Detection: Mobile / Tablet / Desktop)
+  const { device } = userAgent(req);
+  const uaString = req.headers.get('user-agent') || '';
+  const isMobile =
+    device.type === 'mobile' ||
+    device.type === 'tablet' ||
+    /android|iphone|ipad|ipod|mobile|blackberry|iemobile|opera mini/i.test(uaString);
+  const deviceType = isMobile ? 'mobile' : 'desktop';
+
+  // Hàm gán Header và Cookie thiết bị cho phản hồi
+  const applyDeviceHeaders = (response: NextResponse) => {
+    response.headers.set('x-device-type', deviceType);
+    response.cookies.set('tuhocai_device', deviceType, {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30, // 30 ngày
+      sameSite: 'lax',
+    });
+    return response;
+  };
+
+  // 3. Extract subdomain
   // Examples:
   // - "copypage.tuhocai.top" -> "copypage"
   // - "copypage.localhost:8899" -> "copypage"
@@ -30,26 +50,28 @@ export function middleware(req: NextRequest) {
     subdomain = hostParts[0].toLowerCase();
   }
 
-  // 3. Dynamic Subdomain Routing:
+  // 4. Dynamic Subdomain Routing:
   // Any subdomain is automatically forwarded to /lp/{subdomain}
-  // Next.js dynamic route (/lp/[slug]/page.tsx) automatically queries the DB by (slug = ? OR subdomain = ?)
   if (subdomain) {
     // Root of subdomain: e.g. copypage.tuhocai.top/ -> /lp/copypage
     if (pathname === '/' || pathname === '') {
       const url = req.nextUrl.clone();
       url.pathname = `/lp/${subdomain}`;
-      return NextResponse.rewrite(url);
+      const res = NextResponse.rewrite(url);
+      return applyDeviceHeaders(res);
     }
 
     // Thank you page on subdomain: e.g. copypage.tuhocai.top/cam-on -> /lp/copypage/cam-on
     if (pathname === '/cam-on') {
       const url = req.nextUrl.clone();
       url.pathname = `/lp/${subdomain}/cam-on`;
-      return NextResponse.rewrite(url);
+      const res = NextResponse.rewrite(url);
+      return applyDeviceHeaders(res);
     }
   }
 
-  return NextResponse.next();
+  const res = NextResponse.next();
+  return applyDeviceHeaders(res);
 }
 
 export const config = {

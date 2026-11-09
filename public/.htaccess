@@ -1,0 +1,29 @@
+# ==============================================================================
+# TUHOCAI.TOP - APACHE .HTACCESS DEVICE DETECTION & MOBILE ENFORCEMENT
+# Tự động nhận diện thiết bị (Mobile / Tablet / Desktop) & Cố định giao diện Mobile
+# ==============================================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # 1. Nhận diện thiết bị di động
+    RewriteCond %{HTTP_USER_AGENT} "android|blackberry|googlebot-mobile|iemobile|ipad|iphone|ipod|opera mini|palmos|webos|mobile|tablet|smartphone|kindle|silk|fennec" [NC]
+    RewriteRule .* - [E=IS_MOBILE:1,E=DEVICE_TYPE:mobile]
+
+    # 2. Cookie nhận diện thiết bị
+    RewriteCond %{ENV:IS_MOBILE} =1
+    RewriteRule .* - [CO=tuhocai_device:mobile:%{HTTP_HOST}:2592000:/]
+
+    RewriteCond %{ENV:IS_MOBILE} !=1
+    RewriteRule .* - [CO=tuhocai_device:desktop:%{HTTP_HOST}:2592000:/]
+
+    # 3. Header phân luồng & chống cache sai lệch
+    <IfModule mod_headers.c>
+        Header set X-Device-Type "mobile" env=IS_MOBILE
+        Header set X-Device-Type "desktop" "expr=! -T %{ENV:IS_MOBILE}"
+        Header append Vary "User-Agent"
+        Header set X-UA-Compatible "IE=edge"
+    </IfModule>
+</IfModule>
+

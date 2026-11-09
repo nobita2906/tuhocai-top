@@ -537,7 +537,7 @@ export default function CourseLearningRoomPage({
             </div>
 
             {/* Accordion Modules & Lessons List (Full multiline title, no cutoff) */}
-            <div className="divide-y divide-slate-100 dark:divide-white/[0.06] max-h-[calc(100vh-230px)] overflow-y-auto scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="divide-y divide-slate-100 dark:divide-white/[0.06] max-h-[calc(100vh-230px)] overflow-y-auto no-scrollbar scrollbar-none">
               {course.modules.map((mod, modIdx) => {
                 const modLessons = mod.lessons.filter((l) =>
                   !lessonSearchTerm ||
@@ -610,8 +610,8 @@ export default function CourseLearningRoomPage({
                                     </span>
                                   )}
                                   {lesson.isFreePreview && (
-                                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">
-                                      · 0đ
+                                    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100/80 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
+                                      Học thử
                                     </span>
                                   )}
                                 </div>
@@ -707,7 +707,7 @@ export default function CourseLearningRoomPage({
               {/* ======================================================== */}
               <div className="sticky top-20 z-20 px-3.5 py-2.5 rounded-2xl bg-white/95 dark:bg-[#111116]/95 backdrop-blur-md border-2 border-slate-200/90 dark:border-white/10 shadow-md shadow-slate-900/5 transition-all">
                 <div className="flex items-center justify-between gap-3 overflow-hidden">
-                  <div className="flex items-center gap-2 overflow-x-auto py-0.5 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden flex-1 min-w-0">
+                  <div className="flex items-center gap-2 overflow-x-auto py-0.5 no-scrollbar scrollbar-none flex-1 min-w-0">
                     <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider shrink-0 flex items-center gap-1.5 pl-1">
                       <Compass className="w-3.5 h-3.5 text-indigo-500" />
                       Chuyển đến:
