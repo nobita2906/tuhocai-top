@@ -31,7 +31,7 @@
     "build": "next build",
     "start": "next start -p 8899",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "node --max-old-space-size=4096 ./node_modules/typescript/bin/tsc --noEmit",
     "check": "npm run lint && npm run typecheck && npm run build",
     "deploy": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy.ps1"
   },

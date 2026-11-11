@@ -33,8 +33,8 @@ export default async function BaiVietPage({
   const limit = 8;
   const offset = (page - 1) * limit;
 
-  let countSql = 'SELECT COUNT(*) as total FROM posts WHERE is_published = TRUE';
-  let sql = 'SELECT id, slug, title, summary, category, tags, thumbnail, is_featured, views, created_at FROM posts WHERE is_published = TRUE';
+  let countSql = "SELECT COUNT(*) as total FROM posts WHERE is_published = TRUE AND (visibility IS NULL OR visibility = 'PUBLIC')";
+  let sql = "SELECT id, slug, title, summary, category, tags, thumbnail, is_featured, views, created_at FROM posts WHERE is_published = TRUE AND (visibility IS NULL OR visibility = 'PUBLIC')";
   const countParams: any[] = [];
   const params: any[] = [];
 

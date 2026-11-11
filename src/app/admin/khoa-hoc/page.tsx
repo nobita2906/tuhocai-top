@@ -69,6 +69,7 @@ interface Lesson {
   title: string;
   duration: string;
   video_url: string;
+  custom_url?: string | null;
   summary: string;
   content_markdown: string;
   action_checklist: string[];
@@ -96,11 +97,19 @@ interface Course {
   level: string;
   thumbnail: string;
   instructor: string;
+  custom_url?: string | null;
   is_published: boolean;
   sort_order: number;
   modules_count?: number;
   lessons_count?: number;
   enrolled_students?: number;
+}
+
+interface PublishedPost {
+  id: string;
+  title: string;
+  slug: string;
+  category: string;
 }
 
 interface Product {
@@ -114,6 +123,7 @@ interface Product {
 export default function AdminClassroomPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [posts, setPosts] = useState<PublishedPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('ALL');
@@ -186,6 +196,7 @@ export default function AdminClassroomPage() {
     level: 'Thực chiến A-Z',
     thumbnail: '',
     instructor: 'Tự Học AI',
+    custom_url: '',
     isPublished: true,
     sortOrder: 1,
   });
@@ -301,6 +312,7 @@ export default function AdminClassroomPage() {
       if (data.success) {
         setCourses(data.courses || []);
         setProducts(data.products || []);
+        setPosts(data.posts || []);
       } else {
         showToast(data.error || 'Lỗi tải danh sách khóa học', 'error');
       }
@@ -686,6 +698,7 @@ export default function AdminClassroomPage() {
         level: course.level || 'Thực chiến A-Z',
         thumbnail: course.thumbnail || '',
         instructor: course.instructor || 'Tự Học AI',
+        custom_url: course.custom_url || '',
         isPublished: course.is_published,
         sortOrder: course.sort_order || 1,
       });
@@ -701,6 +714,7 @@ export default function AdminClassroomPage() {
         level: 'Thực chiến A-Z',
         thumbnail: '',
         instructor: 'Tự Học AI',
+        custom_url: '',
         isPublished: true,
         sortOrder: courses.length + 1,
       });
@@ -919,6 +933,30 @@ export default function AdminClassroomPage() {
                           <span>{c.enrolled_students || 0} học viên</span>
                         </div>
                       </div>
+
+                      {/* Custom URL status indicator */}
+                      {c.custom_url ? (
+                        <div className="mt-2.5 p-2 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 flex items-center justify-between text-[11px]">
+                          <div className="flex items-center gap-1.5 min-w-0 text-amber-900 dark:text-amber-300 font-bold">
+                            <FileText className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                            <span className="truncate">Bài viết: {c.custom_url}</span>
+                          </div>
+                          <a
+                            href={c.custom_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="shrink-0 ml-1 p-1 rounded hover:bg-amber-200 dark:hover:bg-amber-500/20 text-amber-700 dark:text-amber-300"
+                            title="Mở bài viết"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                        </div>
+                      ) : (
+                        <div className="mt-2.5 px-2 py-1 rounded-lg bg-slate-100 dark:bg-white/[0.04] text-[10.5px] text-slate-500 flex items-center gap-1.5">
+                          <GraduationCap className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                          <span className="truncate">Phòng học Skool: /dashboard/hoc/{c.slug}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -941,10 +979,14 @@ export default function AdminClassroomPage() {
                     </button>
 
                     <Link
-                      href={`/dashboard/hoc/${c.slug}`}
+                      href={c.custom_url || `/dashboard/hoc/${c.slug}`}
                       target="_blank"
-                      className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs transition-colors"
-                      title="Xem giao diện học viên"
+                      className={`p-2 rounded-lg text-xs transition-colors ${
+                        c.custom_url
+                          ? 'bg-amber-100 dark:bg-amber-500/20 hover:bg-amber-200 dark:hover:bg-amber-500/30 text-amber-900 dark:text-amber-300'
+                          : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'
+                      }`}
+                      title={c.custom_url ? `Xem bài viết (${c.custom_url})` : "Xem phòng học học viên"}
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
                     </Link>
@@ -996,12 +1038,21 @@ export default function AdminClassroomPage() {
 
             <div className="flex items-center gap-2.5 shrink-0">
               <Link
-                href={`/dashboard/hoc/${selectedCourse.slug}`}
+                href={selectedCourse.custom_url || `/dashboard/hoc/${selectedCourse.slug}`}
                 target="_blank"
                 className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold transition-all shadow-sm"
               >
-                <Eye className="w-3.5 h-3.5 text-indigo-500" />
-                <span>Xem Phòng Học Học Viên</span>
+                {selectedCourse.custom_url ? (
+                  <>
+                    <FileText className="w-3.5 h-3.5 text-amber-500" />
+                    <span>Xem Link Bài Viết Bán Hàng</span>
+                  </>
+                ) : (
+                  <>
+                    <Eye className="w-3.5 h-3.5 text-indigo-500" />
+                    <span>Xem Phòng Học Học Viên</span>
+                  </>
+                )}
               </Link>
               <button
                 onClick={() => openEditCourseModal(selectedCourse)}
@@ -2357,6 +2408,64 @@ export default function AdminClassroomPage() {
                   placeholder="/sites/tuhocai-top/landing/video-vip/ket-qua-video.jpg"
                   className="w-full px-3.5 py-2 text-sm bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-slate-800 rounded-xl"
                 />
+              </div>
+
+              {/* CẤU HÌNH ĐƯỜNG DẪN BÀI HỌC / BÀI VIẾT BÁN HÀNG TÙY CHỌN */}
+              <div className="space-y-2 p-4 rounded-2xl bg-indigo-50/70 dark:bg-indigo-500/10 border-2 border-indigo-200 dark:border-indigo-500/30">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-black text-indigo-950 dark:text-cyan-300 flex items-center gap-1.5 uppercase tracking-wide">
+                    <LinkIcon className="w-3.5 h-3.5 text-indigo-600 dark:text-cyan-400" />
+                    Đường dẫn đến bài học / bài viết bán hàng (Tùy chọn)
+                  </label>
+                  {courseForm.custom_url && (
+                    <a
+                      href={courseForm.custom_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] font-bold text-indigo-700 dark:text-cyan-400 hover:underline flex items-center gap-1"
+                    >
+                      <span>Mở xem thử</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+
+                <p className="text-[11.5px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                  💡 <strong>Chế độ Bán Khóa Học Bằng Bài Viết:</strong> Điền đường dẫn bài viết hoặc landing page tại đây (VD: <code className="text-indigo-700 dark:text-cyan-400">/bai-viet/quy-trinh-tao-video-ai-trieu-view-tu-1-anh-tinh-tiktok-reels</code>). Khi học viên bấm vào khóa học trên Dashboard, hệ thống sẽ tự động chuyển hướng đến bài viết này thay vì vào phòng học Skool. Để trống nếu muốn dùng phòng học Skool mặc định.
+                </p>
+
+                {posts.length > 0 && (
+                  <div className="space-y-1 pt-1">
+                    <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                      ⚡ Chọn nhanh bài viết bán hàng có sẵn:
+                    </span>
+                    <select
+                      value={courseForm.custom_url}
+                      onChange={(e) => setCourseForm({ ...courseForm, custom_url: e.target.value })}
+                      className="w-full px-3 py-2 text-xs bg-white dark:bg-black/40 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
+                    >
+                      <option value="">-- Phòng học Skool mặc định (/dashboard/hoc/{courseForm.slug || '...'}) --</option>
+                      {posts.map((p) => (
+                        <option key={p.id} value={`/bai-viet/${p.slug}`}>
+                          📄 [{p.category}] {p.title} (/bai-viet/{p.slug})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                <div className="space-y-1 pt-1">
+                  <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                    Hoặc nhập link trực tiếp (Nội bộ hoặc Bên ngoài):
+                  </span>
+                  <input
+                    type="text"
+                    value={courseForm.custom_url}
+                    onChange={(e) => setCourseForm({ ...courseForm, custom_url: e.target.value })}
+                    placeholder="/bai-viet/ten-bai-viet hoặc https://..."
+                    className="w-full px-3.5 py-2 text-xs font-mono bg-white dark:bg-black/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
               </div>
 
               <div className="flex items-center gap-2 pt-2">

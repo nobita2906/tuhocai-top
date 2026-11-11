@@ -22,6 +22,7 @@ export async function POST(req: Request) {
       resources,
       sortOrder,
       isFreePreview,
+      customUrl,
     } = body;
 
     if (!courseId || !moduleId || !title) {
@@ -39,6 +40,7 @@ export async function POST(req: Request) {
           title = ?,
           duration = ?,
           video_url = ?,
+          custom_url = ?,
           summary = ?,
           content_markdown = ?,
           action_checklist = ?,
@@ -52,6 +54,7 @@ export async function POST(req: Request) {
         title.trim(),
         duration || '10:00',
         videoUrl || '',
+        customUrl ? customUrl.trim() : null,
         summary || '',
         contentMarkdown || '',
         checklistJson,
@@ -68,10 +71,10 @@ export async function POST(req: Request) {
       const lessonId = randomUUID();
       await execute(`
         INSERT INTO course_lessons (
-          id, course_id, module_id, title, duration, video_url,
+          id, course_id, module_id, title, duration, video_url, custom_url,
           summary, content_markdown, action_checklist, resources,
           sort_order, is_free_preview
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `, [
         lessonId,
         courseId,
@@ -79,6 +82,7 @@ export async function POST(req: Request) {
         title.trim(),
         duration || '10:00',
         videoUrl || '',
+        customUrl ? customUrl.trim() : null,
         summary || '',
         contentMarkdown || '',
         checklistJson,

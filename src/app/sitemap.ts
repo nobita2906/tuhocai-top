@@ -38,9 +38,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }));
 
-    // Dynamic posts
+    // Dynamic posts (Chỉ đưa các bài viết công khai vào sitemap SEO)
     const posts = await query<any>(
-      'SELECT slug, updated_at FROM posts WHERE is_published = 1'
+      "SELECT slug, updated_at FROM posts WHERE is_published = 1 AND (visibility IS NULL OR visibility = 'PUBLIC')"
     );
     const postRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
       url: `${baseUrl}/bai-viet/${post.slug}`,

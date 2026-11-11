@@ -24,6 +24,10 @@ import {
   Trash2,
   Upload,
   UploadCloud,
+  Lock,
+  Globe,
+  EyeOff,
+  GraduationCap,
 } from 'lucide-react';
 import { slugifyVietnamese } from '@/lib/slugify';
 
@@ -58,6 +62,20 @@ export default function EditPostPage() {
   const [content, setContent] = useState('');
   const [isFeatured, setIsFeatured] = useState(false);
   const [isPublished, setIsPublished] = useState(true);
+  const [visibility, setVisibility] = useState<'PUBLIC' | 'UNLISTED' | 'COURSE_BUYERS'>('PUBLIC');
+  const [requiredPid, setRequiredPid] = useState('');
+  const [coursesList, setCoursesList] = useState<Array<{ id: string; pid: string; slug?: string; title: string; price: number }>>([]);
+
+  useEffect(() => {
+    fetch('/api/admin/classroom')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.courses) {
+          setCoursesList(data.courses);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
   const [saving, setSaving] = useState(false);
@@ -126,6 +144,8 @@ export default function EditPostPage() {
         setContent(p.content || '');
         setIsFeatured(Boolean(p.is_featured));
         setIsPublished(Boolean(p.is_published));
+        setVisibility(p.visibility || 'PUBLIC');
+        setRequiredPid(p.required_pid || '');
       } catch (err: any) {
         setError(err.message || 'Lỗi khi tải bài viết');
       } finally {
@@ -182,6 +202,8 @@ export default function EditPostPage() {
           content,
           is_featured: isFeatured,
           is_published: isPublished,
+          visibility,
+          required_pid: visibility === 'COURSE_BUYERS' ? (requiredPid.trim() || null) : null,
         }),
       });
 
@@ -487,8 +509,8 @@ export default function EditPostPage() {
             <div className="space-y-3">
               <label className="flex items-center justify-between p-3 rounded-xl bg-slate-800/50 border border-slate-700/50 cursor-pointer">
                 <div>
-                  <div className="text-sm font-medium text-white">Xuất bản công khai</div>
-                  <div className="text-xs text-slate-400">Hiện bài viết trên website</div>
+                  <div className="text-sm font-medium text-white">Xuất bản bài viết</div>
+                  <div className="text-xs text-slate-400">Bật/tắt trạng thái hiển thị</div>
                 </div>
                 <input
                   type="checkbox"
@@ -514,6 +536,130 @@ export default function EditPostPage() {
                 />
               </label>
             </div>
+          </div>
+
+          {/* Privacy & Access Control (Phân quyền khóa học) */}
+          <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-white text-sm flex items-center gap-2">
+                <Lock className="w-4 h-4 text-amber-400" />
+                Quyền riêng tư & Phân quyền
+              </h3>
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                visibility === 'PUBLIC'
+                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                  : visibility === 'UNLISTED'
+                  ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                  : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+              }`}>
+                {visibility}
+              </span>
+            </div>
+
+            <div className="space-y-2">
+              <label className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
+                visibility === 'PUBLIC'
+                  ? 'bg-indigo-950/40 border-indigo-500/50 text-white'
+                  : 'bg-slate-800/40 border-slate-700/60 text-slate-300 hover:bg-slate-800/80'
+              }`}>
+                <input
+                  type="radio"
+                  name="visibility"
+                  value="PUBLIC"
+                  checked={visibility === 'PUBLIC'}
+                  onChange={() => setVisibility('PUBLIC')}
+                  className="mt-0.5 w-4 h-4 accent-indigo-500"
+                />
+                <div className="text-xs space-y-0.5">
+                  <div className="font-semibold flex items-center gap-1.5 text-slate-200">
+                    <Globe className="w-3.5 h-3.5 text-emerald-400" />
+                    Công khai (Public)
+                  </div>
+                  <div className="text-slate-400 text-[11px] leading-relaxed">
+                    Hiện trên trang danh sách /bai-viet, lập chỉ mục Google & sitemap SEO.
+                  </div>
+                </div>
+              </label>
+
+              <label className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
+                visibility === 'UNLISTED'
+                  ? 'bg-indigo-950/40 border-indigo-500/50 text-white'
+                  : 'bg-slate-800/40 border-slate-700/60 text-slate-300 hover:bg-slate-800/80'
+              }`}>
+                <input
+                  type="radio"
+                  name="visibility"
+                  value="UNLISTED"
+                  checked={visibility === 'UNLISTED'}
+                  onChange={() => setVisibility('UNLISTED')}
+                  className="mt-0.5 w-4 h-4 accent-indigo-500"
+                />
+                <div className="text-xs space-y-0.5">
+                  <div className="font-semibold flex items-center gap-1.5 text-slate-200">
+                    <EyeOff className="w-3.5 h-3.5 text-blue-400" />
+                    Không công khai (Unlisted)
+                  </div>
+                  <div className="text-slate-400 text-[11px] leading-relaxed">
+                    Ẩn khỏi danh sách bài viết & sitemap. Chỉ ai có đường link mới xem được.
+                  </div>
+                </div>
+              </label>
+
+              <label className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
+                visibility === 'COURSE_BUYERS'
+                  ? 'bg-amber-950/40 border-amber-500/60 text-white'
+                  : 'bg-slate-800/40 border-slate-700/60 text-slate-300 hover:bg-slate-800/80'
+              }`}>
+                <input
+                  type="radio"
+                  name="visibility"
+                  value="COURSE_BUYERS"
+                  checked={visibility === 'COURSE_BUYERS'}
+                  onChange={() => setVisibility('COURSE_BUYERS')}
+                  className="mt-0.5 w-4 h-4 accent-amber-500"
+                />
+                <div className="text-xs space-y-0.5">
+                  <div className="font-semibold flex items-center gap-1.5 text-amber-300">
+                    <GraduationCap className="w-3.5 h-3.5 text-amber-400" />
+                    Dành riêng cho Học viên đã mua khóa (Course VIP Gate)
+                  </div>
+                  <div className="text-slate-400 text-[11px] leading-relaxed">
+                    Khóa nội dung bài viết. Người chưa mua sẽ thấy khung Paywall mở khóa kèm VietQR. Chỉ học viên đã thanh toán mới xem được toàn bộ.
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            {visibility === 'COURSE_BUYERS' && (
+              <div className="pt-2 border-t border-slate-800/80 space-y-3">
+                <label className="block text-xs font-semibold text-amber-300">
+                  Chọn khóa học yêu cầu sở hữu:
+                </label>
+                <select
+                  value={requiredPid}
+                  onChange={(e) => setRequiredPid(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-amber-500/40 text-white text-xs focus:outline-none focus:border-amber-400"
+                >
+                  <option value="">-- Chọn khóa học để gắn bản quyền --</option>
+                  {coursesList.map((c) => (
+                    <option key={c.id} value={c.pid || c.slug}>
+                      {c.title} ({c.pid || c.slug}) - {new Intl.NumberFormat('vi-VN').format(c.price)}đ
+                    </option>
+                  ))}
+                </select>
+
+                <div className="space-y-1">
+                  <div className="text-[11px] text-slate-400">Hoặc nhập mã PID / Product ID thủ công:</div>
+                  <input
+                    type="text"
+                    value={requiredPid}
+                    onChange={(e) => setRequiredPid(e.target.value)}
+                    placeholder="VD: WF-VIP-297"
+                    className="w-full px-3 py-1.5 rounded-lg bg-slate-800/90 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Category */}

@@ -20,6 +20,8 @@ export interface Post {
   summary: string;
   content: string;
   category: PostCategory;
+  visibility?: 'PUBLIC' | 'UNLISTED' | 'COURSE_BUYERS';
+  required_pid?: string | null;
   tags?: string;
   thumbnail?: string | null;
   is_featured: boolean;

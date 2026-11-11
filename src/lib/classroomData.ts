@@ -15,6 +15,7 @@ export interface Lesson {
   actionChecklist: string[];
   resources: LessonResource[];
   sortOrder: number;
+  custom_url?: string;
 }
 
 export interface Module {
@@ -33,6 +34,7 @@ export interface Course {
   level: string;
   thumbnail: string;
   instructor: string;
+  custom_url?: string;
   modules: Module[];
 }
 
@@ -47,6 +49,7 @@ export const COURSES: Course[] = [
     level: 'Thực chiến A-Z',
     thumbnail: '/sites/tuhocai-top/landing/video-vip/ket-qua-video.jpg',
     instructor: 'Đội ngũ Kỹ thuật Tự Học AI',
+    custom_url: '/bai-viet/quy-trinh-tao-video-ai-trieu-view-tu-1-anh-tinh-tiktok-reels',
     modules: [
       {
         id: 'mod-1',

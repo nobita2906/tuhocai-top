@@ -79,6 +79,7 @@ interface CourseDetail {
   level: string;
   thumbnail: string;
   instructor: string;
+  customUrl?: string | null;
   isUnlocked: boolean;
   totalLessons: number;
   completedLessons: number;
@@ -502,6 +503,38 @@ export default function CourseLearningRoomPage({
           </div>
         </div>
       </div>
+
+      {/* BANNER ĐIỀU HƯỚNG TỚI BÀI VIẾT BÁN HÀNG / BÀI HỌC CHUYÊN SÂU (NẾU CÓ CẤU HÌNH) */}
+      {course.customUrl && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-indigo-500/10 to-blue-500/15 border-2 border-amber-400/50 dark:border-amber-500/30 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+              <FileText className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500 text-black">
+                  Chế độ bài viết
+                </span>
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                  Khóa học này được tối ưu dưới dạng bài viết thực chiến
+                </span>
+              </div>
+              <p className="text-xs text-slate-600 dark:text-slate-400 truncate mt-0.5">
+                Xem toàn bộ hướng dẫn, kịch bản mẫu và ưu đãi mới nhất tại bài viết chi tiết.
+              </p>
+            </div>
+          </div>
+
+          <Link
+            href={course.customUrl}
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-xs shadow-md transition-all shrink-0 active:scale-95"
+          >
+            <span>Đọc Bài Viết Ngay</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      )}
 
       {/* 2. BỐ CỤC 2 CỘT CHUẨN: LỘ TRÌNH BÀI HỌC BÊN TAY TRÁI (4 COLS) + KHÔNG GIAN BÀI HỌC BÊN PHẢI (8 COLS) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">

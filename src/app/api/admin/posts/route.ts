@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     const search = searchParams.get('q') || '';
     const category = searchParams.get('category') || '';
 
-    let sql = 'SELECT id, slug, title, summary, category, tags, thumbnail, is_featured, is_published, views, created_at, updated_at FROM posts WHERE 1=1';
+    let sql = 'SELECT id, slug, title, summary, category, visibility, required_pid, tags, thumbnail, is_featured, is_published, views, created_at, updated_at FROM posts WHERE 1=1';
     const params: any[] = [];
 
     if (search) {
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { title, summary, content, category, tags, thumbnail, is_featured, is_published } = body;
+    const { title, summary, content, category, tags, thumbnail, is_featured, is_published, visibility, required_pid } = body;
 
     if (!title || !content) {
       return NextResponse.json({ error: 'Tiêu đề và nội dung bài viết không được để trống' }, { status: 400 });
@@ -59,9 +59,12 @@ export async function POST(req: Request) {
     }
 
     const postId = randomUUID();
+    const finalVisibility = visibility || 'PUBLIC';
+    const finalRequiredPid = required_pid ? required_pid.trim() : null;
+
     await execute(
-      `INSERT INTO posts (id, slug, title, summary, content, category, tags, thumbnail, is_featured, is_published, views)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`,
+      `INSERT INTO posts (id, slug, title, summary, content, category, visibility, required_pid, tags, thumbnail, is_featured, is_published, views)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`,
       [
         postId,
         slug,
@@ -69,6 +72,8 @@ export async function POST(req: Request) {
         summary?.trim() || '',
         content,
         category || 'NEWS',
+        finalVisibility,
+        finalRequiredPid,
         tags?.trim() || '',
         thumbnail?.trim() || null,
         is_featured ? 1 : 0,

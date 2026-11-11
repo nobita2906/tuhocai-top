@@ -2,6 +2,8 @@
 # SCRIPT DEPLOY TU DONG LEN VERCEL CHO DOMAIN TUHOCAI.TOP
 # ==============================================================================
 
+$env:NODE_OPTIONS = "--max-old-space-size=4096"
+
 Write-Host ">>> [1/4] Kiem tra kieu du lieu (TypeScript Typecheck)..." -ForegroundColor Cyan
 npm run typecheck
 if ($LASTEXITCODE -ne 0) {

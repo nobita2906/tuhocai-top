@@ -30,10 +30,19 @@ export async function GET() {
       ORDER BY created_at DESC
     `);
 
+    // Lấy danh sách bài viết đã xuất bản để dễ dàng chọn liên kết bán khóa học
+    const posts = await query<any>(`
+      SELECT id, title, slug, category, created_at
+      FROM posts
+      WHERE is_published = TRUE
+      ORDER BY created_at DESC
+    `);
+
     return NextResponse.json({
       success: true,
       courses,
       products,
+      posts,
     });
   } catch (error: any) {
     console.error('Admin classroom GET error:', error);
@@ -57,6 +66,7 @@ export async function POST(req: Request) {
       level,
       thumbnail,
       instructor,
+      custom_url,
       isPublished,
       sortOrder,
     } = body;
@@ -75,8 +85,8 @@ export async function POST(req: Request) {
     await execute(`
       INSERT INTO courses (
         id, slug, pid, title, headline, category, price, level,
-        thumbnail, instructor, is_published, sort_order
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        thumbnail, instructor, custom_url, is_published, sort_order
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       courseId,
       slug.trim().toLowerCase(),
@@ -88,6 +98,7 @@ export async function POST(req: Request) {
       level || 'Thực chiến A-Z',
       thumbnail || '',
       instructor || 'Tự Học AI',
+      custom_url ? custom_url.trim() : null,
       isPublished !== false,
       Number(sortOrder) || 1,
     ]);
@@ -127,6 +138,7 @@ export async function PUT(req: Request) {
       level,
       thumbnail,
       instructor,
+      custom_url,
       isPublished,
       sortOrder,
     } = body;
@@ -152,6 +164,7 @@ export async function PUT(req: Request) {
         level = ?,
         thumbnail = ?,
         instructor = ?,
+        custom_url = ?,
         is_published = ?,
         sort_order = ?,
         updated_at = NOW()
@@ -166,6 +179,7 @@ export async function PUT(req: Request) {
       level || 'Thực chiến A-Z',
       thumbnail || '',
       instructor || 'Tự Học AI',
+      custom_url ? custom_url.trim() : null,
       isPublished !== false,
       Number(sortOrder) || 0,
       id,

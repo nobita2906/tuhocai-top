@@ -26,7 +26,19 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   try {
     const { id } = await params;
     const body = await req.json();
-    const { title, summary, content, category, tags, thumbnail, is_featured, is_published, slug: newSlug } = body;
+    const {
+      title,
+      summary,
+      content,
+      category,
+      tags,
+      thumbnail,
+      is_featured,
+      is_published,
+      visibility,
+      required_pid,
+      slug: newSlug,
+    } = body;
 
     const existing = await query<any>('SELECT id, slug FROM posts WHERE id = ? LIMIT 1', [id]);
     if (existing.length === 0) {
@@ -50,6 +62,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         summary = COALESCE(?, summary),
         content = COALESCE(?, content),
         category = COALESCE(?, category),
+        visibility = COALESCE(?, visibility),
+        required_pid = CASE WHEN ? = 1 THEN ? ELSE required_pid END,
         tags = COALESCE(?, tags),
         thumbnail = COALESCE(?, thumbnail),
         is_featured = COALESCE(?, is_featured),
@@ -61,6 +75,9 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         summary !== undefined ? summary : null,
         content || null,
         category || null,
+        visibility || null,
+        required_pid !== undefined ? 1 : 0,
+        required_pid ? required_pid.trim() : null,
         tags !== undefined ? tags : null,
         thumbnail !== undefined ? thumbnail : null,
         is_featured !== undefined ? (is_featured ? 1 : 0) : null,

@@ -26,10 +26,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: 'cover',
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#09090b' },
-  ],
+  themeColor: '#09090b',
 };
 
 export const metadata: Metadata = {
@@ -97,7 +94,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="vi" suppressHydrationWarning className={`${plusJakartaSans.variable} ${jetBrainsMono.variable} h-full`}>
+    <html lang="vi" suppressHydrationWarning className={`dark ${plusJakartaSans.variable} ${jetBrainsMono.variable} h-full`}>
       <head>
         <script
           type="application/ld+json"
@@ -107,18 +104,15 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                // Xoa bo gia tri dark mode cu luu trong localStorage truoc day
-                if (localStorage.getItem('theme') === 'dark' && !localStorage.getItem('tuhocai_theme_v2')) {
-                  localStorage.removeItem('theme');
-                }
+                // Mặc định giao diện tối (Dark Mode) cho toàn web
                 var userTheme = localStorage.getItem('tuhocai_theme_v2');
-                if (userTheme === 'dark') {
-                  document.documentElement.classList.add('dark');
-                } else {
+                if (userTheme === 'light') {
                   document.documentElement.classList.remove('dark');
+                } else {
+                  document.documentElement.classList.add('dark');
                 }
               } catch (_) {
-                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('dark');
               }
             `,
           }}

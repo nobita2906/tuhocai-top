@@ -4,18 +4,18 @@ import { useState, useEffect } from 'react';
 import { Sun, Moon } from 'lucide-react';
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     const saved = localStorage.getItem('tuhocai_theme_v2');
-    if (saved === 'dark') {
-      document.documentElement.classList.add('dark');
-      setTheme('dark');
-    } else {
+    if (saved === 'light') {
       document.documentElement.classList.remove('dark');
       setTheme('light');
+    } else {
+      document.documentElement.classList.add('dark');
+      setTheme('dark');
     }
   }, []);
 

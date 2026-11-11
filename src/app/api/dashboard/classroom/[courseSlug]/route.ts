@@ -53,6 +53,7 @@ export async function GET(
         resources: typeof l.resources === 'string' ? JSON.parse(l.resources || '[]') : (l.resources || []),
         sortOrder: l.sort_order || 1,
         isFreePreview: Boolean(l.is_free_preview),
+        customUrl: l.custom_url || null,
       }));
 
       modules = dbModules.map((m: any) => ({
@@ -71,6 +72,7 @@ export async function GET(
         level: dbCourse.level,
         thumbnail: dbCourse.thumbnail,
         instructor: dbCourse.instructor,
+        customUrl: dbCourse.custom_url || null,
       };
     } else {
       // Fallback tĩnh
@@ -78,7 +80,10 @@ export async function GET(
       if (!staticCourse) {
         return NextResponse.json({ error: 'Không tìm thấy khóa học' }, { status: 404 });
       }
-      course = staticCourse;
+      course = {
+        ...staticCourse,
+        customUrl: staticCourse.custom_url || null,
+      };
       modules = staticCourse.modules;
     }
 
