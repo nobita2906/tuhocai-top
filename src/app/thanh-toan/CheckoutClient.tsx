@@ -182,7 +182,7 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
     if (!isLoggedIn) {
       setShowPasswordModal(true);
     } else {
-      window.location.href = '/dashboard';
+      window.location.href = downloadUrl || '/dashboard';
     }
   };
 
@@ -216,7 +216,7 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
 
       setPasswordSuccess(true);
       setTimeout(() => {
-        window.location.href = '/dashboard';
+        window.location.href = downloadUrl || '/dashboard';
       }, 1500);
     } catch (err: any) {
       setPasswordError(err.message || 'Lỗi xử lý');
@@ -855,7 +855,11 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
                   className="w-full flex items-center justify-center gap-2 py-4 px-4 rounded-xl bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-90 text-white font-extrabold text-sm shadow-xl shadow-indigo-950/30 transition-all active:scale-[0.98]"
                 >
                   <FileText className="w-5 h-5" />
-                  🚀 Vào Khu Vực Học Tập / Khóa Học Của Tôi
+                  {downloadUrl && downloadUrl.startsWith('/bai-viet/') ? (
+                    <span>📄 Mở Ngay Bài Hướng Dẫn Thực Hành</span>
+                  ) : (
+                    <span>🚀 Vào Khu Vực Học Tập / Khóa Học Của Tôi</span>
+                  )}
                 </button>
 
                 <a
@@ -917,7 +921,7 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
                   type="button"
                   onClick={() => {
                     setShowPasswordModal(false);
-                    window.location.href = '/dashboard';
+                    window.location.href = downloadUrl || '/dashboard';
                   }}
                   className="w-full py-3 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition-all"
                 >

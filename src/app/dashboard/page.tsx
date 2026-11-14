@@ -120,137 +120,133 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 transition-colors duration-200">
-      {/* 1. SKOOL HEADER PROFILE BANNER */}
-      <div className="rounded-2xl bg-white dark:bg-[#111116] border-2 border-slate-300 dark:border-white/15 p-6 sm:p-8 shadow-md">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      {/* 1. SKOOL HEADER PROFILE BANNER (THU GỌN TINH TẾ) */}
+      <div className="rounded-2xl bg-white dark:bg-[#111116] border border-slate-200 dark:border-white/10 p-4 sm:p-5 shadow-xs">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           {/* User Info & Avatar */}
-          <div className="flex items-center gap-4 sm:gap-5">
+          <div className="flex items-center gap-3.5 sm:gap-4">
             <div className="relative">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-indigo-800 via-indigo-700 to-blue-700 p-0.5 shadow-lg shadow-indigo-950/20">
-                <div className="w-full h-full bg-white dark:bg-[#111116] rounded-[14px] flex items-center justify-center text-indigo-900 dark:text-white font-black text-2xl uppercase font-mono">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-tr from-indigo-700 via-indigo-600 to-blue-600 p-0.5 shadow-md shadow-indigo-950/20">
+                <div className="w-full h-full bg-white dark:bg-[#111116] rounded-[14px] flex items-center justify-center text-indigo-700 dark:text-cyan-400 font-black text-xl uppercase font-mono">
                   {user.name?.charAt(0) || 'U'}
                 </div>
               </div>
-              <span className="absolute -bottom-2 -right-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-black bg-emerald-700 text-white shadow-xs">
+              <span className="absolute -bottom-1 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-mono font-black bg-emerald-600 text-white shadow-xs">
                 {stats?.levelBadge || 'Lv.1'}
               </span>
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-tight">
+                <h1 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-tight">
                   {user.name}
                 </h1>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold bg-indigo-100 dark:bg-indigo-500/20 text-indigo-900 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-500/30">
-                  <Trophy className="w-3 h-3 text-indigo-700 dark:text-cyan-400" />
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/25">
+                  <Trophy className="w-3 h-3 text-indigo-600 dark:text-cyan-400" />
                   {stats?.levelName || 'Level 1: Tân Binh'}
                 </span>
               </div>
-              <p className="text-xs text-slate-600 dark:text-slate-400 font-mono">{user.email}</p>
-              <div className="flex items-center gap-3 pt-1 text-xs text-slate-700 dark:text-slate-300 font-medium">
-                <span className="flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                  Điểm cống hiến: <strong className="font-mono text-slate-900 dark:text-white font-bold">{stats?.points || 0} pts</strong>
-                </span>
+              <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-mono">
+                <span>{user.email}</span>
                 <span>•</span>
-                <span>
-                  Đã hoàn thành: <strong className="font-mono text-emerald-700 dark:text-emerald-400 font-bold">{stats?.totalLessonsCompleted || 0} bài</strong>
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                  Đã hoàn thành {stats?.totalLessonsCompleted || 0} bài
                 </span>
               </div>
             </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2">
             <Link
               href="/san-pham"
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-85 text-white font-bold text-xs shadow-md shadow-indigo-950/20 transition-all active:scale-[0.98]"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-white/[0.05] hover:bg-slate-200 dark:hover:bg-white/[0.1] text-slate-800 dark:text-white font-bold text-xs border border-slate-300 dark:border-white/10 transition-all"
             >
-              <ShoppingBag className="w-3.5 h-3.5" />
-              Khám Phá Thêm Workflow
+              <ShoppingBag className="w-3.5 h-3.5 text-indigo-600 dark:text-cyan-400" />
+              <span>Kho Workflow</span>
             </Link>
 
             <a
               href="https://zalo.me/g/tuhocai"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 hover:opacity-85 text-emerald-900 dark:text-emerald-400 font-bold text-xs border-2 border-emerald-400 dark:border-emerald-500/30 transition-all shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 hover:opacity-85 text-emerald-800 dark:text-emerald-400 font-bold text-xs border border-emerald-300 dark:border-emerald-500/30 transition-all"
             >
               <MessageCircle className="w-3.5 h-3.5" />
-              Cộng Đồng Zalo VIP
+              <span>Hỗ Trợ Zalo VIP</span>
             </a>
           </div>
         </div>
 
         {/* Global Progress Bar */}
-        <div className="mt-6 pt-5 border-t border-slate-200 dark:border-white/[0.08] space-y-2">
+        <div className="mt-4 pt-3 border-t border-slate-100 dark:border-white/[0.06] space-y-1.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 font-mono">
-              <BookOpen className="w-3.5 h-3.5 text-indigo-700 dark:text-cyan-400" />
+            <span className="font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1.5 font-mono text-[11px]">
+              <BookOpen className="w-3.5 h-3.5 text-indigo-600 dark:text-cyan-400" />
               Tiến độ học tập tổng thể
             </span>
-            <span className="font-mono font-black text-indigo-900 dark:text-cyan-400">
+            <span className="font-mono font-bold text-xs text-indigo-700 dark:text-cyan-400">
               {stats?.overallProgress || 0}% ({stats?.totalLessonsCompleted || 0}/{stats?.totalLessonsAvailable || 0} bài)
             </span>
           </div>
-          <div className="w-full h-2.5 bg-slate-100 dark:bg-white/[0.06] rounded-full overflow-hidden border border-slate-300 dark:border-white/10">
+          <div className="w-full h-1.5 bg-slate-100 dark:bg-white/[0.06] rounded-full overflow-hidden border border-slate-200 dark:border-white/10">
             <div
-              className="h-full bg-gradient-to-r from-indigo-700 via-blue-600 to-emerald-500 transition-all duration-500"
+              className="h-full bg-gradient-to-r from-indigo-600 via-blue-600 to-emerald-500 transition-all duration-500"
               style={{ width: `${stats?.overallProgress || 0}%` }}
             />
           </div>
         </div>
       </div>
 
-      {/* 2. SKOOL TOP NAVIGATION TABS */}
-      <div className="flex items-center gap-2 border-b-2 border-slate-300 dark:border-white/10 pb-3 overflow-x-auto">
+      {/* 2. SKOOL TOP NAVIGATION TABS (TINH GỌN) */}
+      <div className="flex items-center gap-2 border-b border-slate-200 dark:border-white/10 pb-2.5 overflow-x-auto">
         <button
           onClick={() => setActiveTab('classroom')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${
             activeTab === 'classroom'
-              ? 'bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 text-white shadow-md shadow-indigo-950/20'
-              : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.06]'
+              ? 'bg-gradient-to-r from-indigo-700 via-indigo-600 to-blue-700 text-white shadow-md shadow-indigo-950/20'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/[0.05]'
           }`}
         >
           <BookOpen className="w-4 h-4" />
-          🎓 Classroom (Lớp Học AI)
+          <span>Khóa Học Của Tôi ({courses.filter(c => c.isUnlocked).length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('library')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${
             activeTab === 'library'
-              ? 'bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 text-white shadow-md shadow-indigo-950/20'
-              : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.06]'
+              ? 'bg-gradient-to-r from-indigo-700 via-indigo-600 to-blue-700 text-white shadow-md shadow-indigo-950/20'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/[0.05]'
           }`}
         >
           <Layers className="w-4 h-4" />
-          📦 Kho Của Tôi ({library.length})
+          <span>Kho Tài Liệu ({library.length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('orders')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${
             activeTab === 'orders'
-              ? 'bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 text-white shadow-md shadow-indigo-950/20'
-              : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.06]'
+              ? 'bg-gradient-to-r from-indigo-700 via-indigo-600 to-blue-700 text-white shadow-md shadow-indigo-950/20'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/[0.05]'
           }`}
         >
           <FileText className="w-4 h-4" />
-          🧾 Lịch Sử Đơn Hàng ({orders.length})
+          <span>Lịch Sử Đơn Hàng ({orders.length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('referral')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${
             activeTab === 'referral'
-              ? 'bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white shadow-md shadow-emerald-950/20'
-              : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.06] border border-emerald-500/20'
+              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-950/20'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/[0.05]'
           }`}
         >
-          <Gift className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-          🤝 Đối Tác Affiliate & CTV (60%)
-          <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-full font-black bg-amber-400 text-slate-950 shadow-xs">
+          <Gift className="w-4 h-4 text-emerald-500" />
+          <span>Đối Tác CTV (60%)</span>
+          <span className="text-[9px] uppercase tracking-wider px-1 py-0.2 rounded-full font-black bg-amber-400 text-slate-950">
             HOT
           </span>
         </button>
@@ -259,19 +255,19 @@ export default function DashboardPage() {
           href="https://zalo.me/g/tuhocai"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.06] transition-all ml-auto whitespace-nowrap"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/[0.05] transition-all ml-auto whitespace-nowrap"
         >
-          <MessageCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-          💬 Hỏi Đáp Cộng Đồng
+          <MessageCircle className="w-3.5 h-3.5 text-emerald-500" />
+          <span>Hỏi Đáp Zalo</span>
           <ExternalLink className="w-3 h-3 text-slate-400" />
         </a>
       </div>
 
-      {/* 3. TAB CONTENT: CLASSROOM */}
+      {/* 3. TAB CONTENT: CLASSROOM (LÀM GỌN KHÓA HỌC ĐÃ MUA) */}
       {activeTab === 'classroom' && (
         <div className="space-y-6">
-          {/* Filter Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-slate-50 dark:bg-[#111116] border-2 border-slate-300 dark:border-white/10">
+          {/* Filter Bar Tinh Gọn */}
+          <div className="flex flex-wrap items-center justify-between gap-3 p-2.5 rounded-xl bg-slate-50 dark:bg-[#111116] border border-slate-200 dark:border-white/10">
             <div className="flex flex-wrap items-center gap-1.5">
               {[
                 { key: 'all', label: 'Tất cả chương trình' },
@@ -282,10 +278,10 @@ export default function DashboardPage() {
                 <button
                   key={f.key}
                   onClick={() => setCourseFilter(f.key as any)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                     courseFilter === f.key
-                      ? 'bg-indigo-800 text-white shadow-xs'
-                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
+                      ? 'bg-indigo-700 text-white shadow-xs'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
                   }`}
                 >
                   {f.label}
@@ -294,202 +290,278 @@ export default function DashboardPage() {
             </div>
 
             <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
-              Hiển thị <strong className="text-slate-900 dark:text-white font-bold">{filteredCourses.length}</strong> khóa học
+              Tổng số: <strong className="text-slate-900 dark:text-white font-bold">{filteredCourses.length}</strong> khóa học
             </span>
           </div>
 
-          {/* Courses Grid phong cách Skool */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredCourses.map((course) => {
-              const targetUrl = course.customUrl || `/dashboard/hoc/${course.slug}`;
-              return (
-              <div
-                key={course.slug}
-                className="group bento-card relative flex flex-col overflow-hidden rounded-2xl bg-white dark:bg-[#111116] border-2 border-slate-300 dark:border-white/15 hover:border-indigo-600/60 dark:hover:border-cyan-400/50 shadow-md transition-all duration-200"
-              >
-                {/* Thumbnail */}
-                <Link href={targetUrl} className="block relative aspect-[16/9] w-full bg-slate-100 dark:bg-black overflow-hidden border-b-2 border-slate-200 dark:border-white/10">
-                  <Image
-                    src={course.thumbnail || '/images/products/n8n-workflow-demo.jpg'}
-                    alt={course.title}
-                    fill
-                    unoptimized
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none" />
+          {/* KHU VỰC 1: KHÓA HỌC BẠN ĐÃ MUA / ĐÃ SỞ HỮU (ƯU TIÊN LÊN ĐẦU, THIẾT KẾ SIÊU GỌN GÀNG) */}
+          {(courseFilter === 'all' || courseFilter === 'unlocked') && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-2">
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  <span>Khóa Học Đã Mở Khóa Của Bạn</span>
+                  <span className="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300">
+                    {courses.filter((c) => c.isUnlocked).length} khóa
+                  </span>
+                </h2>
+              </div>
 
-                  {/* Badges on Thumbnail */}
-                  <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 flex-wrap">
-                    {course.isUnlocked ? (
-                      <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-black bg-emerald-700 text-white border border-emerald-500 shadow-md flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3" />
-                        ĐÃ MỞ KHÓA
-                      </span>
-                    ) : course.price === 0 ? (
-                      <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-black bg-emerald-700 text-white border border-emerald-500 shadow-md">
-                        MIỄN PHÍ 0Đ
-                      </span>
-                    ) : (
-                      <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-black bg-slate-900/90 text-white border border-white/20 shadow-md flex items-center gap-1">
-                        <Lock className="w-3 h-3 text-amber-400" />
-                        KHÓA VIP ({new Intl.NumberFormat('vi-VN').format(course.price)} đ)
-                      </span>
-                    )}
+              {courses.filter((c) => c.isUnlocked).length === 0 ? (
+                <div className="text-center py-10 rounded-2xl bg-white dark:bg-[#111116] border border-slate-200 dark:border-white/10 p-6 space-y-2">
+                  <BookOpen className="w-8 h-8 text-slate-400 mx-auto" />
+                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Bạn chưa mở khóa chương trình nào.</p>
+                  <p className="text-xs text-slate-500">Khám phá các khóa học bên dưới để bắt đầu học ngay nhé!</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {courses
+                    .filter((c) => c.isUnlocked)
+                    .map((course) => {
+                      const targetUrl = course.customUrl || `/dashboard/hoc/${course.slug}`;
+                      return (
+                        <div
+                          key={course.slug}
+                          className="group relative flex flex-col justify-between overflow-hidden rounded-2xl bg-white dark:bg-[#111116] border border-slate-200 dark:border-white/10 hover:border-indigo-500/50 dark:hover:border-indigo-400/50 shadow-sm hover:shadow-md transition-all duration-200"
+                        >
+                          <div>
+                            {/* Thumbnail Gọn Gàng */}
+                            <Link href={targetUrl} className="block relative aspect-[16/9] w-full bg-slate-100 dark:bg-black overflow-hidden">
+                              <Image
+                                src={course.thumbnail || '/images/products/n8n-workflow-demo.jpg'}
+                                alt={course.title}
+                                fill
+                                unoptimized
+                                className="object-cover group-hover:scale-103 transition-transform duration-300"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none" />
 
-                    {course.customUrl && (
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-black bg-amber-500 text-black shadow-md flex items-center gap-1">
-                        <FileText className="w-2.5 h-2.5" />
-                        DẠNG BÀI VIẾT
-                      </span>
-                    )}
-                  </div>
+                              {/* 1 Badge Trạng Thái Học Duy Nhất */}
+                              <div className="absolute top-2.5 left-2.5">
+                                {course.progressPercent === 100 ? (
+                                  <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-600 text-white shadow-sm flex items-center gap-1">
+                                    <CheckCircle2 className="w-3 h-3" />
+                                    ĐÃ HOÀN THÀNH
+                                  </span>
+                                ) : course.progressPercent > 0 ? (
+                                  <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-cyan-600 text-white shadow-sm flex items-center gap-1">
+                                    <Zap className="w-3 h-3 text-amber-300" />
+                                    ĐANG HỌC ({course.progressPercent}%)
+                                  </span>
+                                ) : (
+                                  <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-indigo-600 text-white shadow-sm flex items-center gap-1">
+                                    <Sparkles className="w-3 h-3" />
+                                    SẴN SÀNG HỌC
+                                  </span>
+                                )}
+                              </div>
 
-                  <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-[11px] font-mono text-white/90">
-                    <span className="bg-black/60 backdrop-blur-md px-2 py-0.5 rounded font-bold">
-                      {course.totalLessons} bài học
-                    </span>
-                    <span className="bg-black/60 backdrop-blur-md px-2 py-0.5 rounded font-bold">
-                      {course.level}
-                    </span>
-                  </div>
-                </Link>
+                              <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between text-[11px] font-mono text-white/90">
+                                <span className="bg-black/60 backdrop-blur-md px-2 py-0.5 rounded text-[10px] font-medium">
+                                  {course.totalLessons} bài học
+                                </span>
+                                <span className="bg-black/60 backdrop-blur-md px-2 py-0.5 rounded text-[10px] font-medium">
+                                  {course.level}
+                                </span>
+                              </div>
+                            </Link>
 
-                {/* Content */}
-                <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                  <div className="space-y-2">
-                    <Link href={targetUrl} className="block group/link">
-                      <h3 className="font-extrabold text-slate-900 dark:text-white text-base leading-snug line-clamp-2 group-hover/link:text-indigo-800 dark:group-hover/link:text-cyan-400 transition-colors">
-                        {course.title}
-                      </h3>
-                    </Link>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                      {course.headline}
-                    </p>
-                  </div>
+                            {/* Content Rút Gọn: Bỏ headline dài dòng, tập trung vào tên và tiến độ */}
+                            <div className="p-4 space-y-3">
+                              <Link href={targetUrl} className="block group/link">
+                                <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base leading-snug line-clamp-2 group-hover/link:text-indigo-600 dark:group-hover/link:text-cyan-400 transition-colors">
+                                  {course.title}
+                                </h3>
+                              </Link>
 
-                  {/* Progress Bar for Unlocked Courses */}
-                  <div className="space-y-3 pt-2 border-t border-slate-200 dark:border-white/[0.08]">
-                    {course.isUnlocked ? (
-                      <div className="space-y-1.5">
-                        <div className="flex items-center justify-between text-[11px] font-mono">
-                          <span className="text-slate-600 dark:text-slate-400 font-semibold">Tiến độ</span>
-                          <span className="font-bold text-emerald-700 dark:text-emerald-400">
-                            {course.completedLessons}/{course.totalLessons} ({course.progressPercent}%)
-                          </span>
+                              {/* Progress Bar Gọn Gàng */}
+                              <div className="space-y-1.5 pt-1">
+                                <div className="flex items-center justify-between text-[11px] font-mono">
+                                  <span className="text-slate-500 dark:text-slate-400">Tiến độ</span>
+                                  <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                                    {course.completedLessons}/{course.totalLessons} bài ({course.progressPercent}%)
+                                  </span>
+                                </div>
+                                <div className="w-full h-1.5 bg-slate-100 dark:bg-white/[0.08] rounded-full overflow-hidden">
+                                  <div
+                                    className="h-full bg-emerald-500 transition-all duration-300"
+                                    style={{ width: `${course.progressPercent}%` }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* 1 Nút Hành Động Duy Nhất (Không nút mua thừa) */}
+                          <div className="p-4 pt-0">
+                            <Link
+                              href={targetUrl}
+                              className="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-gradient-to-r from-indigo-700 via-indigo-600 to-blue-600 hover:opacity-90 text-white font-bold text-xs shadow-md transition-all active:scale-[0.98]"
+                            >
+                              <span>
+                                {course.customUrl
+                                  ? 'Xem Bài Viết Hướng Dẫn'
+                                  : course.progressPercent > 0
+                                  ? 'Tiếp Tục Học Ngay'
+                                  : 'Bắt Đầu Học Ngay'}
+                              </span>
+                              <ArrowRight className="w-3.5 h-3.5" />
+                            </Link>
+                          </div>
                         </div>
-                        <div className="w-full h-2 bg-slate-100 dark:bg-white/[0.08] rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-emerald-600 transition-all duration-300"
-                            style={{ width: `${course.progressPercent}%` }}
+                      );
+                    })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* KHU VỰC 2: CÁC KHÓA HỌC KHÁC ĐỂ KHÁM PHÁ THÊM (CHỈ HIỆN KHI FILTER ALL HOẶC VIP/FREE) */}
+          {(courseFilter === 'all' || courseFilter === 'vip' || courseFilter === 'free') && (
+            <div className="space-y-4 pt-6 border-t border-slate-200 dark:border-white/10">
+              <div className="flex items-center justify-between">
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-amber-500" />
+                  <span>
+                    {courseFilter === 'all'
+                      ? 'Khám Phá Thêm Khóa Học AI Khác'
+                      : courseFilter === 'free'
+                      ? 'Các Chương Trình Miễn Phí 0đ'
+                      : 'Các Chương Trình VIP'}
+                  </span>
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {(courseFilter === 'all'
+                  ? courses.filter((c) => !c.isUnlocked)
+                  : filteredCourses
+                ).map((course) => {
+                  const targetUrl = course.customUrl || `/dashboard/hoc/${course.slug}`;
+                  return (
+                    <div
+                      key={course.slug}
+                      className="group relative flex flex-col justify-between overflow-hidden rounded-2xl bg-white dark:bg-[#111116] border border-slate-200 dark:border-white/10 hover:border-slate-400 dark:hover:border-white/25 shadow-sm transition-all"
+                    >
+                      <div>
+                        {/* Thumbnail */}
+                        <Link href={targetUrl} className="block relative aspect-[16/9] w-full bg-slate-100 dark:bg-black overflow-hidden">
+                          <Image
+                            src={course.thumbnail || '/images/products/n8n-workflow-demo.jpg'}
+                            alt={course.title}
+                            fill
+                            unoptimized
+                            className="object-cover group-hover:scale-103 transition-transform duration-300"
                           />
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none" />
+
+                          <div className="absolute top-2.5 left-2.5">
+                            {course.price === 0 ? (
+                              <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-600 text-white shadow-sm">
+                                MIỄN PHÍ 0Đ
+                              </span>
+                            ) : (
+                              <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-900/90 text-white border border-white/20 shadow-sm flex items-center gap-1">
+                                <Lock className="w-3 h-3 text-amber-400" />
+                                {new Intl.NumberFormat('vi-VN').format(course.price)} đ
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between text-[10px] font-mono text-white/90">
+                            <span className="bg-black/60 backdrop-blur-md px-2 py-0.5 rounded">
+                              {course.totalLessons} bài học
+                            </span>
+                            <span className="bg-black/60 backdrop-blur-md px-2 py-0.5 rounded">
+                              {course.level}
+                            </span>
+                          </div>
+                        </Link>
+
+                        {/* Title & Info */}
+                        <div className="p-4 space-y-2">
+                          <Link href={targetUrl} className="block group/link">
+                            <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base leading-snug line-clamp-2 group-hover/link:text-indigo-600 dark:group-hover/link:text-cyan-400 transition-colors">
+                              {course.title}
+                            </h3>
+                          </Link>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
+                            {course.headline}
+                          </p>
                         </div>
                       </div>
-                    ) : (
-                      <p className="text-[11px] text-slate-500 font-mono flex items-center gap-1">
-                        <ShieldCheck className="w-3.5 h-3.5 text-indigo-700 dark:text-indigo-400" />
-                        {course.customUrl ? 'Học trực tiếp qua bài viết hướng dẫn' : 'Mở khóa để nhận mã nguồn và video hướng dẫn'}
-                      </p>
-                    )}
 
-                    {/* Action Button */}
-                    {course.customUrl ? (
-                      <div className="space-y-2">
-                        <Link
-                          href={targetUrl}
-                          className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-85 text-white font-bold text-xs shadow-md shadow-indigo-950/20 transition-all active:scale-[0.98]"
-                        >
-                          <FileText className="w-3.5 h-3.5 text-amber-300" />
-                          <span>Xem Bài Viết Khóa Học</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </Link>
-                        {!course.isUnlocked && course.price > 0 && (
+                      {/* CTA Button */}
+                      <div className="p-4 pt-0">
+                        {course.price === 0 ? (
+                          <Link
+                            href={targetUrl}
+                            className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-sm transition-all"
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            <span>Học Miễn Phí Ngay</span>
+                          </Link>
+                        ) : (
                           <Link
                             href={`/thanh-toan?pid=${course.pid}`}
-                            className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg bg-slate-100 dark:bg-white/[0.04] hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-300 font-semibold text-[11px] transition-all text-center"
+                            className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.05] dark:hover:bg-white/[0.1] text-slate-900 dark:text-white font-bold text-xs border border-slate-300 dark:border-white/10 transition-all"
                           >
-                            <Lock className="w-3 h-3 text-amber-500" />
-                            <span>Mua Ngay ({new Intl.NumberFormat('vi-VN').format(course.price)} đ)</span>
+                            <Lock className="w-3.5 h-3.5 text-amber-500" />
+                            <span>Mở Khóa ({new Intl.NumberFormat('vi-VN').format(course.price)} đ)</span>
                           </Link>
                         )}
                       </div>
-                    ) : course.isUnlocked ? (
-                      <Link
-                        href={targetUrl}
-                        className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-85 text-white font-bold text-xs shadow-md shadow-indigo-950/20 transition-all active:scale-[0.98]"
-                      >
-                        <Zap className="w-3.5 h-3.5 text-amber-300" />
-                        {course.completedLessons > 0 ? 'Tiếp tục học ngay' : 'Bắt đầu học ngay'}
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </Link>
-                    ) : course.price === 0 ? (
-                      <Link
-                        href={targetUrl}
-                        className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-emerald-700 hover:opacity-85 text-white font-bold text-xs shadow-md shadow-emerald-950/20 transition-all active:scale-[0.98]"
-                      >
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        Học Miễn Phí Ngay
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </Link>
-                    ) : (
-                      <Link
-                        href={`/thanh-toan?pid=${course.pid}`}
-                        className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-white dark:bg-white/[0.05] hover:opacity-80 text-slate-900 dark:text-white font-bold text-xs border-2 border-slate-300 dark:border-white/15 transition-all shadow-xs"
-                      >
-                        <Lock className="w-3.5 h-3.5 text-amber-500" />
-                        Mở Khóa Khóa Học ({new Intl.NumberFormat('vi-VN').format(course.price)} đ)
-                      </Link>
-                    )}
-                  </div>
-                </div>
+                    </div>
+                  );
+                })}
               </div>
-              );
-            })}
-          </div>
+            </div>
+          )}
         </div>
       )}
 
-      {/* 4. TAB CONTENT: LIBRARY (Kho Của Tôi) */}
+      {/* 4. TAB CONTENT: LIBRARY (Kho Tài Liệu Đã Mở Khóa) */}
       {activeTab === 'library' && (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 font-mono">
-              <Layers className="w-4 h-4 text-indigo-700 dark:text-cyan-400" />
-              Tài Liệu & Mã Nguồn Đã Mở Khóa Vĩnh Viễn
+        <div className="space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-2">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <Layers className="w-4 h-4 text-indigo-600 dark:text-cyan-400" />
+              <span>Tài Liệu & Mã Nguồn Đã Mở Khóa Vĩnh Viễn</span>
             </h2>
             <span className="text-xs font-mono text-slate-500">Tổng cộng: {library.length} tài nguyên</span>
           </div>
 
           {library.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {library.map((item) => (
                 <div
                   key={item.id}
-                  className="rounded-2xl bg-white dark:bg-[#111116] border-2 border-slate-300 dark:border-white/15 p-6 flex flex-col justify-between space-y-4 hover:border-indigo-600/50 shadow-md transition-colors"
+                  className="rounded-2xl bg-white dark:bg-[#111116] border border-slate-200 dark:border-white/10 p-4 sm:p-5 flex flex-col justify-between space-y-3.5 hover:border-emerald-500/50 shadow-xs hover:shadow-sm transition-all"
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-100 dark:bg-indigo-500/20 text-indigo-900 dark:text-indigo-400 border border-indigo-300 dark:border-indigo-500/30 uppercase">
-                        {item.category || 'Tài nguyên'}
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-cyan-400 border border-indigo-200 dark:border-indigo-500/20 uppercase">
+                        {item.category || 'Tài nguyên AI'}
                       </span>
-                      <span className="text-slate-500 text-[11px] font-mono">
+                      <span className="text-slate-400 text-[11px] font-mono">
                         {new Date(item.unlocked_at).toLocaleDateString('vi-VN')}
                       </span>
                     </div>
 
-                    <h3 className="font-extrabold text-slate-900 dark:text-white text-base leading-snug line-clamp-2">
+                    <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base leading-snug line-clamp-2">
                       {item.product_name}
                     </h3>
                   </div>
 
-                  <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-white/[0.08]">
+                  <div className="pt-2 border-t border-slate-100 dark:border-white/[0.06]">
                     <a
                       href={item.download_url || 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing'}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 via-emerald-700 to-teal-700 hover:opacity-90 text-white font-bold text-xs shadow-md shadow-emerald-950/20 transition-all border border-emerald-400/30 active:scale-[0.98]"
+                      className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-xs transition-all active:scale-[0.98]"
                     >
                       <Download className="w-3.5 h-3.5" />
-                      Mở Thư Mục Tải Google Drive
+                      <span>Mở Thư Mục Tải Google Drive</span>
                     </a>
                   </div>
                 </div>

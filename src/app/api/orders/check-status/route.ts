@@ -13,9 +13,12 @@ export async function GET(req: Request) {
     }
 
     const orders = await query<any>(
-      `SELECT o.id, o.order_code, o.payment_status, o.approved_at, o.user_id, o.customer_email, o.customer_name, p.download_url 
+      `SELECT o.id, o.order_code, o.payment_status, o.approved_at, o.user_id, o.customer_email, o.customer_name, 
+              p.download_url, p.pid AS product_pid,
+              c.custom_url AS course_custom_url, c.slug AS course_slug
        FROM orders o 
        LEFT JOIN products p ON o.product_id = p.id 
+       LEFT JOIN courses c ON (c.pid = p.pid OR c.pid = p.id)
        WHERE o.order_code = ? OR o.id = ? LIMIT 1`,
       [orderCode || '', orderId || '']
     );
@@ -27,11 +30,18 @@ export async function GET(req: Request) {
     const order = orders[0];
     const isApproved = order.payment_status === 'APPROVED';
 
+    // Ưu tiên: Nếu khóa học có custom_url (Link bài hướng dẫn), chuyển thẳng học viên tới đó
+    const targetUrl = order.course_custom_url || (order.course_slug ? `/dashboard/hoc/${order.course_slug}` : (order.download_url || '/dashboard'));
+    const isDirectGuide = Boolean(order.course_custom_url);
+
     const resData: any = {
       success: true,
       orderCode: order.order_code,
       status: order.payment_status,
-      downloadUrl: isApproved ? order.download_url : null,
+      downloadUrl: isApproved ? targetUrl : null,
+      courseCustomUrl: isApproved ? (order.course_custom_url || null) : null,
+      courseSlug: isApproved ? (order.course_slug || null) : null,
+      isDirectGuide: isApproved ? isDirectGuide : false,
       autoLoggedIn: false,
     };
 

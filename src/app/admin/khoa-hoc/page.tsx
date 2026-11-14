@@ -135,6 +135,11 @@ export default function AdminClassroomPage() {
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
 
+  // Delivery Mode states for the selected course (Chọn 1 trong 2: Lộ trình Skool vs Link Bài Hướng Dẫn)
+  const [deliveryMode, setDeliveryMode] = useState<'skool' | 'custom_url'>('skool');
+  const [customUrlInput, setCustomUrlInput] = useState('');
+  const [isUpdatingDelivery, setIsUpdatingDelivery] = useState(false);
+
   // Skool-style Workspace States
   const [isEditingLesson, setIsEditingLesson] = useState(false);
   const [editorTab, setEditorTab] = useState<'content' | 'resources' | 'checklist' | 'settings'>('content');
@@ -330,6 +335,8 @@ export default function AdminClassroomPage() {
   // Load Course Detail
   const openCourseDetail = async (course: Course) => {
     setSelectedCourse(course);
+    setDeliveryMode(course.custom_url ? 'custom_url' : 'skool');
+    setCustomUrlInput(course.custom_url || '');
     setLoadingDetail(true);
     setActiveLesson(null);
     setIsEditingLesson(false);
@@ -438,6 +445,62 @@ export default function AdminClassroomPage() {
       }
     } catch {
       showToast('Lỗi kết nối khi xóa', 'error');
+    }
+  };
+
+  // Handle Save Delivery Mode (Chọn 1 trong 2: Lộ trình Skool vs Link Bài Hướng Dẫn)
+  const handleSaveDeliveryMode = async (mode: 'skool' | 'custom_url', forcedUrl?: string) => {
+    if (!selectedCourse) return;
+    setIsUpdatingDelivery(true);
+    try {
+      const finalUrl = mode === 'custom_url' ? (forcedUrl !== undefined ? forcedUrl : customUrlInput).trim() : null;
+      if (mode === 'custom_url' && !finalUrl) {
+        showToast('Vui lòng chọn hoặc nhập đường dẫn bài hướng dẫn', 'error');
+        setIsUpdatingDelivery(false);
+        return;
+      }
+
+      const payload = {
+        id: selectedCourse.id,
+        slug: selectedCourse.slug,
+        pid: selectedCourse.pid,
+        title: selectedCourse.title,
+        headline: selectedCourse.headline,
+        category: selectedCourse.category,
+        price: selectedCourse.price,
+        level: selectedCourse.level,
+        thumbnail: selectedCourse.thumbnail,
+        instructor: selectedCourse.instructor,
+        custom_url: finalUrl,
+        isPublished: selectedCourse.is_published,
+        sortOrder: selectedCourse.sort_order,
+      };
+
+      const res = await fetch('/api/admin/classroom', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (data.success) {
+        const updatedCourse = { ...selectedCourse, custom_url: finalUrl };
+        setSelectedCourse(updatedCourse);
+        setCourses((prev) => prev.map((c) => (c.id === updatedCourse.id ? updatedCourse : c)));
+        setDeliveryMode(mode);
+        if (mode === 'skool') {
+          setCustomUrlInput('');
+          showToast('✓ Đã chuyển sang: Hình thức 1 (Học từng phần theo lộ trình Skool)');
+        } else {
+          setCustomUrlInput(finalUrl || '');
+          showToast('✓ Đã lưu: Hình thức 2 (Chèn Link bài hướng dẫn trực tiếp)!');
+        }
+      } else {
+        showToast(data.error || 'Lỗi khi cập nhật hình thức học', 'error');
+      }
+    } catch {
+      showToast('Lỗi kết nối khi cập nhật hình thức học', 'error');
+    } finally {
+      setIsUpdatingDelivery(false);
     }
   };
 
@@ -1036,32 +1099,314 @@ export default function AdminClassroomPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 shrink-0">
+            <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
               <Link
                 href={selectedCourse.custom_url || `/dashboard/hoc/${selectedCourse.slug}`}
                 target="_blank"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold transition-all shadow-sm"
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm ${
+                  selectedCourse.custom_url
+                    ? 'border-2 border-amber-500/50 bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 dark:text-amber-300'
+                    : 'border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                }`}
               >
                 {selectedCourse.custom_url ? (
                   <>
-                    <FileText className="w-3.5 h-3.5 text-amber-500" />
-                    <span>Xem Link Bài Viết Bán Hàng</span>
+                    <FileText className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                    <span>Mở Xem Bài Hướng Dẫn</span>
                   </>
                 ) : (
                   <>
-                    <Eye className="w-3.5 h-3.5 text-indigo-500" />
-                    <span>Xem Phòng Học Học Viên</span>
+                    <Eye className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                    <span>Xem Phòng Học Học Viên (Skool)</span>
                   </>
                 )}
+                <ExternalLink className="w-3 h-3 opacity-70 ml-0.5" />
               </Link>
               <button
                 onClick={() => openEditCourseModal(selectedCourse)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all cursor-pointer"
               >
                 <Edit className="w-3.5 h-3.5" />
                 <span>Cài Đặt Khóa</span>
               </button>
             </div>
+          </div>
+
+          {/* DELIVERY MODE CONTROL PANEL - BỘ CHUYỂN ĐỔI CHỌN 1 TRONG 2 HÌNH THỨC HỌC TẬP */}
+          <div className="bg-white dark:bg-[#121216] rounded-2xl border-2 border-slate-200 dark:border-white/[0.08] p-5 sm:p-6 shadow-sm space-y-5">
+            {/* Top Bar of Delivery Mode */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-white/[0.05]">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse"></span>
+                  <h2 className="text-sm sm:text-base font-black text-slate-900 dark:text-white uppercase tracking-wide flex items-center gap-2">
+                    Hình Thức Hiển Thị Khóa Học Cho Học Viên (Chọn 1 trong 2)
+                  </h2>
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  Cấu hình cách học viên tiếp cận nội dung khi mua thành công hoặc bấm vào khóa học trong &ldquo;Kho Của Tôi&rdquo;.
+                </p>
+              </div>
+
+              {/* Status Badge */}
+              <div className="shrink-0">
+                {selectedCourse.custom_url ? (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400 text-xs font-black shadow-sm">
+                    <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                    Đang áp dụng: Link Bài Hướng Dẫn
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-700 dark:text-indigo-400 text-xs font-black shadow-sm">
+                    <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+                    Đang áp dụng: Lộ Trình Skool Từng Phần
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* 2 Big Interactive Choice Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Option 1: Học từng phần theo lộ trình Skool */}
+              <div
+                onClick={() => {
+                  if (selectedCourse.custom_url) {
+                    if (window.confirm('Bạn có muốn chuyển khóa học này về "Hình thức 1: Học từng phần theo lộ trình Skool"? Đường dẫn bài hướng dẫn trực tiếp sẽ được gỡ bỏ.')) {
+                      handleSaveDeliveryMode('skool');
+                    }
+                  } else {
+                    setDeliveryMode('skool');
+                  }
+                }}
+                className={`relative p-4 sm:p-5 rounded-2xl border-2 transition-all cursor-pointer text-left select-none ${
+                  !selectedCourse.custom_url
+                    ? 'border-indigo-600 bg-indigo-50/60 dark:bg-indigo-950/30 shadow-md shadow-indigo-600/10'
+                    : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50/50 dark:bg-white/[0.02]'
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3 mb-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm shrink-0 ${
+                      !selectedCourse.custom_url
+                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                        : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                    }`}>
+                      1
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <GraduationCap className="w-4 h-4 text-indigo-500" />
+                        Học Từng Phần Theo Lộ Trình (Skool View)
+                      </h3>
+                      <span className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
+                        {modules.length} Chương · {allCourseLessons.length} Bài giảng video & tài liệu
+                      </span>
+                    </div>
+                  </div>
+
+                  {!selectedCourse.custom_url && (
+                    <span className="px-2.5 py-1 rounded-lg bg-indigo-600 text-white text-[10px] font-black uppercase tracking-wider shadow-sm shrink-0">
+                      Đang Dùng
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed pl-11">
+                  Học viên học theo từng chương, xem video bài giảng, sao chép prompt và hoàn thành checklist bài học. Thích hợp cho khóa học quy mô lớn.
+                </p>
+
+                {selectedCourse.custom_url && (
+                  <div className="mt-3.5 pl-11">
+                    <span className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
+                      👉 Bấm vào đây để chuyển sang hình thức học từng phần
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Option 2: Chèn Link bài hướng dẫn trực tiếp */}
+              <div
+                onClick={() => {
+                  setDeliveryMode('custom_url');
+                }}
+                className={`relative p-4 sm:p-5 rounded-2xl border-2 transition-all cursor-pointer text-left select-none ${
+                  selectedCourse.custom_url || deliveryMode === 'custom_url'
+                    ? 'border-amber-500 bg-amber-50/60 dark:bg-amber-950/30 shadow-md shadow-amber-500/10'
+                    : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50/50 dark:bg-white/[0.02]'
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3 mb-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm shrink-0 ${
+                      selectedCourse.custom_url || deliveryMode === 'custom_url'
+                        ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30 font-black'
+                        : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                    }`}>
+                      2
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <FileText className="w-4 h-4 text-amber-500" />
+                        Chèn Link Bài Hướng Dẫn Trực Tiếp
+                      </h3>
+                      <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400">
+                        Khách mua thành công xem ngay bài hướng dẫn
+                      </span>
+                    </div>
+                  </div>
+
+                  {selectedCourse.custom_url ? (
+                    <span className="px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 text-[10px] font-black uppercase tracking-wider shadow-sm shrink-0">
+                      Đang Dùng
+                    </span>
+                  ) : deliveryMode === 'custom_url' ? (
+                    <span className="px-2.5 py-1 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] font-black uppercase tracking-wider shrink-0">
+                      Đang Thiết Lập
+                    </span>
+                  ) : null}
+                </div>
+
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed pl-11">
+                  Khi khách hàng mua thành công hoặc mở trong &ldquo;Kho Của Tôi&rdquo;, hệ thống sẽ dẫn thẳng đến bài hướng dẫn thực hành chuyên sâu (nội bộ hoặc ngoài).
+                </p>
+
+                {!selectedCourse.custom_url && deliveryMode !== 'custom_url' && (
+                  <div className="mt-3.5 pl-11">
+                    <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline">
+                      👉 Bấm vào đây để chèn link bài hướng dẫn
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* PANEL CẤU HÌNH LINK BÀI HƯỚNG DẪN */}
+            {(deliveryMode === 'custom_url' || selectedCourse.custom_url) && (
+              <div className="p-4 sm:p-5 rounded-2xl bg-amber-500/[0.04] dark:bg-amber-500/[0.08] border-2 border-amber-500/30 space-y-4">
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <LinkIcon className="w-4 h-4 text-amber-500" />
+                    <span className="text-xs font-black text-amber-900 dark:text-amber-300 uppercase tracking-wide">
+                      Cấu Hình Link Bài Hướng Dẫn Cho Khóa Học Này
+                    </span>
+                  </div>
+                  {selectedCourse.custom_url && (
+                    <a
+                      href={selectedCourse.custom_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-amber-100 dark:bg-amber-500/20 hover:bg-amber-200 dark:hover:bg-amber-500/30 text-amber-800 dark:text-amber-300 text-xs font-bold transition-all shadow-sm"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>Mở Thử Bài Hướng Dẫn Đang Áp Dụng</span>
+                    </a>
+                  )}
+                </div>
+
+                {/* Dropdown chọn nhanh bài viết */}
+                {posts && posts.length > 0 && (
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                      <span>📚 Cách 1: Chọn nhanh từ danh sách bài viết có sẵn trên Tự Học AI:</span>
+                    </label>
+                    <select
+                      value={customUrlInput.startsWith('/bai-viet/') ? customUrlInput : ''}
+                      onChange={(e) => {
+                        if (e.target.value) {
+                          setCustomUrlInput(e.target.value);
+                        }
+                      }}
+                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-medium focus:outline-none focus:border-amber-500 transition-colors cursor-pointer"
+                    >
+                      <option value="">-- Bấm vào đây để chọn bài viết có sẵn trên website --</option>
+                      {posts.map((p) => (
+                        <option key={p.id} value={`/bai-viet/${p.slug}`}>
+                          [{p.category}] {p.title} (/bai-viet/{p.slug})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* Input URL tùy chỉnh */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                    <span>🔗 Cách 2: Hoặc gõ / dán link bài hướng dẫn bất kỳ (Nội bộ hoặc link ngoài):</span>
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <input
+                        type="text"
+                        value={customUrlInput}
+                        onChange={(e) => setCustomUrlInput(e.target.value)}
+                        placeholder="Ví dụ: /bai-viet/quy-trinh-tao-video-ai-trieu-view-tu-1-anh hoặc https://docs.google.com/..."
+                        className="w-full pl-9 pr-8 py-2.5 text-xs sm:text-sm font-mono bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 transition-colors"
+                      />
+                      <LinkIcon className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                      {customUrlInput && (
+                        <button
+                          type="button"
+                          onClick={() => setCustomUrlInput('')}
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold cursor-pointer"
+                          title="Xóa link"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+
+                    {customUrlInput && (
+                      <a
+                        href={customUrlInput}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold shrink-0 transition-colors"
+                        title="Mở xem trước link này"
+                      >
+                        <ExternalLink className="w-4 h-4 text-amber-500" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex items-center justify-between gap-3 pt-1 flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      disabled={isUpdatingDelivery || !customUrlInput.trim()}
+                      onClick={() => handleSaveDeliveryMode('custom_url')}
+                      className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 text-white font-black text-xs shadow-md shadow-emerald-600/20 flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
+                    >
+                      {isUpdatingDelivery ? (
+                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Check className="w-3.5 h-3.5" />
+                      )}
+                      <span>Lưu Cấu Hình Link Bài Hướng Dẫn</span>
+                    </button>
+
+                    {selectedCourse.custom_url && (
+                      <button
+                        type="button"
+                        disabled={isUpdatingDelivery}
+                        onClick={() => {
+                          if (window.confirm('Bạn có chắc muốn hủy link bài hướng dẫn để quay lại Lộ trình học Skool?')) {
+                            handleSaveDeliveryMode('skool');
+                          }
+                        }}
+                        className="px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition-colors cursor-pointer"
+                      >
+                        Hủy Link &amp; Về Lộ Trình Skool
+                      </button>
+                    )}
+                  </div>
+
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 italic">
+                    💡 Link này sẽ tự động thay thế nút vào học khi khách thanh toán thành công và trong &ldquo;Kho Của Tôi&rdquo;.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* MAIN 2-COLUMN SKOOL CLASSROOM LAYOUT */}
@@ -2410,19 +2755,19 @@ export default function AdminClassroomPage() {
                 />
               </div>
 
-              {/* CẤU HÌNH ĐƯỜNG DẪN BÀI HỌC / BÀI VIẾT BÁN HÀNG TÙY CHỌN */}
-              <div className="space-y-2 p-4 rounded-2xl bg-indigo-50/70 dark:bg-indigo-500/10 border-2 border-indigo-200 dark:border-indigo-500/30">
+              {/* CẤU HÌNH ĐƯỜNG DẪN BÀI HƯỚNG DẪN TÙY CHỌN */}
+              <div className="space-y-2 p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-500/10 border-2 border-amber-200 dark:border-amber-500/30">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-black text-indigo-950 dark:text-cyan-300 flex items-center gap-1.5 uppercase tracking-wide">
-                    <LinkIcon className="w-3.5 h-3.5 text-indigo-600 dark:text-cyan-400" />
-                    Đường dẫn đến bài học / bài viết bán hàng (Tùy chọn)
+                  <label className="text-xs font-black text-amber-950 dark:text-amber-300 flex items-center gap-1.5 uppercase tracking-wide">
+                    <LinkIcon className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                    Hình Thức Học: Link Bài Viết Hướng Dẫn Trực Tiếp (Tùy chọn)
                   </label>
                   {courseForm.custom_url && (
                     <a
                       href={courseForm.custom_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[11px] font-bold text-indigo-700 dark:text-cyan-400 hover:underline flex items-center gap-1"
+                      className="text-[11px] font-bold text-amber-700 dark:text-amber-400 hover:underline flex items-center gap-1"
                     >
                       <span>Mở xem thử</span>
                       <ExternalLink className="w-3 h-3" />
@@ -2431,20 +2776,20 @@ export default function AdminClassroomPage() {
                 </div>
 
                 <p className="text-[11.5px] text-slate-600 dark:text-slate-400 leading-relaxed">
-                  💡 <strong>Chế độ Bán Khóa Học Bằng Bài Viết:</strong> Điền đường dẫn bài viết hoặc landing page tại đây (VD: <code className="text-indigo-700 dark:text-cyan-400">/bai-viet/quy-trinh-tao-video-ai-trieu-view-tu-1-anh-tinh-tiktok-reels</code>). Khi học viên bấm vào khóa học trên Dashboard, hệ thống sẽ tự động chuyển hướng đến bài viết này thay vì vào phòng học Skool. Để trống nếu muốn dùng phòng học Skool mặc định.
+                  💡 <strong>Chế độ Bài Hướng Dẫn Trực Tiếp:</strong> Điền đường dẫn bài viết hướng dẫn chuyên sâu (VD: <code className="text-amber-700 dark:text-amber-400">/bai-viet/quy-trinh-tao-video-ai-trieu-view-tu-1-anh-tinh-tiktok-reels</code>). Khi học viên thanh toán thành công hoặc bấm vào khóa học trên Dashboard, hệ thống sẽ tự động chuyển hướng đến bài viết này thay vì vào phòng học Skool. Để trống nếu muốn dùng phòng học Skool mặc định.
                 </p>
 
                 {posts.length > 0 && (
                   <div className="space-y-1 pt-1">
                     <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
-                      ⚡ Chọn nhanh bài viết bán hàng có sẵn:
+                      ⚡ Chọn nhanh bài viết hướng dẫn có sẵn:
                     </span>
                     <select
                       value={courseForm.custom_url}
                       onChange={(e) => setCourseForm({ ...courseForm, custom_url: e.target.value })}
                       className="w-full px-3 py-2 text-xs bg-white dark:bg-black/40 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
                     >
-                      <option value="">-- Phòng học Skool mặc định (/dashboard/hoc/{courseForm.slug || '...'}) --</option>
+                      <option value="">-- Lộ trình học Skool từng phần (/dashboard/hoc/{courseForm.slug || '...'}) --</option>
                       {posts.map((p) => (
                         <option key={p.id} value={`/bai-viet/${p.slug}`}>
                           📄 [{p.category}] {p.title} (/bai-viet/{p.slug})
