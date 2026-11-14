@@ -22,7 +22,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { pid, name, description, price, original_price, download_url, preview_url, category, is_active } = body;
+    const { pid, name, description, price, original_price, download_url, preview_url, landing_page_url, category, is_active } = body;
 
     if (!pid || !name) {
       return NextResponse.json({ error: 'Mã PID và Tên sản phẩm không được để trống' }, { status: 400 });
@@ -32,8 +32,8 @@ export async function POST(req: Request) {
     const id = randomUUID();
 
     await execute(
-      `INSERT INTO products (id, pid, name, slug, description, price, original_price, download_url, preview_url, category, is_active, sales_count)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`,
+      `INSERT INTO products (id, pid, name, slug, description, price, original_price, download_url, preview_url, landing_page_url, category, is_active, sales_count)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`,
       [
         id,
         pid.trim().toUpperCase(),
@@ -44,6 +44,7 @@ export async function POST(req: Request) {
         Number(original_price) || 0,
         download_url?.trim() || '',
         preview_url?.trim() || '',
+        landing_page_url?.trim() || null,
         category || 'workflow',
         is_active ? 1 : 0,
       ]
@@ -61,7 +62,7 @@ export async function PUT(req: Request) {
 
   try {
     const body = await req.json();
-    const { id, name, description, price, original_price, download_url, preview_url, category, is_active } = body;
+    const { id, name, description, price, original_price, download_url, preview_url, landing_page_url, category, is_active } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'Thiếu ID sản phẩm' }, { status: 400 });
@@ -75,6 +76,7 @@ export async function PUT(req: Request) {
         original_price = COALESCE(?, original_price),
         download_url = COALESCE(?, download_url),
         preview_url = COALESCE(?, preview_url),
+        landing_page_url = ?,
         category = COALESCE(?, category),
         is_active = COALESCE(?, is_active)
        WHERE id = ?`,
@@ -85,6 +87,7 @@ export async function PUT(req: Request) {
         original_price !== undefined ? Number(original_price) : null,
         download_url !== undefined ? download_url.trim() : null,
         preview_url !== undefined ? preview_url.trim() : null,
+        landing_page_url !== undefined ? (landing_page_url?.trim() || null) : null,
         category !== undefined ? category : null,
         is_active !== undefined ? (is_active ? 1 : 0) : null,
         id,

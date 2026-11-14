@@ -156,9 +156,9 @@ export default function Navbar() {
                   className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/[0.04] border border-slate-300 dark:border-white/[0.08] hover:border-slate-400 dark:hover:border-white/[0.16] text-xs text-slate-900 dark:text-slate-200 transition-colors shadow-xs shrink-0 whitespace-nowrap"
                 >
                   <div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-500/20 dark:text-indigo-400 font-bold flex items-center justify-center text-xs shrink-0">
-                    {user.name.charAt(0).toUpperCase()}
+                    {(user.name || user.email || 'U').charAt(0).toUpperCase()}
                   </div>
-                  <span className="max-w-[120px] truncate font-bold">{user.name}</span>
+                  <span className="max-w-[120px] truncate font-bold">{user.name || user.email || 'Thành viên'}</span>
                   <ChevronDown className="w-3.5 h-3.5 text-slate-500 shrink-0" />
                 </button>
 

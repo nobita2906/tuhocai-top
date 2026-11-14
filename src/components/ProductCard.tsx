@@ -4,7 +4,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Product } from '@/types';
 import { getProductCover } from '@/lib/productImages';
-import { Zap, Download, ShoppingCart, ShieldCheck, ArrowUpRight, Cpu, Sparkles } from 'lucide-react';
+import { getProductTargetUrl, isLandingPageProduct } from '@/lib/productLinks';
+import { Download, ShoppingCart, ArrowRight, Sparkles } from 'lucide-react';
 
 interface ProductCardProps {
   product: Product;
@@ -14,156 +15,122 @@ interface ProductCardProps {
 export default function ProductCard({ product, onFreeClick }: ProductCardProps) {
   const isFree = product.price === 0;
   const coverImage = getProductCover(product);
+  const targetUrl = getProductTargetUrl(product);
+  const hasLandingPage = isLandingPageProduct(product);
 
-  // Calculate discount percentage
+  // Tính phần trăm giảm giá nếu có
   const discountPercent =
     product.original_price > product.price && product.original_price > 0
       ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
       : 0;
 
-  const categoryConfigs: Record<string, { label: string; badgeClass: string; icon: any }> = {
-    workflow: { 
-      label: 'Workflow n8n', 
-      badgeClass: 'bg-indigo-100 dark:bg-indigo-500/20 text-indigo-900 dark:text-indigo-300 border-indigo-300 dark:border-indigo-500/30', 
-      icon: Cpu 
-    },
-    skill: { 
-      label: 'Skill AI', 
-      badgeClass: 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-900 dark:text-cyan-300 border-cyan-300 dark:border-cyan-500/30', 
-      icon: Sparkles 
-    },
-    prompt: { 
-      label: 'Prompt VIP', 
-      badgeClass: 'bg-purple-100 dark:bg-purple-500/20 text-purple-900 dark:text-purple-300 border-purple-300 dark:border-purple-500/30', 
-      icon: Zap 
-    },
-  };
-
-  const catKey = product.category?.toLowerCase() || '';
-  const cat = categoryConfigs[catKey] || {
-    label: product.category || 'Tài nguyên AI',
-    badgeClass: 'bg-slate-200 dark:bg-white/[0.05] text-slate-800 dark:text-slate-300 border-slate-300 dark:border-white/10',
-    icon: Zap,
-  };
-  const IconComponent = cat.icon;
-
   return (
-    <div className="bento-card group relative flex flex-col overflow-hidden p-3.5 sm:p-4 border-2 border-slate-300 dark:border-white/15 hover:border-slate-400 dark:hover:border-white/10 hover:opacity-95 shadow-md shadow-slate-900/5 transition-all duration-200">
-      {/* 1. VISUAL THUMBNAIL COVER (Top Area) */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl bg-slate-100 dark:bg-[#111116] mb-3.5 border-2 border-slate-300/90 dark:border-white/10 group-hover:opacity-95 transition-opacity shadow-inner">
+    <div className="bento-card group flex flex-col overflow-hidden p-4 sm:p-5 border-2 border-slate-300 dark:border-white/10 hover:border-indigo-400/60 dark:hover:border-indigo-500/40 hover:shadow-xl shadow-md transition-all duration-300 rounded-2xl bg-white dark:bg-[#0e0e13]">
+      {/* 1. ẢNH BÌA TỐI GIẢN - Chỉ tối đa 1 badge thông minh duy nhất ở góc trên trái */}
+      <Link
+        href={targetUrl}
+        className="block relative aspect-[16/10] w-full overflow-hidden rounded-xl bg-slate-100 dark:bg-[#15151c] mb-4 border border-slate-300/80 dark:border-white/10 group-hover:opacity-95 transition-all shadow-inner"
+        title={`Xem ${product.name}`}
+      >
         <Image
           src={coverImage}
           alt={product.name}
           fill
           unoptimized
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          className="object-cover object-center group-hover:scale-[1.02] transition-transform duration-300 ease-out"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover object-center group-hover:scale-[1.03] transition-transform duration-500 ease-out"
           priority={product.pid === 'WF-THAI-099'}
         />
 
-        {/* Ambient bottom shadow gradient for smooth blend */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 dark:from-[#09090b]/90 via-transparent to-black/10 pointer-events-none" />
+        {/* Ambient bottom shadow gradient dịu nhẹ */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 dark:from-[#09090b]/80 via-transparent to-transparent pointer-events-none" />
 
-        {/* Top-Left: Discount or Free Badge - Đậm đà */}
-        {discountPercent > 0 && !isFree && (
-          <div className="absolute top-2 left-2 px-2.5 py-0.5 rounded-md font-mono text-[10px] font-black bg-gradient-to-r from-indigo-800 to-blue-800 text-white shadow-md shadow-indigo-950/40 border border-indigo-400/40 flex items-center gap-1">
+        {/* 1 BADGE THÔNG MINH DUY NHẤT: Ưu tiên Landing Page -> Miễn phí -> Giảm giá */}
+        {hasLandingPage ? (
+          <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-indigo-600/95 text-white backdrop-blur-md border border-indigo-400/30 flex items-center gap-1 shadow-md">
+            <Sparkles className="w-3 h-3 text-cyan-300" />
+            <span>Landing Page</span>
+          </div>
+        ) : isFree ? (
+          <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-emerald-700 text-white backdrop-blur-md border border-emerald-500/40 shadow-md">
+            <span>Miễn phí 0đ</span>
+          </div>
+        ) : discountPercent > 0 ? (
+          <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-slate-900/85 text-white backdrop-blur-md border border-white/20 shadow-md">
             <span>-{discountPercent}%</span>
           </div>
-        )}
-        {isFree && (
-          <div className="absolute top-2 left-2 px-2.5 py-0.5 rounded-md font-mono text-[10px] font-black bg-emerald-700 text-white border border-emerald-600 shadow-md shadow-emerald-950/40 flex items-center gap-1">
-            <span>MIỄN PHÍ 0Đ</span>
-          </div>
-        )}
+        ) : null}
+      </Link>
 
-        {/* Top-Right: Category Pill with High Contrast */}
-        <div className="absolute top-2 right-2">
-          <span className={`tech-badge border backdrop-blur-md text-[10px] py-0.5 px-2 font-bold shadow-sm ${cat.badgeClass}`}>
-            <IconComponent className="w-3 h-3" />
-            {cat.label}
-          </span>
+      {/* 2. TIÊU ĐỀ & MÔ TẢ NGẮN THOÁNG ĐÃNG */}
+      <div className="flex-1 flex flex-col justify-between space-y-2">
+        <div>
+          <Link href={targetUrl} className="group/title block">
+            <h3 className="font-bold text-slate-900 dark:text-white text-base sm:text-lg line-clamp-2 leading-snug group-hover/title:text-indigo-600 dark:group-hover/title:text-cyan-400 transition-colors">
+              {product.name}
+            </h3>
+          </Link>
+          <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+            {product.description || 'Bộ tài liệu và mã nguồn tự động hóa được kiểm thử kỹ lưỡng, sẵn sàng triển khai ngay.'}
+          </p>
         </div>
 
-        {/* Bottom Feature Pill on Image */}
-        <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-slate-900/90 backdrop-blur-md text-white border border-white/20 flex items-center gap-1 shadow-sm">
-          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-          <span>Sẵn sàng dùng</span>
-        </div>
-      </div>
-
-      {/* 2. TITLE & DESCRIPTION */}
-      <div className="flex-1 flex flex-col">
-        <Link href={`/san-pham/${product.slug}`} className="group/title">
-          <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base line-clamp-2 leading-snug group-hover/title:text-indigo-800 dark:group-hover/title:text-cyan-400 transition-colors flex items-start justify-between gap-1">
-            <span>{product.name}</span>
-            <ArrowUpRight className="w-3.5 h-3.5 opacity-0 -translate-x-1 translate-y-1 group-hover/title:opacity-100 group-hover/title:translate-x-0 group-hover/title:translate-y-0 transition-all text-indigo-700 dark:text-cyan-400 flex-shrink-0 mt-0.5" />
-          </h3>
-        </Link>
-
-        <p className="mt-1.5 text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed flex-1">
-          {product.description || 'Bộ tài liệu và mã nguồn tự động hóa được kiểm thử kỹ lưỡng, sẵn sàng triển khai ngay.'}
-        </p>
-
-        {/* 3. PRICING & GUARANTEE */}
-        <div className="mt-3 pt-2.5 border-t border-slate-300 dark:border-white/[0.08] flex items-baseline justify-between gap-1.5">
-          <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 min-w-0">
+        {/* 3. HÀNG CHÂN CARD: GIÁ TIỀN + 1 NÚT BẤM DUY NHẤT (RÕ RÀNG, DỄ TIẾP CẬN) */}
+        <div className="pt-3.5 mt-2 border-t border-slate-200 dark:border-white/[0.08] flex items-center justify-between gap-3">
+          {/* Cụm Giá */}
+          <div className="flex flex-col min-w-0">
             {isFree ? (
-              <>
-                <span className="text-lg sm:text-xl font-black text-emerald-700 dark:text-emerald-400 font-mono tracking-tight whitespace-nowrap">
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight">
                   0&nbsp;đ
                 </span>
-                <span className="text-[11px] text-slate-400 line-through font-mono whitespace-nowrap">
+                <span className="text-xs text-slate-400 line-through font-mono">
                   99.000&nbsp;đ
                 </span>
-              </>
+              </div>
             ) : (
-              <>
-                <span className="text-lg sm:text-xl font-black text-indigo-800 dark:text-indigo-400 font-mono tracking-tight whitespace-nowrap">
+              <div className="flex items-baseline gap-1.5 flex-wrap">
+                <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-mono tracking-tight">
                   {new Intl.NumberFormat('vi-VN').format(product.price)}&nbsp;đ
                 </span>
                 {product.original_price > product.price && (
-                  <span className="text-[11px] text-slate-400 dark:text-slate-500 line-through font-mono font-medium whitespace-nowrap">
+                  <span className="text-xs text-slate-400 dark:text-slate-500 line-through font-mono">
                     {new Intl.NumberFormat('vi-VN').format(product.original_price)}&nbsp;đ
                   </span>
                 )}
-              </>
+              </div>
             )}
           </div>
-          <span className="shrink-0 whitespace-nowrap text-[10px] text-slate-600 dark:text-slate-400 inline-flex items-center gap-1 font-mono font-semibold">
-            <ShieldCheck className="w-3.5 h-3.5 text-indigo-700 dark:text-indigo-400 shrink-0" />
-            <span>Đã bán:</span>
-            <strong className="text-slate-900 dark:text-white font-mono">{product.sales_count || 15}+</strong>
-          </span>
-        </div>
-      </div>
 
-      {/* 4. ACTION BUTTONS: Bình thường đậm đà, hover mờ lại dịu dàng */}
-      <div className="mt-3 pt-0">
-        {isFree ? (
-          <button
-            onClick={() => onFreeClick?.(product)}
-            className="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-700 hover:opacity-85 hover:shadow-xs text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-950/25 transition-all duration-200 active:scale-[0.98] whitespace-nowrap"
-          >
-            <Download className="w-3.5 h-3.5 shrink-0" />
-            Tải Miễn Phí Ngay
-          </button>
-        ) : (
-          <div className="flex items-center gap-2">
-            <Link
-              href={`/san-pham/${product.slug}`}
-              className="flex-1 py-2 px-2 sm:px-2.5 rounded-xl bg-white hover:opacity-80 hover:border-slate-300 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] text-slate-900 dark:text-slate-200 text-center font-bold text-xs sm:text-sm border-2 border-slate-300 dark:border-white/[0.1] shadow-xs transition-all whitespace-nowrap truncate"
-            >
-              Chi tiết
-            </Link>
-            <Link
-              href={`/thanh-toan?pid=${product.pid}`}
-              className="flex-1 flex items-center justify-center gap-1 sm:gap-1.5 py-2 px-2 sm:px-2.5 rounded-xl bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-85 hover:shadow-xs text-white font-bold text-xs sm:text-sm shadow-md shadow-indigo-950/25 transition-all active:scale-[0.98] whitespace-nowrap truncate"
-            >
-              <ShoppingCart className="w-3.5 h-3.5 shrink-0" />
-              <span>Mua ngay</span>
-            </Link>
+          {/* 1 NÚT BẤM CHỦ ĐẠO (SINGLE CLEAR CTA) */}
+          <div className="shrink-0">
+            {isFree ? (
+              <button
+                onClick={() => onFreeClick?.(product)}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-950/20 transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Tải 0đ</span>
+              </button>
+            ) : hasLandingPage ? (
+              <Link
+                href={targetUrl}
+                className="inline-flex items-center gap-1 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-blue-700 hover:opacity-90 text-white font-bold text-xs sm:text-sm shadow-md shadow-indigo-950/25 transition-all hover:translate-x-0.5 active:scale-95 whitespace-nowrap"
+              >
+                <span>Khám phá</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            ) : (
+              <Link
+                href={`/thanh-toan?pid=${product.pid}`}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:opacity-90 text-white font-bold text-xs sm:text-sm shadow-md shadow-indigo-950/25 transition-all active:scale-95 whitespace-nowrap"
+              >
+                <ShoppingCart className="w-3.5 h-3.5" />
+                <span>Mua ngay</span>
+              </Link>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

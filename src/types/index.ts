@@ -42,6 +42,7 @@ export interface Product {
   original_price: number;
   thumbnail?: string | null;
   preview_url?: string | null;
+  landing_page_url?: string | null;
   download_url?: string | null;
   category: string;
   is_active: boolean;

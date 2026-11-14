@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone",
   experimental: {
-    cpus: 4,
+    cpus: 1,
   },
   images: {
     unoptimized: true,

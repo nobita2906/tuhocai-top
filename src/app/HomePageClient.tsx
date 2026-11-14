@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Product, Post } from '@/types';
 import ProductCard from '@/components/ProductCard';
 import LeadMagnetModal from '@/components/LeadMagnetModal';
-import WorkflowDemoModal from '@/components/WorkflowDemoModal';
+import FeaturedSlideSection from '@/components/FeaturedSlideSection';
 import {
   Zap,
   Clock,
@@ -17,9 +17,9 @@ import {
   CheckCircle2,
   Send,
   Loader2,
-  Cpu,
   Sparkles,
-  Play,
+  Search,
+  X,
 } from 'lucide-react';
 
 interface HomePageClientProps {
@@ -39,8 +39,8 @@ function getPostCover(post: Post): string {
 
 export default function HomePageClient({ initialProducts, initialPosts }: HomePageClientProps) {
   const [activeTab, setActiveTab] = useState<'all' | 'workflow' | 'skill' | 'prompt' | 'free'>('all');
+  const [homeSearchQuery, setHomeSearchQuery] = useState('');
   const [leadModalOpen, setLeadModalOpen] = useState(false);
-  const [demoModalOpen, setDemoModalOpen] = useState(false);
   const [selectedResource, setSelectedResource] = useState<{ id: string; name: string; url?: string } | null>(null);
 
   // Email Lead Magnet Section state
@@ -67,6 +67,13 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
   // Filter products & Ưu tiên hiển thị sản phẩm 0Đ lên đầu
   const filteredProducts = initialProducts
     .filter((p) => {
+      const matchSearch =
+        homeSearchQuery.trim() === '' ||
+        p.name.toLowerCase().includes(homeSearchQuery.toLowerCase()) ||
+        p.description?.toLowerCase().includes(homeSearchQuery.toLowerCase());
+
+      if (!matchSearch) return false;
+
       if (activeTab === 'free') return p.price === 0;
       if (activeTab === 'workflow') return p.category?.toLowerCase().includes('workflow');
       if (activeTab === 'skill') return p.category?.toLowerCase().includes('skill');
@@ -129,10 +136,10 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
   };
 
   return (
-    <div className="space-y-20 sm:space-y-28 pb-24 overflow-hidden transition-colors duration-200">
+    <div className="space-y-10 sm:space-y-14 pb-16 overflow-hidden transition-colors duration-200">
       {/* 1. HERO SECTION */}
-      <section className="relative pt-12 sm:pt-20 pb-8 cyber-grid radial-spotlight">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+      <section className="relative pt-8 sm:pt-14 pb-2 sm:pb-3 cyber-grid radial-spotlight">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4 sm:space-y-5">
           {/* Top subtle AI badge - Chuẩn SEO, giàu từ khóa tìm kiếm và độc bản */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white dark:bg-white/[0.05] border-2 border-indigo-600/70 dark:border-indigo-500/30 text-indigo-900 dark:text-indigo-300 font-mono text-xs font-bold shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-indigo-700 dark:text-cyan-400" />
@@ -163,24 +170,15 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
             </a>
           </p>
 
-          {/* Call to actions: Mặc định đậm đà, hover mờ lại dịu dàng */}
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-2">
+          {/* Call to actions: 3 nút tinh gọn, cân đối */}
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-1 sm:pt-2">
             <Link
               href="/san-pham"
               className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-85 text-white font-black text-sm shadow-xl shadow-indigo-950/30 transition-all hover:scale-[0.99] active:scale-[0.98]"
             >
               <Zap className="w-4 h-4 text-white" />
-              Khám Phá Kho Công Cụ & Skill
+              Khám Phá Kho Công Cụ & Khóa Học
             </Link>
-
-            <button
-              type="button"
-              onClick={() => setDemoModalOpen(true)}
-              className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl bg-purple-50 dark:bg-purple-500/10 hover:opacity-85 text-purple-900 dark:text-purple-300 border-2 border-purple-300 dark:border-purple-500/30 font-bold text-sm transition-all shadow-xs cursor-pointer"
-            >
-              <Play className="w-4 h-4 fill-purple-700 dark:fill-purple-300" />
-              Xem Demo Vận Hành (45s)
-            </button>
 
             <button
               onClick={() => handleOpenFreeModal()}
@@ -200,213 +198,78 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
               Cộng Đồng Zalo Hỗ Trợ
             </a>
           </div>
-
-          {/* Stats Cards - Bento Style: Khung đậm đà */}
-          <div className="pt-10 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mx-auto">
-            <div className="bento-card p-4 text-center border-2 border-slate-300 dark:border-white/10 shadow-sm">
-              <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white font-mono">10.000+</p>
-              <p className="text-xs text-slate-700 dark:text-slate-400 mt-1 font-semibold">Thành viên cộng đồng</p>
-            </div>
-            <div className="bento-card p-4 text-center border-2 border-slate-300 dark:border-white/10 shadow-sm">
-              <p className="text-2xl sm:text-3xl font-extrabold text-indigo-800 dark:text-indigo-400 font-mono">50+</p>
-              <p className="text-xs text-slate-700 dark:text-slate-400 mt-1 font-semibold">Workflow & Prompt VIP</p>
-            </div>
-            <div className="bento-card p-4 text-center border-2 border-slate-300 dark:border-white/10 shadow-sm">
-              <p className="text-2xl sm:text-3xl font-extrabold text-blue-800 dark:text-cyan-400 font-mono">100%</p>
-              <p className="text-xs text-slate-700 dark:text-slate-400 mt-1 font-semibold">Mã nguồn sẵn sàng dùng</p>
-            </div>
-            <div className="bento-card p-4 text-center border-2 border-slate-300 dark:border-white/10 shadow-sm">
-              <p className="text-2xl sm:text-3xl font-extrabold text-emerald-800 dark:text-emerald-400 font-mono">0 đ</p>
-              <p className="text-xs text-slate-700 dark:text-slate-400 mt-1 font-semibold">Bắt đầu học ngay hôm nay</p>
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* 2. VALUE STRIP: 3 CAM KẾT VÀNG */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <div className="bento-card p-6 flex gap-4 items-start border-2 border-slate-300 dark:border-white/10 shadow-sm hover:opacity-95">
-            <div className="text-3xl sm:text-4xl font-black font-mono text-indigo-800 dark:text-indigo-400 shrink-0 leading-none">
-              01
-            </div>
-            <div className="space-y-1">
-              <h3 className="font-bold text-base text-slate-900 dark:text-white">Đúng Việc Bạn Cần</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Mỗi workflow và kỹ năng giải quyết trọn vẹn 1 bài toán thực tế: viết kịch bản, tạo ảnh, dựng video, tự động đăng bài đa kênh.
-              </p>
-            </div>
-          </div>
+      {/* 2. TIÊU ĐIỂM & BÀI ĐĂNG NỔI BẬT (SLIDE LƯỚT TRỰC QUAN - KÉO SÁT HERO) */}
+      <div className="-mt-4 sm:-mt-8">
+        <FeaturedSlideSection posts={initialPosts} products={initialProducts} />
+      </div>
 
-          <div className="bento-card p-6 flex gap-4 items-start border-2 border-slate-300 dark:border-white/10 shadow-sm hover:opacity-95">
-            <div className="text-3xl sm:text-4xl font-black font-mono text-blue-800 dark:text-cyan-400 shrink-0 leading-none">
-              02
-            </div>
-            <div className="space-y-1">
-              <h3 className="font-bold text-base text-slate-900 dark:text-white">Dùng Được Ngay</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Không cần biết lập trình phức tạp. File JSON import 1-click vào n8n, kèm prompt mẫu và video hướng dẫn từng bước rõ ràng.
-              </p>
-            </div>
-          </div>
-
-          <div className="bento-card p-6 flex gap-4 items-start border-2 border-slate-300 dark:border-white/10 shadow-sm hover:opacity-95">
-            <div className="text-3xl sm:text-4xl font-black font-mono text-emerald-800 dark:text-emerald-400 shrink-0 leading-none">
-              03
-            </div>
-            <div className="space-y-1">
-              <h3 className="font-bold text-base text-slate-900 dark:text-white">Quản Lý Tập Trung</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Thanh toán quét mã VietQR tự động. Mọi sản phẩm đã mua được lưu trữ vĩnh viễn và dễ dàng tải lại bất cứ lúc nào trong &quot;Kho Của Tôi&quot;.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. FEATURED SPOTLIGHT BENTO (Workflow n8n Đăng bài đa kênh) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bento-card p-6 sm:p-10 relative overflow-hidden border-2 border-indigo-300 dark:border-indigo-500/30 shadow-md">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
-            <div className="lg:col-span-6 space-y-5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-indigo-100 dark:bg-indigo-500/10 text-indigo-900 dark:text-indigo-400 border border-indigo-300 dark:border-indigo-500/25 font-mono text-xs font-bold">
-                <Cpu className="w-3.5 h-3.5" />
-                FLAGSHIP WORKFLOW N8N 2026
-              </div>
-
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
-                Workflow n8n Tự Động Đăng Bài Đa Kênh <br />
-                <span className="text-slate-600 dark:text-slate-400 text-lg font-normal sm:text-xl">
-                  (Facebook, Telegram, WordPress)
-                </span>
-              </h2>
-
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
-                Hệ thống tự động hóa n8n giúp lên lịch, tạo nội dung bằng AI và tự động đăng bài đa kênh không giới hạn.
-              </p>
-
-              <div className="space-y-2.5 py-1">
-                <div className="flex items-center gap-2.5 text-sm text-slate-700 dark:text-slate-300">
-                  <CheckCircle2 className="w-4 h-4 text-indigo-700 dark:text-cyan-400 flex-shrink-0" />
-                  <span>File JSON import trực tiếp vào n8n trong 30 giây</span>
-                </div>
-                <div className="flex items-center gap-2.5 text-sm text-slate-700 dark:text-slate-300">
-                  <CheckCircle2 className="w-4 h-4 text-indigo-700 dark:text-cyan-400 flex-shrink-0" />
-                  <span>Video hướng dẫn cài đặt từng bước chi tiết cho người mới</span>
-                </div>
-                <div className="flex items-center gap-2.5 text-sm text-slate-700 dark:text-slate-300">
-                  <CheckCircle2 className="w-4 h-4 text-indigo-700 dark:text-cyan-400 flex-shrink-0" />
-                  <span>Hỗ trợ kỹ thuật 1-1 qua Zalo khi gặp lỗi cài đặt</span>
-                </div>
-              </div>
-
-              {/* Price & Savings */}
-              <div className="flex items-baseline gap-3 pt-2">
-                <span className="text-3xl font-extrabold text-slate-900 dark:text-white font-mono">99.000 đ</span>
-                <span className="text-sm text-slate-400 line-through font-mono">299.000 đ</span>
-                <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-emerald-100 dark:bg-emerald-500/15 text-emerald-900 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/30">
-                  Tiết kiệm 200.000 đ
-                </span>
-              </div>
-
-              {/* CTA buttons */}
-              <div className="pt-2 flex flex-wrap gap-3">
-                <Link
-                  href="/thanh-toan?pid=WF-THAI-099"
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-85 text-white font-bold text-sm shadow-xl shadow-indigo-950/25 transition-all hover:scale-[0.99] active:scale-[0.98]"
-                >
-                  <Zap className="w-4 h-4" />
-                  Mua Ngay Với VietQR (99.000 đ)
-                </Link>
-                <Link
-                  href="/san-pham/workflow-n8n-tu-dong-dang-bai-da-kenh"
-                  className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl bg-white hover:opacity-80 dark:bg-white/[0.05] dark:hover:bg-white/[0.1] text-slate-900 dark:text-slate-200 text-sm font-bold border-2 border-slate-300 dark:border-white/[0.08] shadow-xs transition-colors"
-                >
-                  Xem Demo Chi Tiết
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Interactive n8n Canvas Mockup with Video/Interactive Demo Button */}
-            <div className="lg:col-span-6 space-y-3">
-              <div
-                onClick={() => setDemoModalOpen(true)}
-                className="group relative rounded-2xl overflow-hidden border-2 border-slate-300 dark:border-indigo-500/25 bg-slate-100 dark:bg-[#111116] aspect-video shadow-md p-1 cursor-pointer transition-all hover:border-indigo-500 dark:hover:border-indigo-400"
-              >
-                <Image
-                  src="/images/n8n-workflow-demo.jpg"
-                  alt="Sơ đồ thực tế n8n workflow tự động đăng bài đa kênh"
-                  fill
-                  className="object-cover rounded-xl transition-transform duration-500 group-hover:scale-105"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  priority
-                />
-                
-                {/* Play Button Overlay */}
-                <div className="absolute inset-0 bg-slate-950/40 group-hover:bg-slate-950/25 backdrop-blur-[1px] transition-colors flex items-center justify-center">
-                  <div className="flex items-center gap-2.5 px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl bg-indigo-600/90 group-hover:bg-indigo-600 text-white font-bold text-xs sm:text-sm shadow-2xl shadow-indigo-600/50 backdrop-blur-md border border-white/20 group-hover:scale-105 transition-transform">
-                    <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                      <Play className="w-3.5 h-3.5 fill-white ml-0.5" />
-                    </div>
-                    <span>Xem Demo Vận Hành Thực Tế (45s)</span>
-                  </div>
-                </div>
-
-                <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900/90 backdrop-blur-md border border-white/20 text-[11px] font-mono text-cyan-300 shadow-sm z-10">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>STATUS: 200 OK</span>
-                </div>
-              </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 text-center font-mono">
-                Bấm vào hình để xem mô phỏng hoạt động chi tiết từng bước của hệ thống n8n
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. PRODUCT CATALOG (Bento Filter & Grid) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      {/* 3. PRODUCT CATALOG (Bento Filter & Grid 3 Cột Thoáng Đãng) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Workflow, Skill & Prompt Tuyển Chọn
+              Kho Công Cụ, Skill & Workflow Tuyển Chọn
             </h2>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1.5">
-              Khám phá các sản phẩm sẵn sàng triển khai ngay, có cả miễn phí lẫn trả phí tối ưu chi phí.
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+              Các giải pháp AI thực chiến sẵn sàng dùng ngay, tiết kiệm chi phí và tối ưu hiệu suất công việc.
             </p>
           </div>
 
-          {/* Segmented Filter Control */}
-          <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-white dark:bg-white/[0.04] border-2 border-slate-300 dark:border-white/[0.08] shadow-xs">
-            {(
-              [
-                { id: 'all', label: 'Tất cả' },
-                { id: 'workflow', label: 'Workflow n8n' },
-                { id: 'skill', label: 'Kỹ Năng AI' },
-                { id: 'prompt', label: 'Prompt VIP' },
-                { id: 'free', label: 'Miễn Phí 0đ' },
-              ] as const
-            ).map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-gradient-to-r from-indigo-800 to-blue-800 text-white shadow-md shadow-indigo-950/25 hover:opacity-90'
-                    : 'text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.05]'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            {/* Ô tìm kiếm nhanh trên trang chủ */}
+            <div className="relative min-w-[200px]">
+              <input
+                type="text"
+                placeholder="Tìm công cụ, prompt..."
+                value={homeSearchQuery}
+                onChange={(e) => setHomeSearchQuery(e.target.value)}
+                className="w-full pl-8 pr-8 py-1.5 rounded-full bg-slate-100 dark:bg-white/[0.04] border border-slate-300 dark:border-white/[0.1] text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 transition-colors"
+              />
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+              {homeSearchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setHomeSearchQuery('')}
+                  className="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Segmented Filter Control - Dạng Pill Tối Giản */}
+            <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-full bg-slate-100 dark:bg-white/[0.04] border border-slate-300 dark:border-white/[0.08] shadow-xs">
+              {(
+                [
+                  { id: 'all', label: 'Tất cả' },
+                  { id: 'workflow', label: 'Workflow n8n' },
+                  { id: 'skill', label: 'Skill AI' },
+                  { id: 'prompt', label: 'Prompt VIP' },
+                  { id: 'free', label: 'Miễn phí 0đ' },
+                ] as const
+              ).map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === tab.id
+                      ? 'bg-gradient-to-r from-indigo-800 to-blue-800 text-white shadow-md shadow-indigo-950/40 font-black'
+                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-          {filteredProducts.map((product) => (
+        {/* Products Grid: 3 cột thoáng đãng, hiển thị Top 6 sản phẩm */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          {filteredProducts.slice(0, 6).map((product) => (
             <ProductCard
               key={product.id}
               product={product}
@@ -414,11 +277,24 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
             />
           ))}
         </div>
+
+        {/* Nút Khám Phá Toàn Bộ Sản Phẩm */}
+        {filteredProducts.length > 6 && (
+          <div className="text-center pt-2">
+            <Link
+              href="/san-pham"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.05] dark:hover:bg-white/[0.1] text-slate-900 dark:text-white font-bold text-xs sm:text-sm border border-slate-300 dark:border-white/10 transition-all hover:scale-[1.01] active:scale-[0.99] shadow-xs"
+            >
+              <span>Xem toàn bộ {initialProducts.length}+ công cụ & tài nguyên trong Kho Sản Phẩm</span>
+              <ArrowRight className="w-4 h-4 text-indigo-600 dark:text-cyan-400" />
+            </Link>
+          </div>
+        )}
       </section>
 
       {/* 5. LEAD MAGNET SECTION (100+ Prompt FLUX) */}
       <section id="tai-lieu-free" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bento-card p-8 sm:p-12 relative overflow-hidden border-2 border-indigo-200 dark:border-indigo-500/25 shadow-md">
+        <div className="bento-card p-6 sm:p-8 relative overflow-hidden border-2 border-indigo-200 dark:border-indigo-500/25 shadow-md">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7 space-y-4">
               <span className="font-mono text-xs uppercase font-bold tracking-wider text-indigo-800 dark:text-cyan-400">
@@ -511,80 +387,97 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
         </div>
       </section>
 
-      {/* 6. NEWS & GUIDES SECTION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="flex items-end justify-between">
+      {/* 6. NEWS & GUIDES SECTION - 3 Cột Thoáng Đãng Chuẩn Tạp Chí */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
           <div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Tin Tức & Hướng Dẫn AI Mới Nhất
+              Tin Tức & Hướng Dẫn AI Thực Chiến
             </h2>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+              Cập nhật kiến thức mới nhất về Prompt Engineering, Tự động hóa n8n và các mô hình AI.
+            </p>
           </div>
           <Link
             href="/bai-viet"
-            className="text-sm font-bold text-indigo-800 dark:text-indigo-400 hover:opacity-85 flex items-center gap-1 font-mono"
+            className="text-xs sm:text-sm font-bold text-indigo-700 dark:text-cyan-400 hover:underline flex items-center gap-1 font-mono shrink-0"
           >
-            Xem tất cả bài viết <ArrowRight className="w-4 h-4" />
+            <span>Xem tất cả bài viết</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-          {initialPosts.slice(0, 4).map((post) => (
+        {/* 3 Cột Bài Viết Tinh Tuyển */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          {initialPosts.slice(0, 3).map((post) => (
             <article
               key={post.id}
-              className="bento-card p-4 flex flex-col group transition-all duration-200 border-2 border-slate-300 dark:border-white/10 hover:border-slate-400 dark:hover:border-white/10 shadow-sm"
+              className="bento-card p-4 sm:p-5 flex flex-col group transition-all duration-300 border-2 border-slate-300 dark:border-white/10 hover:border-indigo-400/50 dark:hover:border-indigo-500/40 hover:shadow-xl shadow-md rounded-2xl bg-white dark:bg-[#0e0e13]"
             >
               {/* Visual Thumbnail */}
-              <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl bg-slate-100 dark:bg-[#111116] mb-3.5 border-2 border-slate-300 dark:border-white/[0.06] group-hover:opacity-95 transition-opacity">
+              <Link
+                href={`/bai-viet/${post.slug}`}
+                className="block relative aspect-[16/10] w-full overflow-hidden rounded-xl bg-slate-100 dark:bg-[#15151c] mb-4 border border-slate-300/80 dark:border-white/10 group-hover:opacity-95 transition-all shadow-inner"
+              >
                 <Image
                   src={getPostCover(post)}
                   alt={post.title}
                   fill
                   unoptimized
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  className="object-cover object-center group-hover:scale-[1.02] transition-transform duration-300 ease-out"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover object-center group-hover:scale-[1.03] transition-transform duration-500 ease-out"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 dark:from-[#09090b]/80 via-transparent to-black/10 pointer-events-none" />
-                <div className="absolute top-2 left-2">
-                  <span className="px-2 py-0.5 rounded-md bg-slate-900/90 backdrop-blur-md text-[10px] font-mono font-bold text-cyan-300 border border-white/20">
-                    {post.category || 'NEWS'}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 dark:from-[#09090b]/80 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute top-2.5 left-2.5">
+                  <span className="px-2.5 py-1 rounded-md bg-slate-900/85 backdrop-blur-md text-[10px] font-mono font-bold text-cyan-300 border border-white/20 shadow-sm">
+                    {post.category || 'KIẾN THỨC AI'}
                   </span>
                 </div>
-              </div>
-
-              <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mb-2 font-mono">
-                <span className="flex items-center gap-1 text-slate-600 dark:text-slate-400 font-semibold">
-                  <Clock className="w-3 h-3 text-indigo-800 dark:text-indigo-400" />
-                  {new Date(post.created_at).toLocaleDateString('vi-VN')}
-                </span>
-                <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1 font-semibold">
-                  <Eye className="w-3 h-3" />
-                  {post.views || 0}
-                </span>
-              </div>
-
-              <Link
-                href={`/bai-viet/${post.slug}`}
-                className="group/title"
-              >
-                <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base line-clamp-2 leading-snug group-hover/title:text-indigo-800 dark:group-hover/title:text-cyan-400 transition-colors">
-                  {post.title}
-                </h3>
               </Link>
 
-              <p className="mt-1.5 text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed flex-1">
-                {post.summary}
-              </p>
+              {/* Title & Summary */}
+              <div className="flex-1 flex flex-col justify-between space-y-2">
+                <div>
+                  <Link href={`/bai-viet/${post.slug}`} className="group/title block">
+                    <h3 className="font-bold text-slate-900 dark:text-white text-base sm:text-lg line-clamp-2 leading-snug group-hover/title:text-indigo-600 dark:group-hover/title:text-cyan-400 transition-colors">
+                      {post.title}
+                    </h3>
+                  </Link>
 
-              <div className="mt-3 pt-2.5 border-t border-slate-300 dark:border-white/[0.06] flex items-center justify-between text-xs font-mono">
-                <Link
-                  href={`/bai-viet/${post.slug}`}
-                  className="font-bold text-indigo-800 dark:text-indigo-400 hover:opacity-80 flex items-center gap-1"
-                >
-                  Đọc tiếp <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </Link>
+                  <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                    {post.summary || 'Hướng dẫn chi tiết từng bước xây dựng quy trình và làm chủ công cụ AI thực tế.'}
+                  </p>
+                </div>
+
+                {/* Footer Meta: Ngày đăng + Nút đọc */}
+                <div className="pt-3.5 mt-2 border-t border-slate-200 dark:border-white/[0.08] flex items-center justify-between text-xs font-mono">
+                  <span className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 font-semibold">
+                    <Clock className="w-3.5 h-3.5 text-indigo-600 dark:text-cyan-400" />
+                    {new Date(post.created_at).toLocaleDateString('vi-VN')}
+                  </span>
+
+                  <Link
+                    href={`/bai-viet/${post.slug}`}
+                    className="font-bold text-indigo-700 dark:text-cyan-400 hover:underline flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
+                  >
+                    <span>Đọc bài viết</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
               </div>
             </article>
           ))}
+        </div>
+
+        {/* Nút Khám Phá Toàn Bộ Bài Viết */}
+        <div className="text-center pt-2">
+          <Link
+            href="/bai-viet"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.05] dark:hover:bg-white/[0.1] text-slate-900 dark:text-white font-bold text-xs sm:text-sm border border-slate-300 dark:border-white/10 transition-all hover:scale-[1.01] active:scale-[0.99] shadow-xs"
+          >
+            <span>Xem toàn bộ cẩm nang & bài viết hướng dẫn AI</span>
+            <ArrowRight className="w-4 h-4 text-indigo-600 dark:text-cyan-400" />
+          </Link>
         </div>
       </section>
 
@@ -595,12 +488,6 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
         resourceId={selectedResource?.id || 'FREE-RESOURCE'}
         resourceName={selectedResource?.name || 'Tài liệu Tự Học AI'}
         defaultDownloadUrl={selectedResource?.url}
-      />
-
-      {/* Interactive Workflow Demo Modal */}
-      <WorkflowDemoModal
-        isOpen={demoModalOpen}
-        onClose={() => setDemoModalOpen(false)}
       />
     </div>
   );

@@ -237,82 +237,72 @@ export default async function SingleArticlePage({
           </div>
         )}
 
-        {/* Article Header */}
+        {/* Article Header - Tinh Tế Chuẩn Tạp Chí Cao Cấp */}
         <header className="space-y-6">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
             {post.title}
           </h1>
 
-          {/* Metadata bar */}
-          <div className="flex flex-wrap items-center gap-y-3 gap-x-5 text-xs text-slate-600 dark:text-slate-300 border-y border-slate-200 dark:border-slate-800/80 py-4">
+          {/* Dòng Metadata Tinh Giản 1 Hàng Gọn Gàng */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-slate-600 dark:text-slate-400 py-3 border-y border-slate-200 dark:border-white/[0.08]">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold text-xs shadow">
+              <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-indigo-600 to-blue-600 flex items-center justify-center text-white font-bold text-xs shadow-xs">
                 Đ
               </div>
-              <div>
-                <span className="text-slate-900 dark:text-white font-bold">Nguyễn Văn Đăng</span>
-                <span className="text-indigo-600 dark:text-indigo-400 ml-1.5 text-[11px] font-semibold">Verified AI Author</span>
-              </div>
+              <span className="text-slate-900 dark:text-white font-bold">Nguyễn Văn Đăng</span>
             </div>
 
-            <span className="hidden sm:inline text-slate-300 dark:text-slate-700">•</span>
+            <span className="text-slate-300 dark:text-slate-700">•</span>
 
-            <span className="flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-200">
-              <Clock className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+            <span className="flex items-center gap-1.5 font-medium text-slate-600 dark:text-slate-300">
+              <Clock className="w-3.5 h-3.5 text-indigo-600 dark:text-cyan-400" />
               {new Date(post.created_at).toLocaleDateString('vi-VN')}
             </span>
 
-            <span className="hidden sm:inline text-slate-300 dark:text-slate-700">•</span>
+            <span className="text-slate-300 dark:text-slate-700">•</span>
 
-            <span className="flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-200">
+            <span className="flex items-center gap-1.5 font-medium text-slate-600 dark:text-slate-300">
               <BookOpen className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              {readingMinutes} phút đọc (~{wordCount} từ)
-            </span>
-
-            <span className="hidden sm:inline text-slate-300 dark:text-slate-700">•</span>
-
-            <span className="flex items-center gap-1.5 font-medium text-slate-600 dark:text-slate-400">
-              <Eye className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
-              {(post.views || 0) + 1} lượt xem
+              {readingMinutes} phút đọc
             </span>
           </div>
 
-          {/* Hero Thumbnail Banner */}
-          {post.thumbnail && (
-            <div className="rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-xl max-h-[480px] relative bg-slate-950">
-              <img
-                src={post.thumbnail}
-                alt={post.title}
-                className="w-full h-auto object-cover max-h-[480px] hover:scale-102 transition-transform duration-500"
-              />
-            </div>
-          )}
-
-          {/* Lead Excerpt */}
+          {/* Đoạn Sapo / Tóm Tắt Mở Đầu Trang Nhã (Bỏ Khung Hộp) */}
           {post.summary && (
-            <div className="p-5 sm:p-6 rounded-2xl bg-indigo-50/70 dark:bg-slate-900/90 border-l-4 border-indigo-600 dark:border-indigo-500 text-slate-800 dark:text-slate-100 text-base sm:text-lg leading-relaxed font-normal shadow-sm border border-slate-200/60 dark:border-slate-800">
+            <div className="border-l-2 border-indigo-600 dark:border-indigo-400 pl-4 sm:pl-5 py-1 text-base sm:text-lg text-slate-700 dark:text-slate-300 leading-relaxed font-normal">
               {post.summary}
             </div>
           )}
 
-          {/* Table of Contents (Mục lục bài viết) */}
+          {/* Hero Thumbnail Banner Chiều Cao Vừa Phải */}
+          {post.thumbnail && (
+            <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-lg max-h-[420px] aspect-[16/9] relative bg-slate-100 dark:bg-slate-950">
+              <img
+                src={post.thumbnail}
+                alt={post.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+
+          {/* Table of Contents (Mục lục bài viết Tối Giản) */}
           {toc.length >= 2 && (
-            <nav aria-label="Mục lục bài viết" className="rounded-2xl bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-sm">
-              <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-bold text-sm sm:text-base">
+            <nav aria-label="Mục lục bài viết" className="rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/[0.08] p-5 sm:p-6 space-y-3 shadow-xs">
+              <div className="flex items-center gap-2 text-indigo-700 dark:text-cyan-400 font-bold text-sm">
                 <ListOrdered className="w-4 h-4" />
-                <span>Mục lục nội dung bài viết</span>
+                <span>Mục lục bài viết</span>
               </div>
-              <ul className="space-y-2.5 text-sm">
+              <ul className="space-y-2 text-xs sm:text-sm">
                 {toc.map((item, index) => (
                   <li
                     key={index}
-                    className={`${item.level === 3 ? 'pl-5 text-slate-600 dark:text-slate-300 text-xs sm:text-sm' : 'font-semibold text-slate-900 dark:text-slate-100'}`}
+                    className={`${item.level === 3 ? 'pl-4 text-slate-600 dark:text-slate-400' : 'font-semibold text-slate-800 dark:text-slate-200'}`}
                   >
                     <a
                       href={`#${item.id}`}
-                      className="hover:text-indigo-600 dark:hover:text-indigo-300 hover:underline transition-colors flex items-baseline gap-2"
+                      className="hover:text-indigo-600 dark:hover:text-cyan-300 hover:underline transition-colors flex items-baseline gap-2"
                     >
-                      <span className="text-indigo-600 dark:text-indigo-400 font-mono text-xs">{index + 1}.</span>
+                      <span className="text-indigo-600 dark:text-cyan-400 font-mono text-xs">{index + 1}.</span>
                       <span>{item.text}</span>
                     </a>
                   </li>
@@ -452,116 +442,64 @@ export default async function SingleArticlePage({
           </div>
         )}
 
-        {/* 3-Tier Conversion Funnel Box (Chỉ hiển thị khi có quyền xem bài viết) */}
+        {/* Quà Tặng Tài Liệu & Nhóm Zalo Hỗ Trợ (Thiết Kế Tinh Giản, Thoáng Mắt) */}
         {hasAccess && (
-          <div className="space-y-6 pt-4">
-            {/* Box 1: Lead Magnet Free 0đ */}
-            <div className="rounded-3xl bg-gradient-to-br from-indigo-950/80 via-slate-900 to-purple-950/70 border border-indigo-500/40 p-6 sm:p-8 space-y-4 shadow-2xl relative overflow-hidden">
-              <div className="absolute -top-12 -right-12 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-
+          <div className="pt-4">
+            <div className="rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/[0.08] p-6 sm:p-8 space-y-4 shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-600/30">
-                  <Sparkles className="w-5 h-5" />
+                <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-sm shrink-0">
+                  <Sparkles className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase tracking-wider">
-                    Quà tặng miễn phí
+                  <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider font-mono">
+                    ✦ Tài nguyên thực hành 0đ
                   </span>
-                  <h3 className="text-lg sm:text-xl font-bold text-white mt-1">
-                    Nhận trọn bộ Prompt & Template JSON bài viết này (0đ)
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                    Nhận Prompt Mẫu & File Template Của Bài Viết
                   </h3>
                 </div>
               </div>
 
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
-                Đừng bắt đầu lại từ con số 0. Toàn bộ file mẫu, prompt copy-paste và workflow mẫu được cập nhật liên tục tại nhóm Zalo VIP Tự Học AI.
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                Toàn bộ prompt thực tế, file JSON flow và tài liệu hướng dẫn được chia sẻ miễn phí trong cộng đồng Tự Học AI.
               </p>
 
-              <div className="flex flex-wrap gap-3 pt-2">
+              <div className="flex flex-wrap gap-3 pt-1">
                 <a
                   href="https://zalo.me/g/tuhocai"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-900/40 transition-all hover:scale-105"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-sm transition-all active:scale-95"
                 >
                   <MessageCircle className="w-4 h-4" />
-                  Vào Nhóm Zalo Nhận File Mẫu Ngay
+                  <span>Vào Nhóm Zalo Nhận File Ngay</span>
                 </a>
 
                 <Link
                   href="/san-pham"
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-700 transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.05] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-200 font-semibold text-xs border border-slate-300 dark:border-white/10 transition-all"
                 >
-                  <Download className="w-4 h-4" />
-                  Xem Kho Quy Trình & Khóa Học
-                </Link>
-              </div>
-            </div>
-
-            {/* Box 2 & 3: Upsell & Affiliate Dual Card */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Box 2: Core Product Upsell */}
-              <div className="rounded-2xl bg-slate-900/90 border border-slate-800 p-5 space-y-3 hover:border-indigo-500/40 transition-all group flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-2 text-indigo-400 font-bold text-sm">
-                    <Zap className="w-4 h-4" />
-                    <span>Workflow n8n Tự Động Đăng Bài Đa Kênh</span>
-                  </div>
-                  <p className="text-xs text-slate-400 leading-relaxed mt-2">
-                    Tự động hóa hoàn toàn khâu xuất bản bài viết lên Facebook, Telegram và Website 24/7.
-                  </p>
-                </div>
-                <div className="flex items-center gap-3 pt-2">
-                  <Link
-                    href="/san-pham/workflow-n8n-tu-dong-dang-bai-da-kenh"
-                    className="text-xs text-slate-300 hover:text-white font-medium"
-                  >
-                    Chi tiết
-                  </Link>
-                  <Link
-                    href="/thanh-toan?pid=WF-THAI-099"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow transition-all"
-                  >
-                    <span>Mua Ngay (99K)</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              </div>
-
-              {/* Box 3: Affiliate Invitation */}
-              <div className="rounded-2xl bg-slate-900/90 border border-slate-800 p-5 space-y-3 hover:border-emerald-500/40 transition-all group">
-                <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
-                  <TrendingUp className="w-4 h-4" />
-                  <span>Kiếm tiền cùng Affiliate Tự Học AI</span>
-                </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Chia sẻ bài viết & sản phẩm của chúng tôi để nhận hoa hồng trọn đời 30% - 50%. Rút tiền tự động trong 24h.
-                </p>
-                <Link
-                  href="/affiliate"
-                  className="inline-flex items-center gap-1.5 text-xs text-emerald-400 group-hover:text-emerald-300 font-semibold pt-1"
-                >
-                  <span>Đăng ký đối tác Affiliate</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Kho Tài Nguyên & Công Cụ AI</span>
                 </Link>
               </div>
             </div>
           </div>
         )}
 
-        {/* Related Posts */}
+        {/* Bài Viết Liên Quan Cùng Chuyên Mục (3 Cột Thoáng Đãng) */}
         {relatedPosts.length > 0 && (
-          <section className="pt-10 border-t border-slate-800/80 space-y-6">
+          <section className="pt-10 border-t border-slate-200 dark:border-white/[0.08] space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-indigo-400" />
-                Bài viết liên quan cùng chuyên mục
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-indigo-600 dark:text-cyan-400" />
+                <span>Bài viết liên quan</span>
               </h2>
               <Link
                 href="/bai-viet"
-                className="text-xs text-indigo-400 hover:text-indigo-300 font-medium"
+                className="text-xs text-indigo-600 dark:text-cyan-400 hover:underline font-mono font-bold"
               >
-                Xem tất cả →
+                Xem tất cả bài viết →
               </Link>
             </div>
 
@@ -570,19 +508,19 @@ export default async function SingleArticlePage({
                 <Link
                   key={rel.id}
                   href={`/bai-viet/${rel.slug}`}
-                  className="rounded-xl bg-slate-900 border border-slate-800 p-4 space-y-2.5 hover:border-indigo-500/40 transition-all flex flex-col justify-between group"
+                  className="rounded-2xl bg-white dark:bg-[#0e0e13] border border-slate-300 dark:border-white/10 p-4 space-y-2.5 hover:border-indigo-400/50 dark:hover:border-indigo-500/40 transition-all flex flex-col justify-between group shadow-xs hover:shadow-md"
                 >
                   <div className="space-y-1.5">
-                    <span className="text-[10px] uppercase font-semibold text-indigo-400 tracking-wider">
+                    <span className="text-[10px] uppercase font-bold text-indigo-600 dark:text-cyan-400 tracking-wider font-mono">
                       {rel.category}
                     </span>
-                    <h3 className="text-xs sm:text-sm font-bold text-slate-200 group-hover:text-white line-clamp-2 leading-snug">
+                    <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-cyan-300 line-clamp-2 leading-snug transition-colors">
                       {rel.title}
                     </h3>
                   </div>
-                  <div className="text-[11px] text-slate-500 flex items-center justify-between pt-2 border-t border-slate-800/60">
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between pt-2 border-t border-slate-200 dark:border-white/[0.06] font-mono">
                     <span>{new Date(rel.created_at).toLocaleDateString('vi-VN')}</span>
-                    <span className="text-indigo-400 group-hover:translate-x-1 transition-transform">→</span>
+                    <span className="text-indigo-600 dark:text-cyan-400 group-hover:translate-x-0.5 transition-transform">→</span>
                   </div>
                 </Link>
               ))}

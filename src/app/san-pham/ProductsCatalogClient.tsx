@@ -6,7 +6,7 @@ import { Product } from '@/types';
 import ProductCard from '@/components/ProductCard';
 import LeadMagnetModal from '@/components/LeadMagnetModal';
 import Pagination from '@/components/ui/Pagination';
-import { Layers, Sparkles, Filter, Search, Download, Cpu } from 'lucide-react';
+import { Layers, Sparkles, Filter, Search, Download, Cpu, X } from 'lucide-react';
 
 interface ProductsCatalogClientProps {
   initialProducts: Product[];
@@ -21,11 +21,11 @@ export default function ProductsCatalogClient({ initialProducts, activeCategory 
   const [leadModalOpen, setLeadModalOpen] = useState(false);
   const [selectedResource, setSelectedResource] = useState<{ id: string; name: string; url?: string } | null>(null);
 
-  const PAGE_SIZE = 8;
+  const PAGE_SIZE = 9;
 
   const categories = [
     { key: 'all', label: 'Tất cả' },
-    { key: 'free', label: 'Miễn Phí 0đ' },
+    { key: 'free', label: 'Miễn phí 0đ' },
     { key: 'workflow', label: 'Workflow n8n' },
     { key: 'skill', label: 'Skill AI' },
     { key: 'prompt', label: 'Prompt VIP' },
@@ -82,10 +82,10 @@ export default function ProductsCatalogClient({ initialProducts, activeCategory 
         </p>
       </div>
 
-      {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-white dark:bg-[#111116] border-2 border-slate-300 dark:border-white/15 shadow-md">
-        {/* Categories */}
-        <div className="flex flex-wrap items-center gap-2">
+      {/* Filter and Search Bar - Thanh Thoát, Dễ Dùng */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-3 sm:p-4 rounded-2xl bg-white dark:bg-[#111116] border border-slate-300 dark:border-white/10 shadow-sm">
+        {/* Categories Pill Tabs */}
+        <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-full bg-slate-100 dark:bg-white/[0.04] border border-slate-300/80 dark:border-white/[0.08]">
           {categories.map((c) => (
             <button
               key={c.key}
@@ -93,10 +93,10 @@ export default function ProductsCatalogClient({ initialProducts, activeCategory 
                 setSelectedCat(c.key);
                 setCurrentPage(1);
               }}
-              className={`px-3.5 py-1.5 rounded-xl text-xs transition-all ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                 selectedCat === c.key
-                  ? 'bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 text-white shadow-md shadow-indigo-950/25 font-bold hover:opacity-85'
-                  : 'text-slate-800 dark:text-slate-300 font-semibold border-2 border-slate-300 dark:border-white/10 hover:opacity-75 bg-slate-50 dark:bg-white/[0.04]'
+                  ? 'bg-gradient-to-r from-indigo-800 to-blue-800 text-white shadow-md shadow-indigo-950/40 font-black'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               {c.label}
@@ -104,25 +104,53 @@ export default function ProductsCatalogClient({ initialProducts, activeCategory 
           ))}
         </div>
 
-        {/* Search */}
-        <div className="relative w-full sm:w-64">
+        {/* Search Input */}
+        <div className="relative w-full sm:w-72">
           <input
             type="text"
-            placeholder="Tìm kiếm tài liệu..."
+            placeholder="Tìm kiếm công cụ, prompt..."
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-50 dark:bg-white/[0.04] border-2 border-slate-300 dark:border-white/[0.15] text-slate-900 dark:text-white text-xs placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-indigo-700 transition-colors shadow-xs"
+            className="w-full pl-9 pr-8 py-2 rounded-xl bg-slate-50 dark:bg-white/[0.04] border border-slate-300 dark:border-white/[0.1] text-slate-900 dark:text-white text-xs placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-indigo-600 transition-colors shadow-xs"
           />
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearchQuery('');
+                setCurrentPage(1);
+              }}
+              className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              title="Xóa tìm kiếm"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Products Grid: 4 columns per row */}
+      {/* Thông báo kết quả tìm kiếm nếu có search query */}
+      {searchQuery && (
+        <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 px-1">
+          <span>
+            Tìm thấy <strong className="text-indigo-600 dark:text-cyan-400 font-bold">{filtered.length}</strong> sản phẩm cho từ khóa &ldquo;{searchQuery}&rdquo;
+          </span>
+          <button
+            onClick={() => setSearchQuery('')}
+            className="text-xs text-indigo-600 dark:text-cyan-400 hover:underline font-medium"
+          >
+            Bỏ lọc tìm kiếm
+          </button>
+        </div>
+      )}
+
+      {/* Products Grid: 3 Cột Thoáng Đãng Chuẩn Bento */}
       {filtered.length === 0 ? (
-        <div className="text-center py-16 bg-white dark:bg-[#111116] rounded-2xl border-2 border-slate-300 dark:border-white/10 space-y-3 shadow-md">
+        <div className="text-center py-16 bg-white dark:bg-[#111116] rounded-2xl border border-slate-300 dark:border-white/10 space-y-3 shadow-md">
           <p className="text-slate-700 dark:text-slate-300 text-sm font-semibold">Không tìm thấy sản phẩm nào phù hợp.</p>
           <button
             onClick={() => {
@@ -130,14 +158,14 @@ export default function ProductsCatalogClient({ initialProducts, activeCategory 
               setSearchQuery('');
               setCurrentPage(1);
             }}
-            className="text-xs font-bold text-indigo-800 dark:text-indigo-400 hover:opacity-80 underline"
+            className="text-xs font-bold text-indigo-700 dark:text-cyan-400 hover:underline"
           >
             Xem lại tất cả sản phẩm
           </button>
         </div>
       ) : (
         <div className="space-y-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
             {filtered
               .slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
               .map((prod) => (
