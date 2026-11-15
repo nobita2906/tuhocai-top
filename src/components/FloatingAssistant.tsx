@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
-import { MessageCircle, Phone, Sparkles, X, Send, ChevronUp, Bot, ExternalLink } from 'lucide-react';
+import { MessageCircle, Phone, Sparkles, X, Send, Bot, Headset, ChevronRight } from 'lucide-react';
 
 const FAQ_MAP: Record<string, string> = {
   'chua-biet-code':
@@ -19,6 +19,7 @@ const FAQ_MAP: Record<string, string> = {
 
 export default function FloatingAssistant() {
   const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [messages, setMessages] = useState<Array<{ sender: 'bot' | 'user'; text: string }>>([
     {
@@ -27,11 +28,30 @@ export default function FloatingAssistant() {
     },
   ]);
   const [inputVal, setInputVal] = useState('');
-  const [userInteracted, setUserInteracted] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
+  // Đóng menu khi click ra ngoài
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [menuOpen]);
+
+  // Đóng cả menu lẫn chat khi đổi trang
+  useEffect(() => {
+    setMenuOpen(false);
+    setChatOpen(false);
+  }, [pathname]);
 
   const handleQuickAsk = (key: string, label: string) => {
-    setUserInteracted(true);
     setMessages((prev) => [
       ...prev,
       { sender: 'user', text: label },
@@ -41,7 +61,6 @@ export default function FloatingAssistant() {
 
   const handleSend = () => {
     if (!inputVal.trim()) return;
-    setUserInteracted(true);
     const query = inputVal.trim().toLowerCase();
     setInputVal('');
 
@@ -67,56 +86,105 @@ export default function FloatingAssistant() {
     return null;
   }
 
+  const isAnyActive = menuOpen || chatOpen;
+
   return (
     <>
-      {/* Floating Action Buttons */}
-      <div className="fixed right-5 bottom-6 z-40 flex flex-col items-end gap-3">
-        {/* Zalo Button */}
-        <a
-          href="https://zalo.me/0938494303"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group relative w-12 h-12 rounded-full bg-[#0068ff] hover:bg-[#0052cc] text-white flex items-center justify-center shadow-lg shadow-blue-500/30 transition-all hover:scale-110"
-          title="Chat Zalo: 0938.494.303"
-        >
-          <span className="absolute right-14 bg-slate-900 text-white text-[11px] font-semibold px-2.5 py-1 rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-md">
-            Zalo: 0938 494 303
-          </span>
-          <MessageCircle className="w-6 h-6 fill-white" />
-        </a>
+      {/* Backdrop mờ nhẹ khi mở menu trên mobile để thao tác tập trung */}
+      {menuOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/30 backdrop-blur-[2px] transition-opacity duration-200"
+          onClick={() => setMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
 
-        {/* Hotline Phone Button */}
-        <a
-          href="tel:0938494303"
-          className="group relative w-12 h-12 rounded-full bg-emerald-700 hover:opacity-85 text-white flex items-center justify-center shadow-lg shadow-emerald-950/30 transition-all border-2 border-emerald-500"
-          title="Gọi Hotline: 0938.494.303"
-        >
-          <span className="absolute right-14 bg-slate-900 text-white text-[11px] font-semibold px-2.5 py-1 rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-md">
-            Gọi: 0938 494 303
-          </span>
-          <Phone className="w-5 h-5" />
-        </a>
+      {/* Floating Speed Dial Container */}
+      <div ref={menuRef} className="fixed right-4 sm:right-6 bottom-5 sm:bottom-6 z-50 flex flex-col items-end">
+        {/* Expanded Stacked Menu (Chỉ hiện khi bấm mở nút FAB và chat chưa mở) */}
+        {menuOpen && !chatOpen && (
+          <div className="flex flex-col items-end gap-2.5 mb-3 animate-in fade-in slide-in-from-bottom-3 duration-200">
+            {/* Action 1: Trợ lý AI */}
+            <button
+              onClick={() => {
+                setChatOpen(true);
+                setMenuOpen(false);
+              }}
+              className="group flex items-center gap-2.5 cursor-pointer select-none"
+            >
+              <span className="bg-slate-900/95 dark:bg-[#151520]/95 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg border border-slate-700/60 dark:border-white/10 group-hover:scale-105 transition-all">
+                🤖 Hỏi đáp Trợ lý AI
+              </span>
+              <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-indigo-700 to-purple-600 hover:from-indigo-600 hover:to-purple-500 text-white flex items-center justify-center shadow-lg shadow-indigo-600/30 border border-white/20 group-hover:scale-110 active:scale-95 transition-all">
+                <Bot className="w-5 h-5" />
+              </div>
+            </button>
 
-        {/* Chat FAQ Assistant Toggle Button - Đậm đà mặc định, hover mờ lại */}
+            {/* Action 2: Gọi Hotline */}
+            <a
+              href="tel:0938494303"
+              onClick={() => setMenuOpen(false)}
+              className="group flex items-center gap-2.5 select-none"
+            >
+              <span className="bg-slate-900/95 dark:bg-[#151520]/95 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg border border-slate-700/60 dark:border-white/10 group-hover:scale-105 transition-all">
+                📞 Hotline: 0938 494 303
+              </span>
+              <div className="w-11 h-11 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-600/30 border border-white/20 group-hover:scale-110 active:scale-95 transition-all">
+                <Phone className="w-5 h-5" />
+              </div>
+            </a>
+
+            {/* Action 3: Chat Zalo */}
+            <a
+              href="https://zalo.me/0938494303"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMenuOpen(false)}
+              className="group flex items-center gap-2.5 select-none"
+            >
+              <span className="bg-slate-900/95 dark:bg-[#151520]/95 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg border border-slate-700/60 dark:border-white/10 group-hover:scale-105 transition-all">
+                💬 Chat Zalo: 0938 494 303
+              </span>
+              <div className="w-11 h-11 rounded-full bg-[#0068ff] hover:bg-[#0052cc] text-white flex items-center justify-center shadow-lg shadow-blue-500/30 border border-white/20 group-hover:scale-110 active:scale-95 transition-all">
+                <MessageCircle className="w-5 h-5 fill-white" />
+              </div>
+            </a>
+          </div>
+        )}
+
+        {/* Nút FAB Chính duy nhất: Gọn gàng - Không choáng chỗ - Sang trọng */}
         <button
           onClick={() => {
-            setUserInteracted(true);
-            setChatOpen(!chatOpen);
+            if (chatOpen) {
+              setChatOpen(false);
+            } else {
+              setMenuOpen(!menuOpen);
+            }
           }}
-          className="group relative w-13 h-13 rounded-full bg-gradient-to-tr from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-85 text-white flex items-center justify-center shadow-xl shadow-indigo-950/40 border-2 border-indigo-400 transition-all active:scale-[0.98]"
-          title="Trợ lý AI Tự Học AI"
+          className={`relative w-12 h-12 sm:w-13 sm:h-13 rounded-full flex items-center justify-center transition-all duration-300 shadow-xl active:scale-95 cursor-pointer ${
+            isAnyActive
+              ? 'bg-slate-800 hover:bg-slate-700 text-white shadow-black/40 rotate-90 border-2 border-slate-600'
+              : 'bg-gradient-to-tr from-indigo-700 via-indigo-600 to-blue-600 hover:opacity-90 text-white shadow-indigo-600/35 border-2 border-indigo-400/80 hover:scale-105'
+          }`}
+          aria-label={isAnyActive ? 'Đóng menu liên hệ' : 'Mở menu liên hệ & hỗ trợ'}
+          title={isAnyActive ? 'Đóng' : 'Liên hệ & Hỗ trợ AI'}
         >
-          <span className="absolute right-15 bg-slate-900 text-white text-[11px] font-semibold px-2.5 py-1 rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-md">
-            Hỏi đáp Trợ lý AI
-          </span>
-          <Bot className="w-6 h-6" />
-          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-cyan-400 border-2 border-white dark:border-[#09090b] animate-ping" />
+          {isAnyActive ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <>
+              <Headset className="w-6 h-6" />
+              {/* Chấm tròn xanh báo trạng thái Online 24/7 */}
+              <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-slate-900" />
+              <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-400 animate-ping opacity-75" />
+            </>
+          )}
         </button>
       </div>
 
-      {/* Chat Assistant Panel */}
+      {/* Chat Assistant Panel khi mở */}
       {chatOpen && (
-        <div className="fixed right-5 bottom-24 z-50 w-[360px] max-w-[calc(100vw-40px)] max-h-[530px] rounded-2xl bg-white dark:bg-[#111116] border-2 border-slate-300 dark:border-white/20 shadow-2xl overflow-hidden flex flex-col text-slate-900 dark:text-slate-100 animate-in slide-in-from-bottom-5 duration-200">
+        <div className="fixed right-4 sm:right-6 bottom-20 sm:bottom-22 z-50 w-[360px] max-w-[calc(100vw-32px)] max-h-[530px] rounded-2xl bg-white dark:bg-[#111116] border-2 border-slate-300 dark:border-white/20 shadow-2xl overflow-hidden flex flex-col text-slate-900 dark:text-slate-100 animate-in slide-in-from-bottom-5 duration-200">
           {/* Header */}
           <div className="bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 text-white px-4 py-3.5 flex items-center justify-between border-b border-indigo-900">
             <div className="flex items-center gap-2.5">
@@ -130,7 +198,7 @@ export default function FloatingAssistant() {
             </div>
             <button
               onClick={() => setChatOpen(false)}
-              className="p-1 rounded-lg hover:bg-white/20 text-white transition hover:opacity-80"
+              className="p-1 rounded-lg hover:bg-white/20 text-white transition hover:opacity-80 cursor-pointer"
               aria-label="Đóng chat"
             >
               <X className="w-4 h-4" />
@@ -161,25 +229,25 @@ export default function FloatingAssistant() {
           <div className="p-2.5 bg-white dark:bg-[#111116] border-t-2 border-slate-200 dark:border-white/10 flex flex-wrap gap-1.5">
             <button
               onClick={() => handleQuickAsk('chua-biet-code', 'Chưa biết lập trình có học n8n được không?')}
-              className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-indigo-100 dark:bg-indigo-950/50 text-indigo-950 dark:text-indigo-300 border-2 border-indigo-400 dark:border-indigo-600/40 hover:opacity-75 transition-all shadow-xs"
+              className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-indigo-100 dark:bg-indigo-950/50 text-indigo-950 dark:text-indigo-300 border-2 border-indigo-400 dark:border-indigo-600/40 hover:opacity-75 transition-all shadow-xs cursor-pointer"
             >
               Chưa biết code học được n8n?
             </button>
             <button
               onClick={() => handleQuickAsk('cach-thanh-toan', 'Thanh toán & nhận link tải ra sao?')}
-              className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-cyan-100 dark:bg-cyan-950/50 text-cyan-950 dark:text-cyan-300 border-2 border-cyan-400 dark:border-cyan-600/40 hover:opacity-75 transition-all shadow-xs"
+              className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-cyan-100 dark:bg-cyan-950/50 text-cyan-950 dark:text-cyan-300 border-2 border-cyan-400 dark:border-cyan-600/40 hover:opacity-75 transition-all shadow-xs cursor-pointer"
             >
               Cách thanh toán & nhận file?
             </button>
             <button
               onClick={() => handleQuickAsk('kho-cua-toi', 'Kho Của Tôi là gì?')}
-              className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-purple-100 dark:bg-purple-950/50 text-purple-950 dark:text-purple-300 border-2 border-purple-400 dark:border-purple-600/40 hover:opacity-75 transition-all shadow-xs"
+              className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-purple-100 dark:bg-purple-950/50 text-purple-950 dark:text-purple-300 border-2 border-purple-400 dark:border-purple-600/40 hover:opacity-75 transition-all shadow-xs cursor-pointer"
             >
               Kho Của Tôi tải lại file?
             </button>
             <button
               onClick={() => handleQuickAsk('tu-van-skill', 'Nên chọn Skill nào trước?')}
-              className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-950 dark:text-emerald-300 border-2 border-emerald-400 dark:border-emerald-600/40 hover:opacity-75 transition-all shadow-xs"
+              className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-950 dark:text-emerald-300 border-2 border-emerald-400 dark:border-emerald-600/40 hover:opacity-75 transition-all shadow-xs cursor-pointer"
             >
               Tư vấn Skill phù hợp
             </button>
@@ -197,7 +265,7 @@ export default function FloatingAssistant() {
             />
             <button
               onClick={handleSend}
-              className="w-8 h-8 rounded-xl bg-gradient-to-r from-indigo-800 to-blue-700 hover:opacity-85 text-white flex items-center justify-center shrink-0 transition shadow-md shadow-indigo-950/20 active:scale-95"
+              className="w-8 h-8 rounded-xl bg-gradient-to-r from-indigo-800 to-blue-700 hover:opacity-85 text-white flex items-center justify-center shrink-0 transition shadow-md shadow-indigo-950/20 active:scale-95 cursor-pointer"
               aria-label="Gửi tin nhắn"
             >
               <Send className="w-3.5 h-3.5" />

@@ -67,7 +67,7 @@ export default function SocialProofToast() {
   useEffect(() => {
     if (isExcludedPage) return;
 
-    // Lần đầu xuất hiện sau 14 giây để khách làm quen trang web, không bị sốc pop-up
+    // Lần đầu xuất hiện sau 18 giây để khách thong thả đọc nội dung
     const firstTimer = setTimeout(() => {
       let isDismissed = false;
       try {
@@ -78,9 +78,9 @@ export default function SocialProofToast() {
         setCurrent(SAMPLE_EVENTS[0]);
         setVisible(true);
       }
-    }, 14000);
+    }, 18000);
 
-    // Chu kỳ xuất hiện lại giãn cách 60 giây (thay vì 22s dồn dập gây phiền toái)
+    // Chu kỳ xuất hiện lại giãn cách 75 giây để không làm phiền
     const interval = setInterval(() => {
       let isDismissed = false;
       try {
@@ -95,7 +95,7 @@ export default function SocialProofToast() {
         });
         setVisible(true);
       }
-    }, 60000);
+    }, 75000);
 
     return () => {
       clearTimeout(firstTimer);
@@ -103,12 +103,12 @@ export default function SocialProofToast() {
     };
   }, [isExcludedPage, dismissedUntil]);
 
-  // Tự động ẩn toast sau 3.5 giây (vừa đủ lướt mắt qua là biến mất, không chiếm màn hình)
+  // Tự động ẩn toast sau 3.2 giây (vừa đủ nhận diện thông điệp, không chiếm màn hình)
   useEffect(() => {
     if (isExcludedPage || !visible) return;
     const hideTimer = setTimeout(() => {
       setVisible(false);
-    }, 3500);
+    }, 3200);
     return () => clearTimeout(hideTimer);
   }, [visible, current, isExcludedPage]);
 
@@ -118,7 +118,7 @@ export default function SocialProofToast() {
     try {
       sessionStorage.setItem('tuhocai_toast_dismissed', 'true');
     } catch (_) {}
-    setDismissedUntil(Date.now() + 600000); // Tối thiểu 10 phút
+    setDismissedUntil(Date.now() + 600000); // Ẩn ít nhất 10 phút
   };
 
   if (isExcludedPage || !current || !visible) return null;
@@ -126,7 +126,12 @@ export default function SocialProofToast() {
   return (
     <aside
       aria-label="Thông báo giao dịch gần đây"
-      className="fixed left-3 sm:left-6 bottom-4 sm:bottom-6 z-40 max-w-[calc(100vw-88px)] sm:max-w-[420px] py-1.5 pl-2.5 pr-2 rounded-full bg-slate-900/95 dark:bg-[#15151e]/95 backdrop-blur-md border border-slate-700/70 dark:border-white/15 shadow-xl shadow-black/25 text-white flex items-center gap-2 select-none pointer-events-auto transition-all animate-in fade-in slide-in-from-bottom-2 duration-300"
+      className="fixed z-40 select-none pointer-events-auto transition-all
+        /* Mobile: Top Capsule Pill ngay dưới Navbar, không bao giờ che ngón tay hay đáy màn hình */
+        top-18 left-1/2 -translate-x-1/2 w-[92vw] max-w-[360px] animate-in fade-in slide-in-from-top-3 duration-300
+        /* Desktop: Giữ ở góc dưới bên trái */
+        sm:top-auto sm:bottom-6 sm:left-6 sm:translate-x-0 sm:w-auto sm:max-w-[420px] sm:slide-in-from-bottom-2
+        py-1.5 pl-2.5 pr-2 rounded-full bg-slate-900/95 dark:bg-[#15151e]/95 backdrop-blur-md border border-slate-700/70 dark:border-white/15 shadow-xl shadow-black/30 text-white flex items-center gap-2"
     >
       {/* Icon shopping mini với chấm xanh live */}
       <div className="relative w-5 h-5 rounded-full bg-indigo-500/20 text-cyan-300 flex items-center justify-center shrink-0">
