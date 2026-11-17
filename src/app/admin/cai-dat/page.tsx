@@ -28,6 +28,8 @@ import {
   RefreshCw,
   Bot,
   ShoppingCart,
+  Gift,
+  Download,
 } from 'lucide-react';
 
 const POPULAR_BANKS = [
@@ -62,7 +64,11 @@ export default function AdminSettingsPage() {
   const [accountName, setAccountName] = useState('NGUYEN VAN DANG');
   const [hotline, setHotline] = useState('0938.494.303');
   const [zaloGroupUrl, setZaloGroupUrl] = useState('https://zalo.me/g/tuhocai');
+  const [zaloSupportPhone, setZaloSupportPhone] = useState('0938.494.303');
   const [supportEmail, setSupportEmail] = useState('dang@tuhocai.top');
+  const [freeResourceTitle, setFreeResourceTitle] = useState('Trọn Bộ 100+ Prompt FLUX & Kịch Bản Video AI Triệu View');
+  const [freeResourceDesc, setFreeResourceDesc] = useState('Nhập email để nhận ngay file template và tài liệu hướng dẫn vào tài khoản của bạn.');
+  const [freeResourceDownloadUrl, setFreeResourceDownloadUrl] = useState('https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing');
   const [telegramBotToken, setTelegramBotToken] = useState('');
   const [telegramChatId, setTelegramChatId] = useState('');
   const [bannerEnabled, setBannerEnabled] = useState(false);
@@ -75,6 +81,10 @@ export default function AdminSettingsPage() {
   const [sepayApiKey, setSepayApiKey] = useState('');
   const [sepayWebhookSecret, setSepayWebhookSecret] = useState('');
   const [sepayAutoApprove, setSepayAutoApprove] = useState(true);
+
+  // SEO & Analytics Settings
+  const [gaId, setGaId] = useState('');
+  const [googleSiteVerification, setGoogleSiteVerification] = useState('');
 
   const sepayWebhookUrl = 'https://www.tuhocai.top/api/webhook/sepay';
 
@@ -90,7 +100,11 @@ export default function AdminSettingsPage() {
         setAccountName(s.account_name || 'NGUYEN VAN DANG');
         setHotline(s.hotline || '0938.494.303');
         setZaloGroupUrl(s.zalo_group_url || 'https://zalo.me/g/tuhocai');
+        setZaloSupportPhone(s.zalo_support_phone || s.hotline || '0938.494.303');
         setSupportEmail(s.support_email || 'dang@tuhocai.top');
+        setFreeResourceTitle(s.free_resource_title || 'Trọn Bộ 100+ Prompt FLUX & Kịch Bản Video AI Triệu View');
+        setFreeResourceDesc(s.free_resource_desc || 'Nhập email để nhận ngay file template và tài liệu hướng dẫn vào tài khoản của bạn.');
+        setFreeResourceDownloadUrl(s.free_resource_download_url || 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing');
         setTelegramBotToken(s.telegram_bot_token || '');
         setTelegramChatId(s.telegram_chat_id || '');
         setBannerEnabled(Boolean(s.banner_enabled));
@@ -101,6 +115,8 @@ export default function AdminSettingsPage() {
         setSepayApiKey(s.sepay_api_key || '');
         setSepayWebhookSecret(s.sepay_webhook_secret || '');
         setSepayAutoApprove(s.sepay_auto_approve !== undefined ? Boolean(s.sepay_auto_approve) : true);
+        setGaId(s.ga_id || '');
+        setGoogleSiteVerification(s.google_site_verification || '');
 
         // Fetch Webhook info for Telegram
         if (s.telegram_bot_token) {
@@ -147,7 +163,11 @@ export default function AdminSettingsPage() {
           account_name: accountName.trim().toUpperCase(),
           hotline: hotline.trim(),
           zalo_group_url: zaloGroupUrl.trim(),
+          zalo_support_phone: zaloSupportPhone.trim(),
           support_email: supportEmail.trim(),
+          free_resource_title: freeResourceTitle.trim(),
+          free_resource_desc: freeResourceDesc.trim(),
+          free_resource_download_url: freeResourceDownloadUrl.trim(),
           telegram_bot_token: telegramBotToken.trim(),
           telegram_chat_id: telegramChatId.trim(),
           banner_enabled: bannerEnabled,
@@ -158,6 +178,8 @@ export default function AdminSettingsPage() {
           sepay_api_key: sepayApiKey.trim(),
           sepay_webhook_secret: sepayWebhookSecret.trim(),
           sepay_auto_approve: sepayAutoApprove,
+          ga_id: gaId.trim(),
+          google_site_verification: googleSiteVerification.trim(),
         }),
       });
 
@@ -724,41 +746,157 @@ export default function AdminSettingsPage() {
           </div>
         </div>
 
-        {/* Section 4: Contact & Support */}
-        <div className="p-6 rounded-2xl bento-card border-2 border-slate-300 dark:border-white/10 space-y-4">
-          <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
-            <h3 className="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
-              <Phone className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-              Thông tin Liên hệ & Hỗ trợ học viên
-            </h3>
-            <p className="text-xs text-slate-600 dark:text-slate-400">Hiển thị ở chân trang (Footer), trang thanh toán và nút liên hệ</p>
+        {/* Section 4: Lead Magnet & Free 0đ Resource Configuration */}
+        <div className="p-6 rounded-2xl bento-card border-2 border-emerald-500/30 dark:border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+                <Gift className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+                  Phễu Quà Tặng 0đ & Bộ Tài Liệu Miễn Phí (Lead Magnet)
+                  <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-extrabold">
+                    TỰ ĐỘNG PHÁT LINK
+                  </span>
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400">
+                  Cấu hình gói quà tặng 0đ hiển thị trên Trang chủ, Pop-up nhận quà và link tự động gửi cho khách hàng
+                </p>
+              </div>
+            </div>
+
+            {freeResourceDownloadUrl && (
+              <a
+                href={freeResourceDownloadUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="px-3.5 py-1.5 rounded-xl bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5 transition self-start sm:self-auto"
+              >
+                <Download className="w-3.5 h-3.5" />
+                Kiểm tra link tải hiện tại <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                Tiêu đề Gói Quà Tặng 0đ (Hiển thị trên Trang chủ & Pop-up)
+              </label>
+              <input
+                type="text"
+                required
+                value={freeResourceTitle}
+                onChange={(e) => setFreeResourceTitle(e.target.value)}
+                placeholder="Ví dụ: Trọn Bộ 100+ Prompt FLUX & Kịch Bản Video AI Triệu View"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 text-sm font-semibold"
+              />
+              <p className="text-[11px] text-slate-500 mt-1">Xuất hiện tại nút nhận quà trang chủ và tiêu đề popup</p>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+                <span>Đường dẫn Link Tải 0đ (Google Drive / Notion / Bài viết)</span>
+                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-bold">Mở khóa tức thì</span>
+              </label>
+              <input
+                type="url"
+                required
+                value={freeResourceDownloadUrl}
+                onChange={(e) => setFreeResourceDownloadUrl(e.target.value)}
+                placeholder="https://drive.google.com/drive/folders/... hoặc https://notion.so/..."
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 font-mono text-xs"
+              />
+              <p className="text-[11px] text-slate-500 mt-1">Khách điền email xong sẽ được chuyển ngay tới link này</p>
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                Mô tả ngắn giá trị gói tài liệu (Hiển thị dưới tiêu đề)
+              </label>
+              <textarea
+                rows={2}
+                value={freeResourceDesc}
+                onChange={(e) => setFreeResourceDesc(e.target.value)}
+                placeholder="Nhập mô tả tóm tắt những gì người học sẽ nhận được khi tải bộ quà 0đ..."
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 text-xs"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Section 5: Contact & Zalo Community Configuration */}
+        <div className="p-6 rounded-2xl bento-card border-2 border-indigo-500/30 dark:border-indigo-500/20 bg-gradient-to-br from-indigo-500/5 via-transparent to-transparent space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
+                <MessageCircle className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+                  Cộng Đồng Zalo VIP & Kênh Hỗ Trợ Học Viên
+                  <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 font-extrabold">
+                    Zalo Community
+                  </span>
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400">
+                  Cập nhật link nhóm Zalo VIP trên Menu Navbar, nút hỗ trợ nổi và email gửi khách hàng
+                </p>
+              </div>
+            </div>
+
+            {zaloGroupUrl && (
+              <a
+                href={zaloGroupUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="px-3.5 py-1.5 rounded-xl bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30 text-xs font-bold flex items-center gap-1.5 transition self-start sm:self-auto"
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                Mở thử nhóm Zalo VIP <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Hotline / Zalo hỗ trợ</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+                <span>Đường dẫn Nhóm Zalo VIP</span>
+                <span className="text-[10px] text-emerald-600 font-bold">Menu & Nút Zalo</span>
+              </label>
+              <input
+                type="url"
+                required
+                value={zaloGroupUrl}
+                onChange={(e) => setZaloGroupUrl(e.target.value)}
+                placeholder="https://zalo.me/g/tuhocai"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600 text-sm font-mono"
+              />
+              <p className="text-[11px] text-slate-500 mt-1">Đổi tại đây sẽ tự động cập nhật nút Zalo trên toàn bộ website</p>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                Hotline / Số Zalo Cá Nhân Hỗ Trợ
+              </label>
               <input
                 type="text"
                 value={hotline}
-                onChange={(e) => setHotline(e.target.value)}
+                onChange={(e) => {
+                  setHotline(e.target.value);
+                  setZaloSupportPhone(e.target.value);
+                }}
                 placeholder="0938.494.303"
                 className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600 text-sm font-mono"
               />
+              <p className="text-[11px] text-slate-500 mt-1">Hiển thị ở chân trang và nút gọi điện hỗ trợ</p>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Đường dẫn Nhóm Zalo VIP</label>
-              <input
-                type="url"
-                value={zaloGroupUrl}
-                onChange={(e) => setZaloGroupUrl(e.target.value)}
-                placeholder="https://zalo.me/g/..."
-                className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600 text-sm font-mono"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Email Hỗ trợ kỹ thuật</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                Email Hỗ Trợ Kỹ Thuật
+              </label>
               <input
                 type="email"
                 value={supportEmail}
@@ -766,6 +904,7 @@ export default function AdminSettingsPage() {
                 placeholder="dang@tuhocai.top"
                 className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600 text-sm font-mono"
               />
+              <p className="text-[11px] text-slate-500 mt-1">Email nhận phản hồi và xuất hiện trong thư kích hoạt</p>
             </div>
           </div>
         </div>
@@ -865,6 +1004,69 @@ export default function AdminSettingsPage() {
                 className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600 text-sm font-mono"
               />
               <p className="text-[11px] text-slate-500 mt-1">Dùng model gpt-4o-mini</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Section 7: Đo lường & SEO (Google Analytics 4 & Google Search Console) */}
+        <div className="p-6 rounded-2xl bento-card border-2 border-slate-300 dark:border-white/10 space-y-4">
+          <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
+            <h3 className="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+              <Zap className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              Đo lường & SEO (Google Analytics 4 & Google Search Console)
+            </h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400">
+              Cấu hình mã theo dõi lưu lượng truy cập thực tế và xác minh quyền sở hữu website với Google
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                Mã Google Analytics 4 (Measurement ID)
+              </label>
+              <input
+                type="text"
+                value={gaId}
+                onChange={(e) => setGaId(e.target.value)}
+                placeholder="G-XXXXXXXXXX"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600 text-sm font-mono"
+              />
+              <p className="text-[11px] text-slate-500 mt-1">
+                Lấy mã luồng dữ liệu (Data Stream) tại{' '}
+                <a
+                  href="https://analytics.google.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-indigo-600 dark:text-indigo-400 font-bold hover:underline"
+                >
+                  Google Analytics
+                </a>
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                Mã xác minh Google Search Console (Verification Token)
+              </label>
+              <input
+                type="text"
+                value={googleSiteVerification}
+                onChange={(e) => setGoogleSiteVerification(e.target.value)}
+                placeholder="Mã thẻ HTML (chuỗi nội dung trong content='...')"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-600 text-sm font-mono"
+              />
+              <p className="text-[11px] text-slate-500 mt-1">
+                Xác minh domain tại{' '}
+                <a
+                  href="https://search.google.com/search-console"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-indigo-600 dark:text-indigo-400 font-bold hover:underline"
+                >
+                  Google Search Console
+                </a>
+              </p>
             </div>
           </div>
         </div>

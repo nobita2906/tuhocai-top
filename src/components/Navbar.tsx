@@ -14,6 +14,16 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [vaultOpen, setVaultOpen] = useState(false);
+  const [zaloGroupUrl, setZaloGroupUrl] = useState('https://zalo.me/g/tuhocai');
+
+  useEffect(() => {
+    fetch('/api/settings/public')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.zalo_group_url) setZaloGroupUrl(data.zalo_group_url);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     fetch('/api/auth/me')
@@ -133,7 +143,7 @@ export default function Navbar() {
 
             {/* Nhóm Zalo VIP - Đậm đà mặc định, hover mờ lại */}
             <a
-              href="https://zalo.me/g/tuhocai"
+              href={zaloGroupUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="whitespace-nowrap shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold text-emerald-950 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-500/20 hover:opacity-75 border-2 border-emerald-400 dark:border-emerald-500/40 transition-all shadow-xs ml-0.5"
@@ -263,7 +273,7 @@ export default function Navbar() {
             </button>
 
             <a
-              href="https://zalo.me/g/tuhocai"
+              href={zaloGroupUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-bold text-emerald-800 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-300 dark:border-emerald-500/25"

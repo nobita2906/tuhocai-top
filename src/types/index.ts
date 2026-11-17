@@ -1,4 +1,4 @@
-export type UserRole = 'USER' | 'ADMIN';
+export type UserRole = 'USER' | 'EDITOR' | 'ADMIN';
 
 export interface User {
   id: string;
@@ -11,7 +11,7 @@ export interface User {
   updated_at: string;
 }
 
-export type PostCategory = 'NEWS' | 'PROMPT' | 'SKILL' | 'WORKFLOW';
+export type PostCategory = 'NEWS' | 'PROMPT' | 'SKILL' | 'WORKFLOW' | 'TUTORIAL';
 
 export interface Post {
   id: string;

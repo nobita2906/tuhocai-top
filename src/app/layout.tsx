@@ -7,6 +7,7 @@ import TopBanner from '@/components/TopBanner';
 import SocialProofToast from '@/components/SocialProofToast';
 import FloatingAssistant from '@/components/FloatingAssistant';
 import AffiliateTracker from '@/components/AffiliateTracker';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin', 'vietnamese'],
@@ -59,6 +60,9 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Tự Học AI TOP - Kho Công Cụ AI & Tự Động Hóa Thực Chiến',
     description: 'Kho công cụ AI thực chiến giúp bạn làm nội dung, xây kênh và kiếm tiền nhanh hơn.',
+  },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '',
   },
 };
 
@@ -117,6 +121,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-slate-50 dark:bg-[#09090b] text-slate-900 dark:text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white transition-colors duration-200">
+        <GoogleAnalytics />
         <TopBanner />
         <Navbar />
         <AffiliateTracker />

@@ -7,6 +7,9 @@ import { Product, Post } from '@/types';
 import ProductCard from '@/components/ProductCard';
 import LeadMagnetModal from '@/components/LeadMagnetModal';
 import FeaturedSlideSection from '@/components/FeaturedSlideSection';
+import InteractiveRoadmap from '@/components/InteractiveRoadmap';
+import TutorialsPlaybookSection from '@/components/TutorialsPlaybookSection';
+import TechNewsCompactList from '@/components/TechNewsCompactList';
 import {
   Zap,
   Clock,
@@ -42,29 +45,21 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
   const [homeSearchQuery, setHomeSearchQuery] = useState('');
   const [leadModalOpen, setLeadModalOpen] = useState(false);
   const [selectedResource, setSelectedResource] = useState<{ id: string; name: string; url?: string } | null>(null);
-
-  // Email Lead Magnet Section state
-  const [leadName, setLeadName] = useState('');
-  const [leadEmail, setLeadEmail] = useState('');
-  const [leadLoading, setLeadLoading] = useState(false);
-  const [leadSuccess, setLeadSuccess] = useState<string | null>(null);
-  const [leadError, setLeadError] = useState('');
-  const [currentUser, setCurrentUser] = useState<{ name: string; email: string } | null>(null);
+  const [publicSettings, setPublicSettings] = useState<{
+    zalo_group_url?: string;
+    hotline?: string;
+    free_resource_title?: string;
+    free_resource_download_url?: string;
+  }>({});
 
   useEffect(() => {
-    fetch('/api/auth/me')
+    fetch('/api/settings/public')
       .then((res) => res.json())
-      .then((data) => {
-        if (data.authenticated && data.user) {
-          setCurrentUser(data.user);
-          setLeadName((prev) => prev || data.user.name || '');
-          setLeadEmail((prev) => prev || data.user.email || '');
-        }
-      })
+      .then((data) => setPublicSettings(data))
       .catch(() => {});
   }, []);
 
-  // Filter products & Ưu tiên hiển thị sản phẩm 0Đ lên đầu
+  // Filter products & Ở tab Tất cả: Ưu tiên hiển thị sản phẩm VIP có phí để định vị thương hiệu chuyên nghiệp
   const filteredProducts = initialProducts
     .filter((p) => {
       const matchSearch =
@@ -78,15 +73,10 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
       if (activeTab === 'workflow') return p.category?.toLowerCase().includes('workflow');
       if (activeTab === 'skill') return p.category?.toLowerCase().includes('skill');
       if (activeTab === 'prompt') return p.category?.toLowerCase().includes('prompt');
-      return true;
+      // Ở tab "Tất cả": Ưu tiên hiển thị sản phẩm VIP có phí để định vị thương hiệu chuyên nghiệp
+      return p.price > 0;
     })
-    .sort((a, b) => {
-      const isAFree = a.price === 0;
-      const isBFree = b.price === 0;
-      if (isAFree && !isBFree) return -1;
-      if (!isAFree && isBFree) return 1;
-      return (b.sales_count || 0) - (a.sales_count || 0);
-    });
+    .sort((a, b) => (b.sales_count || 0) - (a.sales_count || 0));
 
   const handleOpenFreeModal = (product?: Product) => {
     if (product) {
@@ -98,41 +88,11 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
     } else {
       setSelectedResource({
         id: 'FREE-BUNDLE-2026',
-        name: 'Trọn bộ 100+ Prompt FLUX & Midjourney Thương Mại',
+        name: publicSettings.free_resource_title || 'Trọn bộ 100+ Prompt FLUX & Midjourney Thương Mại',
+        url: publicSettings.free_resource_download_url,
       });
     }
     setLeadModalOpen(true);
-  };
-
-  const handleLeadSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLeadLoading(true);
-    setLeadError('');
-    setLeadSuccess(null);
-
-    try {
-      const res = await fetch('/api/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: leadName,
-          email: leadEmail,
-          resource_id: 'FREE-FOOTER-MAGNET',
-          resource_name: 'Trọn bộ 100+ Prompt & Flow Tự Động Hóa',
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Có lỗi xảy ra');
-
-      setLeadSuccess(data.download_url || 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026');
-      setLeadName('');
-      setLeadEmail('');
-    } catch (err: any) {
-      setLeadError(err.message || 'Lỗi gửi thông tin');
-    } finally {
-      setLeadLoading(false);
-    }
   };
 
   return (
@@ -161,12 +121,12 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
             Cần tư vấn chọn công cụ phù hợp? Gọi / Zalo:{' '}
             <a
-              href="https://zalo.me/0934434101"
+              href={`https://zalo.me/${(publicSettings.hotline || '0938494303').replace(/[^0-9]/g, '')}`}
               target="_blank"
               rel="noreferrer"
               className="text-indigo-800 dark:text-cyan-400 font-bold hover:underline"
             >
-              0934.434.101
+              {publicSettings.hotline || '0938.494.303'}
             </a>
           </p>
 
@@ -189,7 +149,7 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
             </button>
 
             <a
-              href="https://zalo.me/g/tuhocai"
+              href={publicSettings.zalo_group_url || 'https://zalo.me/g/tuhocai'}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 hover:opacity-85 text-emerald-900 dark:text-emerald-400 border-2 border-emerald-400 dark:border-emerald-500/30 font-bold text-sm transition-all shadow-xs"
@@ -292,194 +252,20 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
         )}
       </section>
 
-      {/* 5. LEAD MAGNET SECTION (100+ Prompt FLUX) */}
-      <section id="tai-lieu-free" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bento-card p-6 sm:p-8 relative overflow-hidden border-2 border-indigo-200 dark:border-indigo-500/25 shadow-md">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-7 space-y-4">
-              <span className="font-mono text-xs uppercase font-bold tracking-wider text-indigo-800 dark:text-cyan-400">
-                {'// MIỄN PHÍ DÀNH CHO BẠN'}
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                Tải Trọn Bộ 100+ Prompt FLUX & App Flow Tự Động
-              </h2>
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
-                Nhập tên và email để hệ thống tự động kích hoạt file template và tài liệu hướng dẫn vào tài khoản của bạn.
-              </p>
+      {/* 4. INTERACTIVE ROADMAP & STARTER KIT (PHƯƠNG ÁN 2 - BỐ CỤC ĐỘT PHÁ, KHÔNG CÒN TRÙNG LẶP 0Đ) */}
+      <InteractiveRoadmap
+        products={initialProducts}
+        onClaimFree={(title, id) => {
+          setSelectedResource({ id, name: title });
+          setLeadModalOpen(true);
+        }}
+      />
 
-              <form onSubmit={handleLeadSubmit} className="space-y-3 pt-2">
-                {currentUser && (
-                  <div className="p-2.5 px-3.5 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/30 text-xs flex items-center justify-between text-indigo-950 dark:text-indigo-300">
-                    <span className="font-semibold">
-                      Tài khoản nhận: <strong className="font-bold">{currentUser.email}</strong>
-                    </span>
-                    <span className="text-[10px] font-black uppercase tracking-wider bg-indigo-200/60 dark:bg-indigo-500/30 px-2 py-0.5 rounded text-indigo-800 dark:text-cyan-300">
-                      ✓ ĐÃ ĐĂNG NHẬP
-                    </span>
-                  </div>
-                )}
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <input
-                    type="text"
-                    required
-                    placeholder="Họ và tên của bạn"
-                    value={leadName}
-                    onChange={(e) => setLeadName(e.target.value)}
-                    className="flex-1 px-4 py-3 rounded-xl bg-white dark:bg-[#09090b] border-2 border-slate-300 dark:border-white/[0.1] text-slate-900 dark:text-white text-sm focus:outline-none focus:border-indigo-700 transition-colors shadow-xs"
-                  />
-                  <input
-                    type="email"
-                    required
-                    placeholder="Email nhận link tải"
-                    value={leadEmail}
-                    onChange={(e) => setLeadEmail(e.target.value)}
-                    className="flex-1 px-4 py-3 rounded-xl bg-white dark:bg-[#09090b] border-2 border-slate-300 dark:border-white/[0.1] text-slate-900 dark:text-white text-sm focus:outline-none focus:border-indigo-700 transition-colors shadow-xs"
-                  />
-                  <button
-                    type="submit"
-                    disabled={leadLoading}
-                    className="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-85 text-white font-bold text-sm transition-all flex items-center justify-center gap-2 flex-shrink-0 disabled:opacity-50 shadow-lg shadow-indigo-950/25"
-                  >
-                    {leadLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                    Nhận Link Tải
-                  </button>
-                </div>
+      {/* 5. HƯỚNG DẪN THỰC CHIẾN & PLAYBOOKS (TÁCH BIỆT HOÀN TOÀN, CARD PLAYBOOK NỔI BẬT) */}
+      <TutorialsPlaybookSection posts={initialPosts} />
 
-                {leadSuccess && (
-                  <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border-2 border-emerald-300 dark:border-emerald-500/30 text-emerald-900 dark:text-emerald-400 text-xs flex items-center justify-between font-bold">
-                    <span>Thành công! Đã gửi link tải.</span>
-                    <a
-                      href={leadSuccess}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline font-bold"
-                    >
-                      Bấm vào đây để tải ngay
-                    </a>
-                  </div>
-                )}
-
-                {leadError && (
-                  <p className="text-rose-600 dark:text-rose-400 text-xs font-semibold">{leadError}</p>
-                )}
-
-                <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">
-                  Link được mở khóa trực tiếp và tự động gửi qua email từ Resend.
-                </p>
-              </form>
-            </div>
-
-            <div className="lg:col-span-5 space-y-2">
-              <div className="relative rounded-2xl overflow-hidden border-2 border-slate-300 dark:border-white/[0.1] bg-slate-100 dark:bg-slate-950 aspect-video shadow-md">
-                <Image
-                  src="/images/flux-prompt-bundle.jpg"
-                  alt="Bộ ảnh mẫu thực tế tạo từ Prompt FLUX & Midjourney"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 40vw"
-                />
-              </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 text-center font-mono">
-                Mẫu ảnh thực tế: Sản phẩm thương mại • Kiến trúc • Kỹ thuật số
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 6. NEWS & GUIDES SECTION - 3 Cột Thoáng Đãng Chuẩn Tạp Chí */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Tin Tức & Hướng Dẫn AI Thực Chiến
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
-              Cập nhật kiến thức mới nhất về Prompt Engineering, Tự động hóa n8n và các mô hình AI.
-            </p>
-          </div>
-          <Link
-            href="/bai-viet"
-            className="text-xs sm:text-sm font-bold text-indigo-700 dark:text-cyan-400 hover:underline flex items-center gap-1 font-mono shrink-0"
-          >
-            <span>Xem tất cả bài viết</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-
-        {/* 3 Cột Bài Viết Tinh Tuyển */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-          {initialPosts.slice(0, 3).map((post) => (
-            <article
-              key={post.id}
-              className="bento-card p-4 sm:p-5 flex flex-col group transition-all duration-300 border-2 border-slate-300 dark:border-white/10 hover:border-indigo-400/50 dark:hover:border-indigo-500/40 hover:shadow-xl shadow-md rounded-2xl bg-white dark:bg-[#0e0e13]"
-            >
-              {/* Visual Thumbnail */}
-              <Link
-                href={`/bai-viet/${post.slug}`}
-                className="block relative aspect-[16/10] w-full overflow-hidden rounded-xl bg-slate-100 dark:bg-[#15151c] mb-4 border border-slate-300/80 dark:border-white/10 group-hover:opacity-95 transition-all shadow-inner"
-              >
-                <Image
-                  src={getPostCover(post)}
-                  alt={post.title}
-                  fill
-                  unoptimized
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover object-center group-hover:scale-[1.03] transition-transform duration-500 ease-out"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 dark:from-[#09090b]/80 via-transparent to-transparent pointer-events-none" />
-                <div className="absolute top-2.5 left-2.5">
-                  <span className="px-2.5 py-1 rounded-md bg-slate-900/85 backdrop-blur-md text-[10px] font-mono font-bold text-cyan-300 border border-white/20 shadow-sm">
-                    {post.category || 'KIẾN THỨC AI'}
-                  </span>
-                </div>
-              </Link>
-
-              {/* Title & Summary */}
-              <div className="flex-1 flex flex-col justify-between space-y-2">
-                <div>
-                  <Link href={`/bai-viet/${post.slug}`} className="group/title block">
-                    <h3 className="font-bold text-slate-900 dark:text-white text-base sm:text-lg line-clamp-2 leading-snug group-hover/title:text-indigo-600 dark:group-hover/title:text-cyan-400 transition-colors">
-                      {post.title}
-                    </h3>
-                  </Link>
-
-                  <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                    {post.summary || 'Hướng dẫn chi tiết từng bước xây dựng quy trình và làm chủ công cụ AI thực tế.'}
-                  </p>
-                </div>
-
-                {/* Footer Meta: Ngày đăng + Nút đọc */}
-                <div className="pt-3.5 mt-2 border-t border-slate-200 dark:border-white/[0.08] flex items-center justify-between text-xs font-mono">
-                  <span className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 font-semibold">
-                    <Clock className="w-3.5 h-3.5 text-indigo-600 dark:text-cyan-400" />
-                    {new Date(post.created_at).toLocaleDateString('vi-VN')}
-                  </span>
-
-                  <Link
-                    href={`/bai-viet/${post.slug}`}
-                    className="font-bold text-indigo-700 dark:text-cyan-400 hover:underline flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
-                  >
-                    <span>Đọc bài viết</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        {/* Nút Khám Phá Toàn Bộ Bài Viết */}
-        <div className="text-center pt-2">
-          <Link
-            href="/bai-viet"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.05] dark:hover:bg-white/[0.1] text-slate-900 dark:text-white font-bold text-xs sm:text-sm border border-slate-300 dark:border-white/10 transition-all hover:scale-[1.01] active:scale-[0.99] shadow-xs"
-          >
-            <span>Xem toàn bộ cẩm nang & bài viết hướng dẫn AI</span>
-            <ArrowRight className="w-4 h-4 text-indigo-600 dark:text-cyan-400" />
-          </Link>
-        </div>
-      </section>
+      {/* 6. BẢN TIN AI & XU HƯỚNG CÔNG NGHỆ (DẠNG THẺ NHỎ DANH SÁCH COMPACT LIST, LƯỚT SIÊU NHANH) */}
+      <TechNewsCompactList posts={initialPosts} />
 
       {/* Lead Magnet Modal */}
       <LeadMagnetModal

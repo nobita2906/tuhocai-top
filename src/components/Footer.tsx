@@ -1,7 +1,18 @@
 import Link from 'next/link';
 import { MessageCircle, Phone, Mail, ShieldCheck, Heart, Cpu } from 'lucide-react';
+import { getSiteSettings } from '@/lib/settings';
 
-export default function Footer() {
+export default async function Footer() {
+  const settings = await getSiteSettings().catch(() => ({
+    hotline: '0938.494.303',
+    zalo_group_url: 'https://zalo.me/g/tuhocai',
+    support_email: 'dang@tuhocai.top',
+  }));
+
+  const zaloGroup = settings.zalo_group_url || 'https://zalo.me/g/tuhocai';
+  const hotline = settings.hotline || '0938.494.303';
+  const email = settings.support_email || 'dang@tuhocai.top';
+
   return (
     <footer className="w-full border-t-2 border-slate-300 dark:border-white/[0.08] bg-slate-100/90 dark:bg-[#09090b] text-slate-700 dark:text-slate-400 transition-colors duration-200">
       {/* Top CTA Banner with subtle tech glow */}
@@ -20,7 +31,7 @@ export default function Footer() {
             </p>
           </div>
           <a
-            href="https://zalo.me/g/tuhocai"
+            href={zaloGroup}
             target="_blank"
             rel="noopener noreferrer"
             className="flex-shrink-0 inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-700 hover:opacity-85 text-white font-bold text-sm shadow-xl shadow-emerald-950/25 border-2 border-emerald-500 transition-all active:scale-[0.98]"
@@ -77,15 +88,15 @@ export default function Footer() {
           <ul className="space-y-2.5 text-xs">
             <li className="flex items-center gap-2">
               <Phone className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-              <span>Hotline / Zalo: <strong className="text-slate-900 dark:text-white font-mono">0938.494.303</strong> (Đăng)</span>
+              <span>Hotline / Zalo: <strong className="text-slate-900 dark:text-white font-mono">{hotline}</strong> (Đăng)</span>
             </li>
             <li className="flex items-center gap-2">
               <Mail className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-              <span>Email: <strong className="text-slate-900 dark:text-white font-mono">dang@tuhocai.top</strong></span>
+              <span>Email: <strong className="text-slate-900 dark:text-white font-mono">{email}</strong></span>
             </li>
             <li className="flex items-center gap-2">
               <MessageCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              <span>Zalo Admin: <a href="https://zalo.me/0938494303" target="_blank" className="text-emerald-600 dark:text-emerald-400 hover:underline font-mono">0938 494 303</a></span>
+              <span>Zalo Admin: <a href={`https://zalo.me/${hotline.replace(/[^0-9]/g, '')}`} target="_blank" className="text-emerald-600 dark:text-emerald-400 hover:underline font-mono">{hotline}</a></span>
             </li>
           </ul>
         </div>

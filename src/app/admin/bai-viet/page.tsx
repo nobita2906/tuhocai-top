@@ -16,6 +16,7 @@ import {
   Clock,
 } from 'lucide-react';
 import Pagination from '@/components/ui/Pagination';
+import { POST_CATEGORIES } from '@/lib/postTaxonomy';
 
 export default function AdminPostsPage() {
   const [posts, setPosts] = useState<any[]>([]);
@@ -126,17 +127,27 @@ export default function AdminPostsPage() {
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 rounded-2xl bento-card border-2 border-slate-300 dark:border-white/10">
         {/* Category tabs */}
         <div className="flex flex-wrap items-center gap-1.5">
-          {['ALL', 'NEWS', 'WORKFLOW', 'PROMPT', 'SKILL'].map((cat) => (
+          <button
+            onClick={() => setCategory('ALL')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              category === 'ALL'
+                ? 'bg-gradient-to-r from-indigo-700 via-indigo-800 to-blue-800 text-white shadow-md shadow-indigo-600/30'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.05]'
+            }`}
+          >
+            Tất cả ({posts.length})
+          </button>
+          {POST_CATEGORIES.map((cat) => (
             <button
-              key={cat}
-              onClick={() => setCategory(cat)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                category === cat
+              key={cat.value}
+              onClick={() => setCategory(cat.value)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                category === cat.value
                   ? 'bg-gradient-to-r from-indigo-700 via-indigo-800 to-blue-800 text-white shadow-md shadow-indigo-600/30'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.05]'
               }`}
             >
-              {cat === 'ALL' ? 'Tất cả' : cat}
+              {cat.label.split('(')[0].trim()}
             </button>
           ))}
         </div>

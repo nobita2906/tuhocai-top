@@ -31,14 +31,9 @@ import {
   GraduationCap,
 } from 'lucide-react';
 import { slugifyVietnamese } from '@/lib/slugify';
-
-const CATEGORIES = [
-  { value: 'NEWS', label: 'Tin tức & Xu hướng' },
-  { value: 'WORKFLOW', label: 'Quy trình AI Automation' },
-  { value: 'PROMPT', label: 'Prompt Engineering' },
-  { value: 'SKILL', label: 'Kỹ năng & Agent Coding' },
-  { value: 'TUTORIAL', label: 'Hướng dẫn thực chiến' },
-];
+import { POST_CATEGORIES } from '@/lib/postTaxonomy';
+import AdminTagSelector from '@/components/AdminTagSelector';
+import WordRichTextEditor from '@/components/WordRichTextEditor';
 
 const SAMPLE_THUMBNAILS = [
   'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
@@ -50,7 +45,6 @@ const SAMPLE_THUMBNAILS = [
 export default function NewPostPage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const inlineFileInputRef = useRef<HTMLInputElement>(null);
 
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
@@ -78,7 +72,6 @@ export default function NewPostPage() {
       .catch(() => {});
   }, []);
 
-  const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -91,31 +84,12 @@ export default function NewPostPage() {
 
   // Image Upload State
   const [uploadingThumb, setUploadingThumb] = useState(false);
-  const [uploadingInline, setUploadingInline] = useState(false);
 
   const handleTitleChange = (val: string) => {
     setTitle(val);
     if (!isSlugManual) {
       setSlug(slugifyVietnamese(val));
     }
-  };
-
-  const insertSnippet = (prefix: string, suffix = '') => {
-    const textarea = document.getElementById('post-content-area') as HTMLTextAreaElement | null;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selected = content.substring(start, end);
-    const replacement = `${prefix}${selected || 'nội dung'}${suffix}`;
-
-    const newContent = content.substring(0, start) + replacement + content.substring(end);
-    setContent(newContent);
-
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + prefix.length, start + prefix.length + (selected || 'nội dung').length);
-    }, 50);
   };
 
   // Upload Thumbnail
@@ -143,34 +117,6 @@ export default function NewPostPage() {
       alert(err.message || 'Lỗi tải ảnh');
     } finally {
       setUploadingThumb(false);
-    }
-  };
-
-  // Upload Inline Image to Content
-  const handleInlineImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      setUploadingInline(true);
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const res = await fetch('/api/admin/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Lỗi khi tải ảnh lên');
-      }
-
-      insertSnippet(`\n\n![${file.name.replace(/\.[^/.]+$/, '')}](${data.url})\n\n`, '');
-    } catch (err: any) {
-      alert(err.message || 'Lỗi tải ảnh vào bài viết');
-    } finally {
-      setUploadingInline(false);
     }
   };
 
@@ -378,146 +324,17 @@ export default function NewPostPage() {
           </div>
 
           {/* Content Editor */}
-          <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3 flex-wrap gap-2">
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('edit')}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-                    activeTab === 'edit'
-                      ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <FileEdit className="w-4 h-4 inline mr-1.5" />
-                  Soạn thảo
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('preview')}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-                    activeTab === 'preview'
-                      ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <Eye className="w-4 h-4 inline mr-1.5" />
-                  Xem trước
-                </button>
-              </div>
-
-              {activeTab === 'edit' && (
-                <div className="flex items-center gap-1 flex-wrap">
-                  <button
-                    type="button"
-                    onClick={() => insertSnippet('## ', '')}
-                    className="p-1.5 rounded text-slate-400 hover:text-white hover:bg-slate-800"
-                    title="Tiêu đề H2"
-                  >
-                    <Heading2 className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertSnippet('### ', '')}
-                    className="p-1.5 rounded text-slate-400 hover:text-white hover:bg-slate-800"
-                    title="Tiêu đề H3"
-                  >
-                    <Heading3 className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertSnippet('**', '**')}
-                    className="p-1.5 rounded text-slate-400 hover:text-white hover:bg-slate-800"
-                    title="In đậm"
-                  >
-                    <Bold className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertSnippet('*', '*')}
-                    className="p-1.5 rounded text-slate-400 hover:text-white hover:bg-slate-800"
-                    title="In nghiêng"
-                  >
-                    <Italic className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertSnippet('> ', '')}
-                    className="p-1.5 rounded text-slate-400 hover:text-white hover:bg-slate-800"
-                    title="Trích dẫn"
-                  >
-                    <Quote className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertSnippet('```typescript\n', '\n```')}
-                    className="p-1.5 rounded text-slate-400 hover:text-white hover:bg-slate-800"
-                    title="Khối Code"
-                  >
-                    <Code2 className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertSnippet('- ', '')}
-                    className="p-1.5 rounded text-slate-400 hover:text-white hover:bg-slate-800"
-                    title="Danh sách"
-                  >
-                    <List className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertSnippet('[Liên kết](', ')')}
-                    className="p-1.5 rounded text-slate-400 hover:text-white hover:bg-slate-800"
-                    title="Chèn link"
-                  >
-                    <Link2 className="w-4 h-4" />
-                  </button>
-
-                  {/* Inline Image Upload */}
-                  <input
-                    type="file"
-                    ref={inlineFileInputRef}
-                    onChange={handleInlineImageUpload}
-                    accept="image/*"
-                    className="hidden"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => inlineFileInputRef.current?.click()}
-                    disabled={uploadingInline}
-                    className="flex items-center gap-1 px-2 py-1 rounded text-xs bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 transition disabled:opacity-50 ml-1"
-                    title="Tải ảnh từ máy tính chèn vào bài"
-                  >
-                    {uploadingInline ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <UploadCloud className="w-3.5 h-3.5" />}
-                    <span>Chèn ảnh máy tính</span>
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {activeTab === 'edit' ? (
-              <div>
-                <textarea
-                  id="post-content-area"
-                  rows={18}
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="Nhập nội dung bài viết bằng Markdown hoặc HTML thuần..."
-                  className="w-full px-4 py-3 rounded-xl bg-slate-950/70 border border-slate-800 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 font-mono text-sm leading-relaxed"
-                />
-              </div>
-            ) : (
-              <div className="min-h-[420px] p-6 rounded-xl bg-slate-950/70 border border-slate-800 text-slate-300 prose prose-invert max-w-none">
-                {content ? (
-                  <div className="space-y-4 whitespace-pre-line leading-relaxed">
-                    {content}
-                  </div>
-                ) : (
-                  <p className="text-slate-600 italic">Chưa có nội dung để xem trước.</p>
-                )}
-              </div>
-            )}
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2 flex items-center justify-between">
+              <span>Nội dung bài viết <span className="text-red-400">*</span></span>
+              <span className="text-xs text-indigo-400 font-normal">Trình soạn thảo trực quan chuẩn Word WYSIWYG</span>
+            </label>
+            <WordRichTextEditor
+              value={content}
+              onChange={setContent}
+              placeholder="Nhập nội dung bài viết, bôi đen văn bản để định dạng hoặc tải ảnh từ máy tính..."
+              minHeight="540px"
+            />
           </div>
         </div>
 
@@ -685,30 +502,34 @@ export default function NewPostPage() {
 
           {/* Category */}
           <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
-            <label className="block text-sm font-semibold text-white">Chuyên mục</label>
+            <div className="flex items-center justify-between">
+              <label className="block text-sm font-semibold text-white">Chuyên mục bài viết</label>
+              <span className="text-[11px] font-mono text-slate-400">Định tuyến hiển thị trang chủ</span>
+            </div>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-white focus:outline-none focus:border-indigo-500 text-sm"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-white focus:outline-none focus:border-indigo-500 text-sm font-semibold"
             >
-              {CATEGORIES.map((cat) => (
+              {POST_CATEGORIES.map((cat) => (
                 <option key={cat.value} value={cat.value}>
                   {cat.label}
                 </option>
               ))}
             </select>
+            {/* Mô tả giải thích chuyên mục */}
+            <p className="text-[11px] text-slate-400 leading-relaxed font-mono">
+              💡 {POST_CATEGORIES.find((c) => c.value === category)?.desc}
+            </p>
           </div>
 
-          {/* Tags */}
+          {/* Tags Chuẩn hóa theo nhóm */}
           <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
-            <label className="block text-sm font-semibold text-white">Thẻ tags</label>
-            <input
-              type="text"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-              placeholder="AI, Prompt, Cursor, NextJS..."
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 text-sm"
-            />
+            <div className="flex items-center justify-between">
+              <label className="block text-sm font-semibold text-white">Thẻ tags bài viết</label>
+              <span className="text-[11px] font-mono text-cyan-400">Chuẩn hóa dữ liệu</span>
+            </div>
+            <AdminTagSelector tagsString={tags} onChange={setTags} />
           </div>
 
           {/* Thumbnail */}
@@ -814,7 +635,7 @@ export default function NewPostPage() {
                     onChange={(e) => setCategory(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:border-indigo-500"
                   >
-                    {CATEGORIES.map((cat) => (
+                    {POST_CATEGORIES.map((cat) => (
                       <option key={cat.value} value={cat.value}>
                         {cat.label}
                       </option>

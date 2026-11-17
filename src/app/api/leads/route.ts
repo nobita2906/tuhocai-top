@@ -2,10 +2,12 @@ import { NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
 import { execute, query } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth';
+import { getSiteSettings } from '@/lib/settings';
 
 export async function POST(req: Request) {
   try {
     const { name, email, phone, resource_id, resource_name } = await req.json();
+    const siteSettings = await getSiteSettings();
 
     // Check if user is logged in
     const session = await getCurrentUser();
@@ -32,11 +34,11 @@ export async function POST(req: Request) {
     await execute(
       `INSERT INTO leads (id, user_id, name, email, phone, resource_id, resource_name, source)
        VALUES (?, ?, ?, ?, ?, ?, ?, 'free_download')`,
-      [leadId, userId, cleanName, cleanEmail, cleanPhone || null, resource_id || 'FREE-ALL', resource_name || 'Bộ Tài Liệu AI Miễn Phí']
+      [leadId, userId, cleanName, cleanEmail, cleanPhone || null, resource_id || 'FREE-ALL', resource_name || siteSettings.free_resource_title || 'Bộ Tài Liệu AI Miễn Phí']
     );
 
     // If resource_id corresponds to a product in products table, find its download link
-    let downloadUrl = 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing';
+    let downloadUrl = siteSettings.free_resource_download_url || 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing';
     if (resource_id) {
       const prods = await query<any>('SELECT * FROM products WHERE pid = ? OR id = ? LIMIT 1', [resource_id, resource_id]);
       if (prods.length > 0) {
@@ -56,8 +58,8 @@ export async function POST(req: Request) {
       success: true,
       message: 'Đăng ký nhận tài liệu thành công!',
       download_url: downloadUrl,
-      zalo_group: process.env.NEXT_PUBLIC_ZALO_GROUP || 'https://zalo.me/g/tuhocai',
-      zalo_support: process.env.NEXT_PUBLIC_ZALO_SUPPORT || '0938494303'
+      zalo_group: siteSettings.zalo_group_url || 'https://zalo.me/g/tuhocai',
+      zalo_support: siteSettings.zalo_support_phone || siteSettings.hotline || '0938.494.303'
     });
   } catch (err: any) {
     console.error('Lead capture error:', err);

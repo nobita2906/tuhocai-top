@@ -4,6 +4,7 @@ import { verifyAdminSession, unauthorizedAdminResponse } from '@/lib/adminAuth';
 import { query, execute } from '@/lib/db';
 import { sendOrderApprovedEmail } from '@/lib/email';
 import { approveAffiliateCommission, cancelAffiliateCommission } from '@/lib/affiliate';
+import { logAudit } from '@/lib/audit';
 
 export async function GET(req: Request) {
   const admin = await verifyAdminSession();
@@ -104,6 +105,21 @@ export async function PUT(req: Request) {
       );
     }
 
+
+    // Ghi nhận Audit Log
+    await logAudit({
+      action: status === 'APPROVED' ? 'APPROVE_ORDER' : 'UPDATE_ORDER_STATUS',
+      targetType: 'ORDER',
+      targetId: order.order_code,
+      details: {
+        from_status: order.payment_status,
+        to_status: status,
+        product: order.product_name,
+        customer_email: order.customer_email,
+        amount: order.final_amount,
+      },
+      req,
+    }).catch(() => {});
 
     return NextResponse.json({
       success: true,

@@ -27,6 +27,19 @@ export default function LeadMagnetModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState<{ downloadUrl: string; zaloGroup: string } | null>(null);
+  const [dynamicSettings, setDynamicSettings] = useState<{ downloadUrl?: string; zaloGroup?: string }>({});
+
+  useEffect(() => {
+    fetch('/api/settings/public')
+      .then((res) => res.json())
+      .then((data) => {
+        setDynamicSettings({
+          downloadUrl: data.free_resource_download_url,
+          zaloGroup: data.zalo_group_url,
+        });
+      })
+      .catch(() => {});
+  }, []);
 
   const claimForUser = useCallback(async (user: { name?: string; email: string; phone?: string }) => {
     setLoading(true);
@@ -51,8 +64,8 @@ export default function LeadMagnetModal({
       }
 
       setResult({
-        downloadUrl: data.download_url || defaultDownloadUrl,
-        zaloGroup: data.zalo_group || 'https://zalo.me/g/tuhocai',
+        downloadUrl: data.download_url || defaultDownloadUrl || dynamicSettings.downloadUrl || 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing',
+        zaloGroup: data.zalo_group || dynamicSettings.zaloGroup || 'https://zalo.me/g/tuhocai',
       });
     } catch (err: any) {
       setError(err.message || 'Không thể tự động kích hoạt. Bạn có thể thử lại hoặc nhập thông tin thủ công.');
@@ -128,8 +141,8 @@ export default function LeadMagnetModal({
       }
 
       setResult({
-        downloadUrl: data.download_url || defaultDownloadUrl,
-        zaloGroup: data.zalo_group || 'https://zalo.me/g/tuhocai',
+        downloadUrl: data.download_url || defaultDownloadUrl || dynamicSettings.downloadUrl || 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing',
+        zaloGroup: data.zalo_group || dynamicSettings.zaloGroup || 'https://zalo.me/g/tuhocai',
       });
     } catch (err: any) {
       setError(err.message || 'Không thể đăng ký. Vui lòng thử lại.');

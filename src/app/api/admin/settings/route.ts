@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { verifyAdminSession, unauthorizedAdminResponse } from '@/lib/adminAuth';
+import { verifyAdminSession, verifySuperAdminSession, unauthorizedAdminResponse } from '@/lib/adminAuth';
 import { getSiteSettings, saveSiteSettings } from '@/lib/settings';
+import { logAudit } from '@/lib/audit';
 
 export async function GET() {
   const admin = await verifyAdminSession();
@@ -15,13 +16,25 @@ export async function GET() {
 }
 
 export async function PUT(req: Request) {
-  const admin = await verifyAdminSession();
-  if (!admin) return unauthorizedAdminResponse();
+  // Chỉ Super Admin (role ADMIN) mới được phép thay đổi cấu hình toàn website
+  const superAdmin = await verifySuperAdminSession();
+  if (!superAdmin) {
+    return unauthorizedAdminResponse('Chỉ Super Admin mới có quyền cập nhật cấu hình hệ thống');
+  }
 
   try {
     const body = await req.json();
     await saveSiteSettings(body);
     const updated = await getSiteSettings();
+
+    // Ghi nhận Audit Log
+    await logAudit({
+      action: 'UPDATE_SITE_SETTINGS',
+      targetType: 'SETTING',
+      details: { modified_fields: Object.keys(body) },
+      req,
+    }).catch(() => {});
+
     return NextResponse.json({
       success: true,
       settings: updated,

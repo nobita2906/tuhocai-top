@@ -29,6 +29,26 @@ export default function FloatingAssistant() {
   ]);
   const [inputVal, setInputVal] = useState('');
   const menuRef = useRef<HTMLDivElement>(null);
+  const [supportContact, setSupportContact] = useState<{ hotline: string; zaloUrl: string }>({
+    hotline: '0938.494.303',
+    zaloUrl: 'https://zalo.me/0938494303',
+  });
+
+  useEffect(() => {
+    fetch('/api/settings/public')
+      .then((res) => res.json())
+      .then((data) => {
+        const hl = data.hotline || '0938.494.303';
+        const cleanHl = hl.replace(/[^0-9]/g, '');
+        setSupportContact({
+          hotline: hl,
+          zaloUrl: data.zalo_support_phone
+            ? `https://zalo.me/${data.zalo_support_phone.replace(/[^0-9]/g, '')}`
+            : `https://zalo.me/${cleanHl || '0938494303'}`,
+        });
+      })
+      .catch(() => {});
+  }, []);
 
   // Đóng menu khi click ra ngoài
   useEffect(() => {
@@ -122,12 +142,12 @@ export default function FloatingAssistant() {
 
             {/* Action 2: Gọi Hotline */}
             <a
-              href="tel:0938494303"
+              href={`tel:${supportContact.hotline.replace(/[^0-9]/g, '')}`}
               onClick={() => setMenuOpen(false)}
               className="group flex items-center gap-2.5 select-none"
             >
               <span className="bg-slate-900/95 dark:bg-[#151520]/95 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg border border-slate-700/60 dark:border-white/10 group-hover:scale-105 transition-all">
-                📞 Hotline: 0938 494 303
+                📞 Hotline: {supportContact.hotline}
               </span>
               <div className="w-11 h-11 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-600/30 border border-white/20 group-hover:scale-110 active:scale-95 transition-all">
                 <Phone className="w-5 h-5" />
@@ -136,14 +156,14 @@ export default function FloatingAssistant() {
 
             {/* Action 3: Chat Zalo */}
             <a
-              href="https://zalo.me/0938494303"
+              href={supportContact.zaloUrl}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setMenuOpen(false)}
               className="group flex items-center gap-2.5 select-none"
             >
               <span className="bg-slate-900/95 dark:bg-[#151520]/95 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg border border-slate-700/60 dark:border-white/10 group-hover:scale-105 transition-all">
-                💬 Chat Zalo: 0938 494 303
+                💬 Chat Zalo: {supportContact.hotline}
               </span>
               <div className="w-11 h-11 rounded-full bg-[#0068ff] hover:bg-[#0052cc] text-white flex items-center justify-center shadow-lg shadow-blue-500/30 border border-white/20 group-hover:scale-110 active:scale-95 transition-all">
                 <MessageCircle className="w-5 h-5 fill-white" />
