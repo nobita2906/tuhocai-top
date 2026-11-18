@@ -10,6 +10,7 @@ import FeaturedSlideSection from '@/components/FeaturedSlideSection';
 import InteractiveRoadmap from '@/components/InteractiveRoadmap';
 import TutorialsPlaybookSection from '@/components/TutorialsPlaybookSection';
 import TechNewsCompactList from '@/components/TechNewsCompactList';
+import BundlesSection from '@/components/BundlesSection';
 import {
   Zap,
   Clock,
@@ -40,8 +41,20 @@ function getPostCover(post: Post): string {
   return '/images/products/flux-prompt-bundle.jpg';
 }
 
+type GoalFilter = 'all' | 'video' | 'automation' | 'design' | 'nocode' | 'free';
+
+const GOAL_OPTIONS: { id: GoalFilter; label: string; icon: string }[] = [
+  { id: 'all', label: 'Tất cả mục tiêu', icon: '🎯' },
+  { id: 'video', label: 'Xây kênh Video AI', icon: '🎬' },
+  { id: 'automation', label: 'Tự động hóa bán hàng', icon: '⚙️' },
+  { id: 'design', label: 'Tạo ảnh & Thiết kế', icon: '🎨' },
+  { id: 'nocode', label: 'Tạo App & Không code', icon: '💻' },
+  { id: 'free', label: 'Quà tặng 0đ', icon: '🎁' },
+];
+
 export default function HomePageClient({ initialProducts, initialPosts }: HomePageClientProps) {
   const [activeTab, setActiveTab] = useState<'all' | 'workflow' | 'skill' | 'prompt' | 'free'>('all');
+  const [selectedGoal, setSelectedGoal] = useState<GoalFilter>('all');
   const [homeSearchQuery, setHomeSearchQuery] = useState('');
   const [leadModalOpen, setLeadModalOpen] = useState(false);
   const [selectedResource, setSelectedResource] = useState<{ id: string; name: string; url?: string } | null>(null);
@@ -59,22 +72,68 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
       .catch(() => {});
   }, []);
 
-  // Filter products & Ở tab Tất cả: Ưu tiên hiển thị sản phẩm VIP có phí để định vị thương hiệu chuyên nghiệp
+  // Filter products: Lọc thông minh kết hợp Mục Tiêu Thực Chiến + Định Dạng + Tìm Kiếm
   const filteredProducts = initialProducts
     .filter((p) => {
+      const pText = `${p.name} ${p.description || ''} ${p.pid} ${p.category || ''}`.toLowerCase();
+
       const matchSearch =
         homeSearchQuery.trim() === '' ||
-        p.name.toLowerCase().includes(homeSearchQuery.toLowerCase()) ||
-        p.description?.toLowerCase().includes(homeSearchQuery.toLowerCase());
+        pText.includes(homeSearchQuery.toLowerCase());
 
       if (!matchSearch) return false;
 
+      // 1. Lọc theo Mục tiêu (Goal Filter)
+      if (selectedGoal === 'video') {
+        const isVideo =
+          pText.includes('video') ||
+          pText.includes('drama') ||
+          pText.includes('tiktok') ||
+          p.pid.includes('VIP-297') ||
+          p.pid.includes('DRAMA');
+        if (!isVideo) return false;
+      } else if (selectedGoal === 'automation') {
+        const isAuto =
+          pText.includes('workflow') ||
+          pText.includes('n8n') ||
+          pText.includes('tự động') ||
+          pText.includes('auto') ||
+          pText.includes('email') ||
+          pText.includes('sheets');
+        if (!isAuto) return false;
+      } else if (selectedGoal === 'design') {
+        const isDesign =
+          pText.includes('prompt') ||
+          pText.includes('ảnh') ||
+          pText.includes('landing') ||
+          pText.includes('midjourney') ||
+          pText.includes('flux') ||
+          pText.includes('clone');
+        if (!isDesign) return false;
+      } else if (selectedGoal === 'nocode') {
+        const isNocode =
+          pText.includes('code') ||
+          pText.includes('app') ||
+          pText.includes('codex') ||
+          pText.includes('gpt') ||
+          pText.includes('lập trình');
+        if (!isNocode) return false;
+      } else if (selectedGoal === 'free') {
+        if (p.price !== 0) return false;
+      }
+
+      // 2. Lọc theo Tab định dạng (Format Tab)
       if (activeTab === 'free') return p.price === 0;
       if (activeTab === 'workflow') return p.category?.toLowerCase().includes('workflow');
       if (activeTab === 'skill') return p.category?.toLowerCase().includes('skill');
       if (activeTab === 'prompt') return p.category?.toLowerCase().includes('prompt');
-      // Ở tab "Tất cả": Ưu tiên hiển thị sản phẩm VIP có phí để định vị thương hiệu chuyên nghiệp
-      return p.price > 0;
+
+      // Ở tab "Tất cả" & không chọn Goal riêng lẻ: Ưu tiên hiển thị sản phẩm VIP có phí để định vị thương hiệu chuyên nghiệp
+      if (selectedGoal === 'all') {
+        return p.price > 0;
+      }
+
+      return true;
     })
     .sort((a, b) => (b.sales_count || 0) - (a.sales_count || 0));
 
@@ -158,6 +217,25 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
               Cộng Đồng Zalo Hỗ Trợ
             </a>
           </div>
+
+          {/* 3 Trụ Cột Cam Kết Niềm Tin (Value Pillars) */}
+          <div className="pt-3 sm:pt-5 flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 text-xs font-medium text-slate-700 dark:text-slate-300">
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100/90 dark:bg-white/[0.04] border border-slate-300/80 dark:border-white/10 shadow-xs backdrop-blur-xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="font-semibold text-slate-900 dark:text-white">⚡ Nhận link tự động</span>
+              <span className="text-slate-500 dark:text-slate-400">trong 30 giây</span>
+            </div>
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100/90 dark:bg-white/[0.04] border border-slate-300/80 dark:border-white/10 shadow-xs backdrop-blur-xs">
+              <span className="text-indigo-600 dark:text-cyan-400 font-bold">🔄</span>
+              <span className="font-semibold text-slate-900 dark:text-white">Cập nhật trọn đời</span>
+              <span className="text-slate-500 dark:text-slate-400">không phụ phí</span>
+            </div>
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100/90 dark:bg-white/[0.04] border border-slate-300/80 dark:border-white/10 shadow-xs backdrop-blur-xs">
+              <span className="text-emerald-600 dark:text-emerald-400 font-bold">💬</span>
+              <span className="font-semibold text-slate-900 dark:text-white">Hỗ trợ 1-1</span>
+              <span className="text-slate-500 dark:text-slate-400">qua Zalo VIP</span>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -213,7 +291,11 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
               ).map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    if (tab.id === 'free') setSelectedGoal('free');
+                    else if (selectedGoal === 'free') setSelectedGoal('all');
+                  }}
                   className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                     activeTab === tab.id
                       ? 'bg-gradient-to-r from-indigo-800 to-blue-800 text-white shadow-md shadow-indigo-950/40 font-black'
@@ -227,16 +309,71 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
           </div>
         </div>
 
-        {/* Products Grid: 3 cột thoáng đãng, hiển thị Top 6 sản phẩm */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-          {filteredProducts.slice(0, 6).map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onFreeClick={() => handleOpenFreeModal(product)}
-            />
-          ))}
+        {/* Hàng Goal-driven Selector: Chọn theo mục tiêu thực chiến (Lấy cảm hứng từ congcuaitrungkien) */}
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/[0.06] space-y-2.5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-cyan-400" />
+              <span>BẠN MUỐN ĐẠT ĐƯỢC MỤC TIÊU NÀO TRƯỚC?</span>
+            </div>
+            <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
+              {filteredProducts.length} công cụ phù hợp
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {GOAL_OPTIONS.map((goal) => {
+              const isActive = selectedGoal === goal.id;
+              return (
+                <button
+                  key={goal.id}
+                  onClick={() => {
+                    setSelectedGoal(goal.id);
+                    if (goal.id === 'free') setActiveTab('free');
+                    else if (activeTab === 'free') setActiveTab('all');
+                  }}
+                  className={`inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-md scale-[1.02]'
+                      : 'bg-white dark:bg-white/[0.05] text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.1] border border-slate-300/80 dark:border-white/10'
+                  }`}
+                >
+                  <span>{goal.icon}</span>
+                  <span>{goal.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
+
+        {/* Products Grid: 3 cột thoáng đãng, hiển thị Top 6 sản phẩm */}
+        {filteredProducts.length === 0 ? (
+          <div className="text-center py-12 p-6 rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 space-y-3">
+            <p className="text-sm font-semibold text-slate-600 dark:text-slate-400">
+              Chưa tìm thấy công cụ phù hợp với từ khóa & bộ lọc đã chọn.
+            </p>
+            <button
+              onClick={() => {
+                setHomeSearchQuery('');
+                setSelectedGoal('all');
+                setActiveTab('all');
+              }}
+              className="px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs"
+            >
+              Đặt lại tất cả bộ lọc
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+            {filteredProducts.slice(0, 6).map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onFreeClick={() => handleOpenFreeModal(product)}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Nút Khám Phá Toàn Bộ Sản Phẩm */}
         {filteredProducts.length > 6 && (
@@ -251,6 +388,9 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
           </div>
         )}
       </section>
+
+      {/* 4. GÓI COMBO SIÊU TIẾT KIỆM (ALL-IN-ONE BUNDLES - TỐI ƯU CHUYỂN ĐỔI CAO) */}
+      <BundlesSection zaloSupportUrl={publicSettings.zalo_group_url} />
 
       {/* 4. INTERACTIVE ROADMAP & STARTER KIT (PHƯƠNG ÁN 2 - BỐ CỤC ĐỘT PHÁ, KHÔNG CÒN TRÙNG LẶP 0Đ) */}
       <InteractiveRoadmap

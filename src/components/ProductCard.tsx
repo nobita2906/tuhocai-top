@@ -45,8 +45,13 @@ export default function ProductCard({ product, onFreeClick }: ProductCardProps) 
         {/* Ambient bottom shadow gradient dịu nhẹ */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 dark:from-[#09090b]/80 via-transparent to-transparent pointer-events-none" />
 
-        {/* 1 BADGE THÔNG MINH DUY NHẤT: Ưu tiên Landing Page -> Miễn phí -> Giảm giá */}
-        {hasLandingPage ? (
+        {/* 1 BADGE THÔNG MINH DUY NHẤT: Ưu tiên Gói Combo -> Landing Page -> Miễn phí -> Giảm giá */}
+        {product.category === 'combo' ? (
+          <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-amber-400 text-slate-950 backdrop-blur-md border border-amber-300 flex items-center gap-1 shadow-md">
+            <Sparkles className="w-3 h-3 text-slate-950" />
+            <span>GÓI COMBO</span>
+          </div>
+        ) : hasLandingPage ? (
           <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-indigo-600/95 text-white backdrop-blur-md border border-indigo-400/30 flex items-center gap-1 shadow-md">
             <Sparkles className="w-3 h-3 text-cyan-300" />
             <span>Landing Page</span>

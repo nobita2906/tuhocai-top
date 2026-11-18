@@ -4,11 +4,16 @@ export function getProductCover(product: {
   category?: string;
   thumbnail?: string | null;
 }): string {
+  if (product.pid === 'COMBO-VIDEO-299') return '/images/flux-prompt-bundle.jpg';
+  if (product.pid === 'COMBO-AUTO-349') return '/images/n8n-workflow-demo.jpg';
+
   if (product.thumbnail && product.thumbnail.trim() !== '') {
     return product.thumbnail;
   }
 
   const pidMap: Record<string, string> = {
+    'COMBO-VIDEO-299': '/images/flux-prompt-bundle.jpg',
+    'COMBO-AUTO-349': '/images/n8n-workflow-demo.jpg',
     'WF-THAI-099': '/images/n8n-workflow-demo.jpg',
     'WF-N8N-001': '/images/products/wf-facebook.svg',
     'SKILL-GPT-001': '/images/products/skill-chatgpt.svg',
