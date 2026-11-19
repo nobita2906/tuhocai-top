@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { HelpCircle, ChevronDown, Sparkles } from 'lucide-react';
 
 interface FaqItem {
@@ -36,14 +35,27 @@ const FAQS: FaqItem[] = [
 ];
 
 export default function HomeFaqSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
-
-  const toggle = (idx: number) => {
-    setOpenIndex(openIndex === idx ? null : idx);
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQS.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
   };
 
   return (
-    <section id="faq" className="py-8 sm:py-14 border-t border-slate-200 dark:border-white/5">
+    <section id="faq" className="py-8 sm:py-14 border-t border-slate-200 dark:border-white/5 scroll-mt-20">
+      {/* FAQ Schema Markup for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto space-y-2.5">
@@ -59,39 +71,26 @@ export default function HomeFaqSection() {
           </p>
         </div>
 
-        {/* Accordion List */}
+        {/* Accordion List with native HTML details so Googlebot indexes 100% content */}
         <div className="space-y-3">
-          {FAQS.map((item, index) => {
-            const isOpen = openIndex === index;
-            return (
-              <div
-                key={index}
-                className="rounded-2xl border-2 border-slate-200 dark:border-white/10 bg-white dark:bg-[#111116] overflow-hidden transition-all duration-200"
-              >
-                <button
-                  type="button"
-                  onClick={() => toggle(index)}
-                  className="w-full flex items-center justify-between p-4 sm:p-5 text-left font-bold text-sm sm:text-base text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors cursor-pointer gap-4"
-                >
-                  <span className="flex-1">{item.q}</span>
-                  <ChevronDown
-                    className={`w-5 h-5 text-slate-400 shrink-0 transition-transform duration-300 ${
-                      isOpen ? 'rotate-180 text-indigo-600 dark:text-cyan-400' : ''
-                    }`}
-                  />
-                </button>
+          {FAQS.map((item, index) => (
+            <details
+              key={index}
+              open={index === 0}
+              className="group rounded-2xl border-2 border-slate-200 dark:border-white/10 bg-white dark:bg-[#111116] overflow-hidden transition-all duration-200 open:border-indigo-500/40"
+            >
+              <summary className="w-full flex items-center justify-between p-4 sm:p-5 text-left font-bold text-sm sm:text-base text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors cursor-pointer gap-4 list-none [&::-webkit-details-marker]:hidden select-none">
+                <span className="flex-1">{item.q}</span>
+                <ChevronDown className="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-300 group-open:rotate-180 group-open:text-indigo-600 dark:group-open:text-cyan-400" />
+              </summary>
 
-                {isOpen && (
-                  <div className="px-4 pb-5 sm:px-5 sm:pb-6 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-white/5 pt-3">
-                    {item.a}
-                  </div>
-                )}
+              <div className="px-4 pb-5 sm:px-5 sm:pb-6 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-white/5 pt-3">
+                {item.a}
               </div>
-            );
-          })}
+            </details>
+          ))}
         </div>
       </div>
     </section>
   );
 }
-

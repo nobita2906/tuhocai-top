@@ -19,6 +19,7 @@ interface HomePageClientProps {
 }
 
 export default function HomePageClient({ initialProducts, initialPosts }: HomePageClientProps) {
+  const [selectedBranchId, setSelectedBranchId] = useState<string | undefined>(undefined);
   const [selectedResource, setSelectedResource] = useState<{
     id: string;
     name: string;
@@ -48,6 +49,7 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
   };
 
   const handleSelectBranch = (branch: BranchOption) => {
+    setSelectedBranchId(branch.id);
     setSelectedResource({
       id: `FREE-${branch.id.toUpperCase()}`,
       name: branch.giftTitle,
@@ -62,7 +64,7 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
       <HomeHeroSection onClaimFreeClick={handleClaimFreeScroll} />
 
       {/* KHỐI 2: PHÂN NHÁNH NHU CẦU (Người mới / Văn phòng / Creator) */}
-      <BranchSelector onSelectBranch={handleSelectBranch} />
+      <BranchSelector onSelectBranch={handleSelectBranch} activeBranchId={selectedBranchId} />
 
       {/* KHỐI 3: FORM NHẬN QUÀ 0Đ (Thu Email trực tiếp trên trang) */}
       <InlineLeadForm initialResource={selectedResource || undefined} />

@@ -2,7 +2,8 @@ import { query } from '@/lib/db';
 import { Product, Post } from '@/types';
 import HomePageClient from './HomePageClient';
 
-export const revalidate = 60; // revalidate every minute
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function HomePage() {
   // Query products from MySQL

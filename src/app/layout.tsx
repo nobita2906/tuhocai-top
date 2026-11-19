@@ -30,10 +30,10 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.tuhocai.top'),
-  title: 'Tự Học AI TOP - Kho Công Cụ AI, Workflow n8n & Skill Thực Chiến',
-  description: 'Kho công cụ AI thực chiến giúp bạn làm nội dung, xây kênh và kiếm tiền nhanh hơn: Template n8n workflow, skill viết kịch bản, prompt thương mại và trợ lý AI tải về dùng ngay.',
-  keywords: ['Tự học AI', 'kho công cụ AI', 'workflow n8n', 'skill AI', 'prompt AI', 'tự động hóa AI', 'tuhocai.top'],
-  authors: [{ name: 'Tự Học AI', url: 'https://www.tuhocai.top' }],
+  title: 'Tự Học AI - Tự học AI bằng cách làm cùng Nguyễn Đăng AI',
+  description: 'Nền tảng tự học AI thực chiến: từ người mới đến có workflow chạy thật. Chia sẻ quy trình, template n8n tự động hóa, bộ prompt và kỹ năng ứng dụng AI vào công việc văn phòng & sáng tạo nội dung.',
+  keywords: ['Tự học AI', 'Nguyễn Đăng AI', 'workflow n8n', 'skill AI', 'prompt AI', 'tự động hóa', 'tuhocai.top'],
+  authors: [{ name: 'Nguyễn Đăng AI', url: 'https://www.tuhocai.top' }],
   alternates: {
     canonical: '/',
   },
@@ -49,17 +49,17 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: 'Tự Học AI TOP - Kho Công Cụ AI, Workflow n8n & Skill Thực Chiến',
-    description: 'Kho công cụ AI thực chiến: Skill, kịch bản, Prompt và Workflow n8n giúp bạn làm nội dung, xây kênh và kiếm tiền nhanh hơn.',
+    title: 'Tự Học AI - Tự học AI bằng cách làm cùng Nguyễn Đăng AI',
+    description: 'Nền tảng tự học AI thực chiến: từ người mới đến có workflow chạy thật. Template n8n, prompt thương mại và cẩm nang ứng dụng AI vào công việc.',
     url: 'https://www.tuhocai.top',
-    siteName: 'Tự Học AI TOP',
+    siteName: 'Tự Học AI (tuhocai.top)',
     locale: 'vi_VN',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Tự Học AI TOP - Kho Công Cụ AI & Tự Động Hóa Thực Chiến',
-    description: 'Kho công cụ AI thực chiến giúp bạn làm nội dung, xây kênh và kiếm tiền nhanh hơn.',
+    title: 'Tự Học AI - Tự học AI bằng cách làm cùng Nguyễn Đăng AI',
+    description: 'Nền tảng tự học AI thực chiến: từ người mới đến có workflow chạy thật cùng Nguyễn Đăng AI.',
   },
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '',

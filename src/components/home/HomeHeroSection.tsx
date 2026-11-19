@@ -1,6 +1,7 @@
 'use client';
 
-import { Sparkles, Gift, ArrowRight, ShieldCheck, CheckCircle2, Play, Cpu, Layers, Zap } from 'lucide-react';
+import { useState } from 'react';
+import { Sparkles, Gift, ArrowRight, CheckCircle2, Play, Cpu, Layers, Zap, X } from 'lucide-react';
 import Image from 'next/image';
 
 interface HomeHeroSectionProps {
@@ -8,6 +9,8 @@ interface HomeHeroSectionProps {
 }
 
 export default function HomeHeroSection({ onClaimFreeClick }: HomeHeroSectionProps) {
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
+
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
@@ -50,11 +53,13 @@ export default function HomeHeroSection({ onClaimFreeClick }: HomeHeroSectionPro
 
               <button
                 type="button"
-                onClick={() => scrollToSection('san-pham')}
-                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors py-2 cursor-pointer"
+                onClick={() => setVideoModalOpen(true)}
+                className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-indigo-600 dark:text-cyan-400 hover:underline py-2 cursor-pointer"
               >
-                <span>Xem các sản phẩm đóng gói</span>
-                <ArrowRight className="w-4 h-4" />
+                <div className="w-6 h-6 rounded-full bg-indigo-500/10 dark:bg-cyan-500/20 flex items-center justify-center border border-indigo-500/30">
+                  <Play className="w-3 h-3 fill-current ml-0.5" />
+                </div>
+                <span>Video chào 45s (Nguyễn Đăng AI)</span>
               </button>
             </div>
 
@@ -65,13 +70,13 @@ export default function HomeHeroSection({ onClaimFreeClick }: HomeHeroSectionPro
                 100% Miễn phí
               </span>
               <span className="text-slate-300 dark:text-slate-700">•</span>
-              <span>Giao link 30s</span>
+              <span>Giao link trong 30s</span>
               <span className="text-slate-300 dark:text-slate-700">•</span>
               <span>Nhóm Zalo hỗ trợ</span>
             </div>
           </div>
 
-          {/* Cột phải: Mockup Workflow Chạy Thật & Quy Trình Trực Quan */}
+          {/* Cột phải: Mockup Sơ đồ Workflow Tự Động Hóa Mẫu (Minh bạch, không phóng đại) */}
           <div className="lg:col-span-5 relative">
             <div className="relative rounded-3xl bg-slate-900/90 border-2 border-indigo-500/30 p-5 shadow-2xl backdrop-blur-xl overflow-hidden text-white">
               {/* Top Bar giả lập app */}
@@ -82,11 +87,11 @@ export default function HomeHeroSection({ onClaimFreeClick }: HomeHeroSectionPro
                     <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
                     <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
                   </div>
-                  <span className="font-mono text-[11px] text-slate-400 truncate">workflow_n8n_live.json</span>
+                  <span className="font-mono text-[11px] text-slate-400 truncate">quy_trinh_tu_dong_hoa.json</span>
                 </div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-mono font-bold whitespace-nowrap shrink-0">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  ĐANG CHẠY THẬT
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-cyan-300 text-[10px] font-mono font-bold whitespace-nowrap shrink-0 border border-cyan-500/30">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                  SƠ ĐỒ QUY TRÌNH MẪU
                 </div>
               </div>
 
@@ -116,7 +121,7 @@ export default function HomeHeroSection({ onClaimFreeClick }: HomeHeroSectionPro
                     <div className="text-xs font-bold text-cyan-300 truncate">2. AI Xử Lý &amp; Tạo Ảnh FLUX</div>
                     <div className="text-[10px] text-slate-400 font-mono">Viết kịch bản + render ảnh thương mại</div>
                   </div>
-                  <div className="text-[10px] text-cyan-400 font-mono">✓ 30s</div>
+                  <div className="text-[10px] text-cyan-400 font-mono">✓ Tự động</div>
                 </div>
 
                 {/* Connector line */}
@@ -131,24 +136,69 @@ export default function HomeHeroSection({ onClaimFreeClick }: HomeHeroSectionPro
                     <div className="text-xs font-bold text-white truncate">3. Tự Động Đăng Đa Kênh</div>
                     <div className="text-[10px] text-slate-400 font-mono">Facebook, Zalo &amp; Blog Tự Học AI</div>
                   </div>
-                  <div className="text-[10px] text-emerald-400 font-mono">✓ Tự động</div>
+                  <div className="text-[10px] text-emerald-400 font-mono">✓ Xuất bản</div>
                 </div>
               </div>
 
               {/* Bottom Result Box */}
               <div className="p-3 rounded-xl bg-slate-950/80 border border-white/10 flex items-center justify-between text-xs">
                 <div className="space-y-0.5">
-                  <div className="text-[11px] text-slate-400">Kết quả thực tế:</div>
-                  <div className="font-bold text-white">Tiết kiệm 80% thời gian làm nội dung</div>
+                  <div className="text-[11px] text-slate-400">Ứng dụng thực tế:</div>
+                  <div className="font-bold text-white">Tự động hóa từ ý tưởng đến đăng bài</div>
                 </div>
                 <div className="text-right">
-                  <span className="text-[11px] font-mono text-cyan-400 font-bold">100+ Workflow</span>
+                  <span className="text-[11px] font-mono text-cyan-400 font-bold">Template n8n</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Video Modal Chào 45s */}
+      {videoModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
+          <div className="relative w-full max-w-2xl rounded-2xl bg-slate-900 border border-white/20 p-4 shadow-2xl overflow-hidden space-y-3">
+            <div className="flex items-center justify-between text-white pb-2 border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <Play className="w-4 h-4 text-cyan-400" />
+                <span className="text-xs sm:text-sm font-bold font-mono">Nguyễn Đăng AI — Chào bạn &amp; Giới thiệu Tự Học AI</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setVideoModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-black">
+              <iframe
+                src="https://www.youtube-nocookie.com/embed/KOAKDMxpPxI?autoplay=1"
+                title="Nguyễn Đăng AI - Video giới thiệu"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full border-0"
+              />
+            </div>
+
+            <div className="flex items-center justify-between pt-1 text-xs text-slate-400">
+              <span>Học bằng cách làm — Thực hành cùng Nguyễn Đăng AI</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setVideoModalOpen(false);
+                  onClaimFreeClick();
+                }}
+                className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-colors"
+              >
+                Nhận Bộ Quà 0đ Ngay
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

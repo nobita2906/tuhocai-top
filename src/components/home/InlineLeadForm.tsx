@@ -9,6 +9,7 @@ interface InlineLeadFormProps {
     id: string;
     name: string;
     giftDesc?: string;
+    branchId?: string;
   };
 }
 
@@ -22,8 +23,12 @@ export default function InlineLeadForm({ initialResource }: InlineLeadFormProps)
   const [downloadUrl, setDownloadUrl] = useState('');
   const [zaloGroup, setZaloGroup] = useState('https://zalo.me/g/qnitrawpaxpvl6aj7ixb');
 
-  const resourceTitle = initialResource?.name || 'Trọn Bộ 100+ Prompt FLUX & Kịch Bản Video AI Ngắn';
-  const resourceId = initialResource?.id || 'FREE-BUNDLE-2026';
+  // Dynamic gift title & description based on user branch selection
+  const resourceTitle = initialResource?.name || 'Trọn Bộ Tài Liệu Tự Học AI & Prompt Thực Chiến (0đ)';
+  const resourceId = initialResource?.id || 'FREE-ALL-2026';
+  const resourceDesc =
+    initialResource?.giftDesc ||
+    'Bộ tài nguyên và quy trình mẫu được đúc kết từ quá trình thực chiến tự học và ứng dụng AI hàng ngày của Nguyễn Đăng AI. Tải về dùng ngay, hoàn toàn miễn phí.';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,7 +70,7 @@ export default function InlineLeadForm({ initialResource }: InlineLeadFormProps)
   };
 
   return (
-    <section id="nhan-qua-0d" className="py-8 sm:py-14">
+    <section id="nhan-qua-0d" className="py-8 sm:py-14 scroll-mt-20">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-slate-900 to-[#0c1022] border-2 border-indigo-500/40 p-6 sm:p-10 lg:p-12 shadow-2xl text-white">
           {/* Ambient Glow */}
@@ -78,7 +83,7 @@ export default function InlineLeadForm({ initialResource }: InlineLeadFormProps)
               <div className="lg:col-span-7 space-y-5">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-mono font-bold">
                   <Gift className="w-3.5 h-3.5 text-emerald-300" />
-                  QUÀ TẶNG 0Đ DÀNH RIÊNG CHO BẠN
+                  QUÀ TẶNG 0Đ DÀNH CHO BẠN
                 </div>
 
                 <div className="space-y-2">
@@ -86,7 +91,7 @@ export default function InlineLeadForm({ initialResource }: InlineLeadFormProps)
                     {resourceTitle}
                   </h2>
                   <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                    {initialResource?.giftDesc || 'Tài liệu được đúc kết từ quá trình thực chiến tự học và ứng dụng AI hàng ngày của Nguyễn Đăng AI. Tải về dùng ngay, hoàn toàn miễn phí.'}
+                    {resourceDesc}
                   </p>
                 </div>
 
@@ -94,7 +99,7 @@ export default function InlineLeadForm({ initialResource }: InlineLeadFormProps)
                 <div className="space-y-2.5 pt-1">
                   <div className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-200">
                     <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                    <span>File JSON workflow &amp; Prompt mẫu đã được kiểm thử thực tế.</span>
+                    <span>Bộ tài liệu &amp; Prompt mẫu đã được kiểm thử thực tế.</span>
                   </div>
                   <div className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-200">
                     <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
@@ -143,9 +148,8 @@ export default function InlineLeadForm({ initialResource }: InlineLeadFormProps)
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-xs font-mono font-bold text-slate-300 uppercase flex items-center justify-between">
-                      <span>Số điện thoại / Zalo</span>
-                      <span className="text-[10px] text-slate-400 lowercase font-normal">(không bắt buộc)</span>
+                    <label className="block text-xs font-mono font-bold text-slate-400 uppercase">
+                      Số điện thoại / Zalo <span className="text-slate-500 font-normal lowercase">(không bắt buộc)</span>
                     </label>
                     <input
                       type="tel"
@@ -157,20 +161,20 @@ export default function InlineLeadForm({ initialResource }: InlineLeadFormProps)
                   </div>
 
                   {error && (
-                    <p className="text-xs text-rose-400 bg-rose-500/10 p-2.5 rounded-lg border border-rose-500/20">
+                    <div className="p-2.5 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs">
                       {error}
-                    </p>
+                    </div>
                   )}
 
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-3.5 px-4 rounded-xl font-black text-sm bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:opacity-90 text-slate-950 shadow-lg shadow-emerald-950/40 transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer disabled:opacity-50"
+                    className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:opacity-95 text-white font-bold text-sm shadow-xl shadow-emerald-950/30 transition-all cursor-pointer disabled:opacity-50"
                   >
                     {loading ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>Đang chuẩn bị quà tặng...</span>
+                        <span>Đang xử lý...</span>
                       </>
                     ) : (
                       <>
@@ -183,41 +187,41 @@ export default function InlineLeadForm({ initialResource }: InlineLeadFormProps)
               </div>
             </div>
           ) : (
-            /* Màn hình Chúc Mừng Sau Khi Nhận Quà Thành Công */
-            <div className="relative z-10 text-center py-6 sm:py-10 max-w-xl mx-auto space-y-5">
-              <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center mx-auto">
+            /* Màn hình Cảm ơn sau khi gửi Form thành công */
+            <div className="relative z-10 text-center max-w-xl mx-auto space-y-5 py-4">
+              <div className="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center mx-auto text-emerald-400 animate-bounce">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
 
               <div className="space-y-2">
                 <h3 className="text-2xl sm:text-3xl font-black text-white">
-                  Quà Tặng Của Bạn Đã Sẵn Sàng!
+                  Đã Kích Hoạt Quà Tặng 0đ!
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                  Cảm ơn bạn đã kết nối cùng Nguyễn Đăng AI. Link tải toàn bộ tài nguyên đã được kích hoạt ngay dưới đây:
+                <p className="text-xs sm:text-sm text-slate-300">
+                  Cảm ơn <strong>{name || 'bạn'}</strong>. Link tải bộ tài liệu <strong>{resourceTitle}</strong> đã được gửi tới email <span className="text-cyan-400 underline font-mono">{email}</span>.
                 </p>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <a
                   href={downloadUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl font-black text-sm bg-gradient-to-r from-emerald-400 to-cyan-400 text-slate-950 shadow-lg hover:opacity-90 transition-all"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white text-slate-900 font-bold text-sm hover:bg-slate-100 shadow-xl transition-all"
                 >
-                  <Download className="w-4 h-4" />
-                  <span>Mở Thư Mục Tải Về Ngay</span>
+                  <Download className="w-4 h-4 text-emerald-600" />
+                  <span>Mở Thư Mục Google Drive</span>
                 </a>
 
                 <a
                   href={zaloGroup}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl font-bold text-sm bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-all"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-xl transition-all"
                 >
-                  <MessageCircle className="w-4 h-4 text-emerald-400" />
-                  <span>Vào Group Zalo Hỗ Trợ</span>
+                  <MessageCircle className="w-4 h-4" />
+                  <span>Vào Nhóm Zalo Nhận Hỗ Trợ</span>
                 </a>
               </div>
             </div>

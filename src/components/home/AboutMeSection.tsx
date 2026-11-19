@@ -10,7 +10,7 @@ interface AboutMeSectionProps {
 
 export default function AboutMeSection({ zaloUrl = 'https://zalo.me/g/qnitrawpaxpvl6aj7ixb' }: AboutMeSectionProps) {
   return (
-    <section id="ve-toi" className="py-8 sm:py-14 border-t border-slate-200 dark:border-white/5">
+    <section id="ve-toi" className="py-8 sm:py-14 border-t border-slate-200 dark:border-white/5 scroll-mt-20">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bento-card rounded-3xl p-6 sm:p-10 bg-white dark:bg-[#111116] border-2 border-slate-200 dark:border-white/10 shadow-xl">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
@@ -39,19 +39,19 @@ export default function AboutMeSection({ zaloUrl = 'https://zalo.me/g/qnitrawpax
                 </p>
               </div>
 
-              {/* Dải 3 con số có thật theo Blueprint */}
+              {/* Dải 3 con số thật kiểm chứng được theo góp ý của anh Đăng */}
               <div className="grid grid-cols-3 gap-2 w-full pt-2">
                 <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 text-center">
-                  <div className="text-lg sm:text-xl font-black text-indigo-600 dark:text-cyan-400 font-mono">100+</div>
-                  <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Video &amp; Bài viết</div>
+                  <div className="text-lg sm:text-xl font-black text-indigo-600 dark:text-cyan-400 font-mono">10+</div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Template Đóng Gói</div>
                 </div>
                 <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 text-center">
                   <div className="text-lg sm:text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono">1.000+</div>
-                  <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Bạn bè trong Group</div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Thành Viên Zalo</div>
                 </div>
                 <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 text-center">
-                  <div className="text-lg sm:text-xl font-black text-amber-500 font-mono">20+</div>
-                  <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Template đóng gói</div>
+                  <div className="text-lg sm:text-xl font-black text-amber-500 font-mono">1-1</div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Hỗ Trợ Kỹ Thuật</div>
                 </div>
               </div>
             </div>
@@ -72,10 +72,10 @@ export default function AboutMeSection({ zaloUrl = 'https://zalo.me/g/qnitrawpax
                   Xin chào bạn, mình là <strong>Nguyễn Đăng AI</strong>. Mình bắt đầu tự mày mò ứng dụng Trí Tuệ Nhân Tạo từ những ngày đầu khi thấy công việc lặp lại tốn quá nhiều thời gian mỗi ngày.
                 </p>
                 <p>
-                  Thay vì học lý thuyết hàn lâm, mình chọn cách <strong>học bằng cách làm</strong>: tự ráp các workflow n8n để đăng bài tự động, tự viết prompt để làm kịch bản video và tạo hình ảnh bán hàng thực tế cho kênh của mình.
+                  Thay vì học lý thuyết hàn lâm, mình chọn cách <strong>học bằng cách làm</strong>: tự ráp các workflow n8n để đăng bài tự động, tự viết prompt để làm kịch bản video và tạo hình ảnh thực tế cho các dự án của mình.
                 </p>
                 <p>
-                  Khi đã có những quy trình chạy ổn định và tiết kiệm 80% sức người, mình đóng gói lại thành các template hoàn chỉnh trên <strong>Tự Học AI</strong> để bạn chỉ cần tải về, import 1 click là chạy được ngay mà không cần biết viết code.
+                  Khi đã có những quy trình chạy ổn định và giải phóng sức người, mình đóng gói lại thành các template hoàn chỉnh trên <strong>Tự Học AI</strong> để bạn chỉ cần tải về, import là chạy được ngay mà không cần biết viết code.
                 </p>
               </div>
 
@@ -94,7 +94,7 @@ export default function AboutMeSection({ zaloUrl = 'https://zalo.me/g/qnitrawpax
                   href="/bai-viet"
                   className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-100 dark:bg-white/[0.05] hover:bg-slate-200 dark:hover:bg-white/10 text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-semibold border border-slate-300 dark:border-white/10 transition-colors"
                 >
-                  <span>Xem Các Bài Viết Của Mình</span>
+                  <span>Xem Các Hướng Dẫn Mới</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>

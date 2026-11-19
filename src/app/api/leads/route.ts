@@ -58,7 +58,7 @@ export async function POST(req: Request) {
       success: true,
       message: 'Đăng ký nhận tài liệu thành công!',
       download_url: downloadUrl,
-      zalo_group: siteSettings.zalo_group_url || 'https://zalo.me/g/tuhocai',
+      zalo_group: siteSettings.zalo_group_url || 'https://zalo.me/g/qnitrawpaxpvl6aj7ixb',
       zalo_support: siteSettings.zalo_support_phone || siteSettings.hotline || '0938.494.303'
     });
   } catch (err: any) {

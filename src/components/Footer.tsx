@@ -65,32 +65,32 @@ export default async function Footer() {
         <div>
           <h4 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-3 font-mono">Tài nguyên AI</h4>
           <ul className="space-y-2 text-xs">
-            <li><Link href="/san-pham" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors">Workflow n8n Tự Động Hóa</Link></li>
-            <li><Link href="/san-pham?cat=skill" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors">Kỹ Năng Sử Dụng AI (Skills)</Link></li>
-            <li><Link href="/san-pham?cat=prompt" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors">Bộ Prompt AI Chuẩn Thương Mại</Link></li>
-            <li><Link href="/#tai-lieu-free" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors">Nhận Bộ Tài Liệu 0đ</Link></li>
-            <li><Link href="/affiliate" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors font-bold text-amber-600 dark:text-amber-400">🤝 Đối Tác Tiếp Thị Affiliate & CTV (60%)</Link></li>
+            <li><Link href="/san-pham" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors">Kho Sản Phẩm &amp; Công Cụ</Link></li>
+            <li><Link href="/san-pham?cat=skill" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors">Kỹ Năng &amp; Prompt AI Văn Phòng</Link></li>
+            <li><Link href="/san-pham?cat=combo" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors">Combo Video AI &amp; Automation</Link></li>
+            <li><Link href="/#nhan-qua-0d" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors">Nhận Bộ Tài Liệu 0đ</Link></li>
+            <li><Link href="/affiliate" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors font-bold text-amber-600 dark:text-amber-400">🤝 Đối Tác Tiếp Thị Affiliate (60%)</Link></li>
           </ul>
         </div>
 
         {/* Legal & Policies */}
         <div>
-          <h4 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-3 font-mono">Chính sách & Pháp lý</h4>
+          <h4 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-3 font-mono">Chính sách &amp; Pháp lý</h4>
           <ul className="space-y-2 text-xs">
-            <li><Link href="/dieu-khoan" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors">Điều Khoản Sử Dụng</Link></li>
-            <li><Link href="/bao-mat" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors">Chính Sách Bảo Mật</Link></li>
-            <li><Link href="/hoan-tien" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors">Chính Sách Hoàn Tiền & Hỗ Trợ</Link></li>
-            <li><Link href="/dashboard" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors">Kho Tài Liệu Đã Lưu Của Tôi</Link></li>
+            <li><Link href="/hoan-tien" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors">Chính Sách Hoàn Tiền 7 Ngày</Link></li>
+            <li><Link href="/dieu-khoan" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors">Điều Khoản Sử Dụng &amp; Bản Quyền</Link></li>
+            <li><Link href="/bao-mat" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors">Chính Sách Bảo Mật Thông Tin</Link></li>
+            <li><Link href="/bai-viet" className="hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors">Blog Hướng Dẫn Kỹ Thuật</Link></li>
           </ul>
         </div>
 
         {/* Support */}
         <div>
-          <h4 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-3 font-mono">Hỗ trợ & Liên hệ</h4>
+          <h4 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-3 font-mono">Hỗ trợ &amp; Liên hệ</h4>
           <ul className="space-y-2.5 text-xs">
             <li className="flex items-center gap-2">
               <Phone className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-              <span>Hotline / Zalo: <strong className="text-slate-900 dark:text-white font-mono">{hotline}</strong> (Nguyễn Đăng AI)</span>
+              <span>Hotline / Zalo: <strong className="text-slate-900 dark:text-white font-mono">{hotline}</strong></span>
             </li>
             <li className="flex items-center gap-2">
               <Mail className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
@@ -98,7 +98,7 @@ export default async function Footer() {
             </li>
             <li className="flex items-center gap-2">
               <MessageCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              <span>Zalo Admin: <a href={`https://zalo.me/${hotline.replace(/[^0-9]/g, '')}`} target="_blank" className="text-emerald-600 dark:text-emerald-400 hover:underline font-mono">{hotline}</a></span>
+              <span>Group Zalo: <a href={zaloGroup} target="_blank" rel="noopener noreferrer" className="text-emerald-600 dark:text-emerald-400 hover:underline font-bold">Cộng đồng Tự Học AI</a></span>
             </li>
           </ul>
         </div>

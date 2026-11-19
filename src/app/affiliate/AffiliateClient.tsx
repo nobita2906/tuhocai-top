@@ -1133,7 +1133,7 @@ Tải về dùng ngay, không cần biết kỹ thuật nha!`}
               <p>• <strong>Thời hạn Cookie 30 ngày:</strong> Áp dụng mô hình Last-Click. Khách bấm link ref của bạn và mua hàng trong vòng 30 ngày đều được tính hoa hồng đầy đủ.</p>
               <p>• <strong>Duyệt thanh toán VietQR trong 24h:</strong> Rút tiền tối thiểu từ 200.000đ, không giam vốn, chuyển khoản thẳng về số tài khoản ngân hàng của bạn.</p>
               <p>• <strong>Nghiêm cấm:</strong> Không chạy quảng cáo Google Search từ khóa thương hiệu "Tự Học AI", không spam link rác vào các hội nhóm làm ảnh hưởng uy tín thương hiệu.</p>
-              <p>• <strong>Hỗ trợ kỹ thuật 1-1:</strong> Cần hỗ trợ riêng hoặc deal tỷ lệ hoa hồng cao hơn cho Team/KOL, liên hệ Zalo: <strong className="text-indigo-600 dark:text-indigo-400">0934.434.101 (Đăng)</strong>.</p>
+              <p>• <strong>Hỗ trợ kỹ thuật 1-1:</strong> Cần hỗ trợ riêng hoặc deal tỷ lệ hoa hồng cao hơn cho Team/KOL, liên hệ Zalo: <strong className="text-indigo-600 dark:text-indigo-400">0938.494.303 (Nguyễn Đăng AI)</strong> hoặc tham gia Group Zalo Tự Học AI.</p>
             </div>
           </div>
         )}

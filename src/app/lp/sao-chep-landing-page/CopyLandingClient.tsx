@@ -43,7 +43,7 @@ export default function CopyLandingClient({ lp }: Props) {
 
   // Dynamic pricing from DB
   const price = lp?.price != null ? Number(lp.price) : 99000;
-  const originalPrice = lp?.original_price != null ? Number(lp.original_price) : 499000;
+  const originalPrice = lp?.original_price != null ? Number(lp.original_price) : price;
   const priceFormatted = new Intl.NumberFormat('vi-VN').format(price) + 'đ';
   const originalPriceFormatted = new Intl.NumberFormat('vi-VN').format(originalPrice) + 'đ';
   const priceShort = price >= 1000 ? `${Math.round(price / 1000)}K` : `${price}đ`;
@@ -330,7 +330,7 @@ export default function CopyLandingClient({ lp }: Props) {
                   <div className="w-3 h-3 rounded-full bg-rose-500/80" />
                   <div className="w-3 h-3 rounded-full bg-amber-500/80" />
                   <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
-                  <span className="ml-2 text-slate-300 font-bold">tuhocai-vip / skill-clone-landing-page /</span>
+                  <span className="ml-2 text-slate-300 font-bold">tuhocai-vip / skill-landing-page-cro /</span>
                 </div>
                 <span className="text-cyan-400 font-bold">4 files · Mở khóa 100%</span>
               </div>
@@ -343,7 +343,7 @@ export default function CopyLandingClient({ lp }: Props) {
                     </div>
                     <div>
                       <div className="font-mono text-xs sm:text-sm font-bold text-white flex items-center gap-2">
-                        <span>01_Skill_AI_Clone_Landing_Page.md</span>
+                        <span>01_Skill_AI_Dung_Landing_Page_CRO.md</span>
                         <span className="text-[10px] bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded">Core Skill</span>
                       </div>
                       <p className="text-xs text-slate-300 mt-0.5">Tệp cấu hình Agentic Skill cho Claude Code, Cursor, Codex, OpenCode</p>
@@ -393,7 +393,7 @@ export default function CopyLandingClient({ lp }: Props) {
                 <span className="text-yellow-400">trà sữa {priceFormatted}</span>
               </h2>
               <p className="mt-5 text-base sm:text-lg text-slate-200 leading-relaxed">
-                Chỉ <strong className="text-white font-bold">{priceFormatted}</strong> để nhận trọn bộ Skill AI Clone Landing Page thần tốc — một kỹ năng giúp bạn tạo ra hàng chục trang bán hàng đỉnh cao mỗi tuần cho doanh nghiệp của mình.
+                Chỉ <strong className="text-white font-bold">{priceFormatted}</strong> để nhận trọn bộ Skill AI Phân Tích &amp; Tự Dựng Landing Page Chuẩn CRO — một kỹ năng giúp bạn tự tạo ra các trang bán hàng chuyên nghiệp cho riêng mình.
               </p>
               <div className="mt-6 inline-flex items-center gap-3 border-l-2 border-cyan-400 pl-4 text-xs sm:text-sm font-bold uppercase text-cyan-400">
                 Nhận trọn bộ quy trình ngay hôm nay
@@ -615,11 +615,11 @@ export default function CopyLandingClient({ lp }: Props) {
             </div>
 
             <h2 className="text-xl font-black uppercase text-white">
-              KÍCH HOẠT SKILL CLONE LANDING PAGE
+              KÍCH HOẠT SKILL DỰNG LANDING PAGE CRO
             </h2>
 
             <div className="my-2 text-3xl font-black text-yellow-400">
-              {priceFormatted} <span className="text-xs line-through text-slate-500 font-normal">{originalPriceFormatted}</span>
+              {priceFormatted} {originalPrice > price && <span className="text-xs line-through text-slate-500 font-normal">{originalPriceFormatted}</span>}
             </div>
 
             <div className="inline-flex p-2.5 bg-white rounded-xl shadow-md my-1">

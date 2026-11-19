@@ -18,7 +18,42 @@ import {
   Zap,
 } from 'lucide-react';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+function getProductChecklist(p: Product) {
+  const text = `${p.pid} ${p.slug} ${p.name}`.toLowerCase();
+  if (text.includes('combo-video') || text.includes('video-ai') || p.pid === 'COMBO-VIDEO-299') {
+    return [
+      'Trọn bộ khóa học & video hướng dẫn tạo Video AI từ 1 ảnh tĩnh',
+      'Quy trình viết kịch bản Mini Drama gia đình thu hút người xem',
+      'Kho 100+ prompt FLUX thương mại (được phép dùng tạo ảnh cho cá nhân & kinh doanh)',
+      'Chính sách hoàn tiền 100% trong 7 ngày nếu không áp dụng được',
+    ];
+  }
+  if (text.includes('pack-office') || text.includes('van-phong') || p.pid === 'PACK-OFFICE-069') {
+    return [
+      '50+ prompt thực chiến cho công việc văn phòng: soạn email, biên bản họp & báo cáo',
+      'Cẩm nang kết hợp ChatGPT, Claude & Gemini giải phóng thời gian làm việc mỗi ngày',
+      'Cập nhật prompt và kỹ năng mới định kỳ trọn đời không thu phụ phí',
+      'Chính sách hoàn tiền 100% trong 7 ngày nếu không hài lòng',
+    ];
+  }
+  if (text.includes('n8n') || text.includes('auto') || text.includes('workflow')) {
+    return [
+      'File JSON workflow n8n hoàn chỉnh, import 1 click là chạy',
+      'Tài liệu & Video hướng dẫn cấu hình kết nối API từng bước',
+      'Cập nhật miễn phí các bản nâng cấp và sửa lỗi trọn đời',
+      'Hỗ trợ kỹ thuật 1-1 qua nhóm Zalo VIP & Hoàn tiền trong 7 ngày',
+    ];
+  }
+  return [
+    'Tài liệu và file mẫu hướng dẫn chi tiết từng bước cho người mới',
+    'Cập nhật tài nguyên mới định kỳ trọn đời không phát sinh chi phí',
+    'Chính sách hoàn tiền 100% trong 7 ngày nếu không đúng mô tả',
+    'Hỗ trợ kỹ thuật 1-1 qua nhóm Zalo VIP cùng Nguyễn Đăng AI',
+  ];
+}
 
 export async function generateMetadata({
   params,
@@ -30,9 +65,25 @@ export async function generateMetadata({
   if (products.length === 0) return { title: 'Sản phẩm không tồn tại' };
 
   const p = products[0];
+  const canonicalUrl = `https://tuhocai.top/san-pham/${p.slug}`;
+
   return {
     title: `${p.name} - Tự Học AI (tuhocai.top)`,
     description: p.description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: `${p.name} - Tự Học AI`,
+      description: p.description,
+      url: canonicalUrl,
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${p.name} - Tự Học AI`,
+      description: p.description,
+    },
   };
 }
 
@@ -58,8 +109,14 @@ export default async function ProductDetailPage({
     }
   }
 
+  // Chuẩn hóa địa chỉ URL: Nếu truy cập bằng PID hoặc slug cũ, redirect 301 sang slug chính thức (Giải quyết C14)
+  if (product.slug && slug !== product.slug) {
+    redirect(`/san-pham/${product.slug}`);
+  }
+
   const isFree = product.price === 0;
   const coverImage = getProductCover(product);
+  const checklist = getProductChecklist(product);
 
   // Fetch 3 related products (1 hàng 3 thẻ thoáng đãng chuẩn mới)
   const related = await query<Product>(
@@ -98,7 +155,7 @@ export default async function ProductDetailPage({
             </p>
           </div>
 
-          {/* Ảnh Bìa Sản Phẩm Sắc Nét, Không Bị Dán Tem Mác */}
+          {/* Ảnh Bìa Sản Phẩm Sắc Nét */}
           <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-slate-100 dark:bg-[#111116] border border-slate-300 dark:border-white/10 shadow-lg">
             <Image
               src={coverImage}
@@ -111,7 +168,6 @@ export default async function ProductDetailPage({
             />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 dark:from-[#09090b]/80 via-transparent to-transparent pointer-events-none" />
 
-            {/* Chỉ 1 badge duy nhất ở góc trên nếu giảm giá hoặc miễn phí */}
             {isFree ? (
               <div className="absolute top-3 left-3 px-3 py-1 rounded-md text-xs font-mono font-bold bg-emerald-600 text-white shadow-md border border-emerald-400/40">
                 Miễn phí 0đ
@@ -123,7 +179,7 @@ export default async function ProductDetailPage({
             ) : null}
           </div>
 
-          {/* Quyền Lợi Gói Sản Phẩm: Dạng Danh Sách Checklist Tinh Tế */}
+          {/* Quyền Lợi Gói Sản Phẩm: Checklist Động Đúng Từng Gói (Giải quyết C13) */}
           <div className="rounded-2xl p-5 sm:p-6 bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 space-y-4">
             <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2 font-mono">
               <Layers className="w-4 h-4 text-indigo-600 dark:text-cyan-400" />
@@ -131,112 +187,102 @@ export default async function ProductDetailPage({
             </h3>
 
             <div className="space-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-                <span>Mã nguồn JSON flow chuẩn n8n / Bộ Prompt VIP thương mại</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-                <span>Tài liệu & Video hướng dẫn từng bước chi tiết cho người mới</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-                <span>Cập nhật miễn phí các bản nâng cấp và sửa lỗi trọn đời</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-                <span>Hỗ trợ kỹ thuật 1-1 qua nhóm Zalo VIP khi gặp vướng mắc</span>
-              </div>
+              {checklist.map((item, idx) => (
+                <div key={idx} className="flex items-start gap-3">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                  <span>{item}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* CỘT PHẢI: HỘP MUA HÀNG & SỞ HỮU GỌN GÀNG (STICKY) */}
-        <div className="lg:col-span-5 space-y-4 lg:sticky lg:top-24">
-          <div className="rounded-2xl p-6 sm:p-7 space-y-5 shadow-xl border border-slate-300 dark:border-white/10 bg-white dark:bg-[#0e0e13]">
-            {/* Hàng Giá Tiền */}
-            <div className="space-y-1 pb-4 border-b border-slate-200 dark:border-white/[0.08]">
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">Giá sở hữu trọn đời:</span>
-              <div className="flex items-baseline gap-2.5 flex-wrap pt-1">
+        {/* CỘT PHẢI: KHUNG ĐẶT MUA / TẢI VỀ (STICKY BOX) */}
+        <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-5">
+          <div className="rounded-3xl p-6 sm:p-8 bg-white dark:bg-[#111116] border-2 border-slate-200 dark:border-white/10 shadow-xl space-y-6">
+            <div>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">Mức giá sở hữu:</span>
+              <div className="flex items-baseline gap-3 mt-1">
                 {isFree ? (
-                  <>
-                    <span className="text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight">
-                      0&nbsp;đ
-                    </span>
-                    <span className="text-sm text-slate-400 line-through font-mono">
-                      99.000&nbsp;đ
-                    </span>
-                  </>
+                  <span className="text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-400 font-mono">
+                    MIỄN PHÍ 0đ
+                  </span>
                 ) : (
                   <>
-                    <span className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white font-mono tracking-tight">
-                      {new Intl.NumberFormat('vi-VN').format(product.price)}&nbsp;đ
+                    <span className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white font-mono">
+                      {new Intl.NumberFormat('vi-VN').format(product.price)}đ
                     </span>
                     {product.original_price > product.price && (
-                      <span className="text-sm text-slate-400 dark:text-slate-500 line-through font-mono font-medium">
-                        {new Intl.NumberFormat('vi-VN').format(product.original_price)}&nbsp;đ
+                      <span className="text-sm text-slate-400 font-mono">
+                        (Mua lẻ: {new Intl.NumberFormat('vi-VN').format(product.original_price)}đ)
                       </span>
                     )}
                   </>
                 )}
               </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                {isFree ? 'Tải về sử dụng ngay không cần đăng ký thẻ' : 'Thanh toán 1 lần • Sở hữu vĩnh viễn • Nhận link ngay'}
+              </p>
             </div>
 
-            {/* 1 NÚT BẤM CHÍNH DUY NHẤT (SINGLE CLEAR CTA) */}
-            <div className="space-y-3">
+            {/* Nút Hành Động Chính */}
+            <div>
               {isFree ? (
-                <Link
-                  href={`/thanh-toan?pid=${product.pid}`}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-950/20 transition-all active:scale-[0.98]"
+                <a
+                  href={product.download_url || '#'}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full inline-flex items-center justify-center gap-2.5 py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-base shadow-lg shadow-emerald-950/20 transition-all hover:scale-[1.01] active:scale-[0.98]"
                 >
-                  <Download className="w-4 h-4" />
-                  <span>Tải Xuống Miễn Phí Ngay</span>
-                </Link>
+                  <Download className="w-5 h-5" />
+                  <span>Tải Về Ngay (0đ)</span>
+                </a>
               ) : (
                 <Link
-                  href={`/thanh-toan?pid=${product.pid}`}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-blue-700 hover:opacity-90 text-white font-bold text-sm shadow-xl shadow-indigo-950/25 transition-all hover:scale-[1.01] active:scale-[0.98]"
+                  href={`/thanh-toan?product=${product.pid}`}
+                  className="w-full inline-flex items-center justify-center gap-2.5 py-4 px-6 rounded-2xl bg-gradient-to-r from-indigo-700 via-indigo-600 to-blue-600 hover:opacity-95 text-white font-black text-base shadow-xl shadow-indigo-950/25 transition-all hover:scale-[1.01] active:scale-[0.98]"
                 >
-                  <Zap className="w-4 h-4 text-amber-300" />
-                  <span>Mua Ngay Bằng VietQR ({new Intl.NumberFormat('vi-VN').format(product.price)} đ)</span>
+                  <ShoppingCart className="w-5 h-5" />
+                  <span>Mua Ngay — Kích Hoạt Tự Động</span>
                 </Link>
               )}
-
-              {/* Dòng Hỗ Trợ Zalo Tinh Tế */}
-              <a
-                href="https://zalo.me/0934434101"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 py-2 px-3 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
-              >
-                <MessageCircle className="w-3.5 h-3.5 text-emerald-500" />
-                <span>Cần tư vấn nhanh? Chat Zalo: 0934.434.101</span>
-              </a>
             </div>
 
-            {/* 3 Cam Kết Chuẩn */}
-            <div className="space-y-2 pt-4 border-t border-slate-200 dark:border-white/[0.08] text-xs text-slate-600 dark:text-slate-400">
-              <div className="flex items-center gap-2">
+            {/* Bảo Chứng An Tâm */}
+            <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-white/5 text-xs text-slate-600 dark:text-slate-400">
+              <div className="flex items-center gap-2.5">
+                <Zap className="w-4 h-4 text-amber-500 shrink-0" />
+                <span>Giao tự động trong 30 giây qua mã VietQR</span>
+              </div>
+              <div className="flex items-center gap-2.5">
                 <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Duyệt tự động tức thì & nhận link tải ngay</span>
+                <span>Hoàn tiền 100% trong 7 ngày nếu không hài lòng</span>
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-indigo-500 dark:text-cyan-400 shrink-0" />
-                <span>Lưu trữ vĩnh viễn trong Kho tài liệu của bạn</span>
+              <div className="flex items-center gap-2.5">
+                <MessageCircle className="w-4 h-4 text-cyan-500 shrink-0" />
+                <span>Hỗ trợ kỹ thuật 1-1 qua nhóm Zalo VIP</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-purple-500 shrink-0" />
-                <span>Cập nhật mã nguồn & tài liệu mới trọn đời</span>
-              </div>
+            </div>
+
+            {/* Hỗ Trợ Zalo Thống Nhất (Giải quyết C12) */}
+            <div className="pt-2 text-center border-t border-slate-100 dark:border-white/5">
+              <a
+                href="https://zalo.me/g/qnitrawpaxpvl6aj7ixb"
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors inline-flex items-center gap-1.5"
+              >
+                <MessageCircle className="w-3.5 h-3.5 text-emerald-500" />
+                <span>Cần tư vấn chọn giải pháp? Nhắn Zalo Hỗ Trợ</span>
+              </a>
             </div>
           </div>
 
-          {/* Dòng Text Nhỏ Giới Thiệu CTV Affiliate (Không làm loãng trang bán hàng) */}
-          <div className="p-3.5 rounded-xl bg-slate-100/70 dark:bg-white/[0.02] border border-slate-200 dark:border-white/[0.06] text-center">
-            <p className="text-xs text-slate-600 dark:text-slate-400">
-              Muốn nhận hoa hồng 60% khi chia sẻ sản phẩm này?{' '}
-              <Link href="/affiliate" className="text-indigo-600 dark:text-cyan-400 font-bold hover:underline inline-flex items-center gap-0.5">
-                <span>Đăng ký CTV</span>
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 text-xs text-slate-500 dark:text-slate-400 leading-relaxed text-center">
+            <p>
+              Tất cả sản phẩm đều được kiểm thử và bảo hành bởi <strong>Nguyễn Đăng AI</strong>. Xem thêm{' '}
+              <Link href="/hoan-tien" className="text-indigo-600 dark:text-cyan-400 font-semibold hover:underline inline-flex items-center gap-0.5">
+                Chính sách hoàn tiền 7 ngày
                 <ArrowRight className="w-3 h-3" />
               </Link>
             </p>
