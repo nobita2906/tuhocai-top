@@ -62,28 +62,26 @@ export default function FeaturedSlideSection({ posts, products }: FeaturedSlideS
     slides.push({
       id: 'slide-course-video-ai',
       type: 'COURSE',
-      badge: 'KHÓA HỌC HOT 2026',
+      badge: 'QUY TRÌNH HOT',
       badgeColor: 'border-amber-500/40 text-amber-300 bg-amber-500/10',
-      title: 'Khóa Học & Quy Trình Tạo Video AI Triệu View Từ 1 Ảnh Tĩnh',
-      subtitle: 'Thực chiến xây kênh TikTok & Reels 2026',
+      title: 'Khóa Học & Quy Trình Sản Xuất Video AI Ngắn Từ 1 Ảnh',
+      subtitle: 'Thực chiến xây kênh bán hàng TikTok & Reels',
       description:
-        'Trọn bộ quy trình 5 bước: viết kịch bản giữ chân 3s với Claude 3.7, giữ nét khuôn mặt nhất quán FLUX/Midjourney và chuyển động mượt mà với Kling AI.',
+        'Trọn bộ quy trình 5 bước: viết kịch bản giữ chân người xem, giữ nét khuôn mặt nhân vật nhất quán và tạo chuyển động video mượt mà bằng AI.',
       highlights: [
-        'Bộ Prompt độc quyền giữ nét nhân vật đã kiểm chứng triệu view',
-        'Checklist kịch bản phân cảnh 3s & template CapCut tải về dùng ngay',
-        'Hỗ trợ thực chiến 1-1 và cập nhật video bài giảng mới trọn đời',
+        'Bộ Prompt giữ nét nhân vật và bối cảnh chuẩn thương mại',
+        'Checklist kịch bản phân cảnh và template CapCut dựng video dùng ngay',
+        'Hỗ trợ thực hành 1-1 và cập nhật video bài giảng mới trọn đời',
       ],
       ctaText: 'Đăng Ký Khóa Học (297K)',
       ctaLink: '/thanh-toan?pid=WF-VIP-297',
-      secondaryCtaText: 'Xem Landing Page Khóa Học',
+      secondaryCtaText: 'Xem Chi Tiết Quy Trình',
       secondaryCtaLink: '/lp/video-ai-tu-1-anh',
       price: {
         current: 297000,
-        original: 1200000,
-        discount: 'Tiết kiệm 75%',
       },
       image: videoCourse.thumbnail || '/images/products/flux-prompt-bundle.jpg',
-      imageAlt: 'Khóa học làm video AI bán hàng triệu view từ 1 ảnh',
+      imageAlt: 'Khóa học làm video AI bán hàng thực chiến từ 1 ảnh',
     });
   }
 
@@ -95,12 +93,12 @@ export default function FeaturedSlideSection({ posts, products }: FeaturedSlideS
     slides.push({
       id: 'slide-n8n-flagship',
       type: 'WORKFLOW',
-      badge: 'FLAGSHIP WORKFLOW N8N 2026',
+      badge: 'FLAGSHIP WORKFLOW N8N',
       badgeColor: 'border-indigo-500/40 text-indigo-300 bg-indigo-500/10',
       title: 'Workflow n8n Tự Động Đăng Bài Đa Kênh',
       subtitle: 'Facebook, Telegram & WordPress 24/7',
       description:
-        'Hệ thống tự động hóa n8n giúp lên lịch, tạo nội dung bằng AI và tự động đăng bài đa kênh không giới hạn, tiết kiệm 95% thời gian quản lý kênh.',
+        'Hệ thống tự động hóa n8n giúp lên lịch, tạo nội dung bằng AI và tự động đăng bài đa kênh không giới hạn, giảm thiểu công việc lặp lại mỗi ngày.',
       highlights: [
         'File JSON import trực tiếp vào n8n trong 30 giây',
         'Video hướng dẫn cài đặt từng bước chi tiết cho người mới',
@@ -112,8 +110,6 @@ export default function FeaturedSlideSection({ posts, products }: FeaturedSlideS
       secondaryCtaLink: '/san-pham/workflow-n8n-tu-dong-dang-bai-da-kenh',
       price: {
         current: 99000,
-        original: 299000,
-        discount: 'Tiết kiệm 200.000 đ',
       },
       image: '/images/n8n-workflow-demo.jpg',
       imageAlt: 'Sơ đồ thực tế n8n workflow tự động đăng bài đa kênh',
@@ -127,7 +123,7 @@ export default function FeaturedSlideSection({ posts, products }: FeaturedSlideS
     slides.push({
       id: `slide-post-${post.id}`,
       type: 'POST',
-      badge: isFeatured ? '🔥 BÀI VIẾT NỔI BẬT' : '⚡ BÀI ĐĂNG MỚI',
+      badge: isFeatured ? 'BÀI VIẾT NỔI BẬT' : 'BÀI ĐĂNG MỚI',
       badgeColor: isFeatured
         ? 'border-rose-500/40 text-rose-300 bg-rose-500/10'
         : 'border-cyan-500/40 text-cyan-300 bg-cyan-500/10',
@@ -330,8 +326,8 @@ export default function FeaturedSlideSection({ posts, products }: FeaturedSlideS
           <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-10 items-center">
-            {/* Cột trái: Nội dung chi tiết */}
-            <div className="lg:col-span-7 space-y-4 sm:space-y-5">
+            {/* Cột trái: Nội dung chi tiết (Trên mobile chuyển xuống dưới hình ảnh) */}
+            <div className="lg:col-span-7 space-y-4 sm:space-y-5 order-2 lg:order-1">
               {/* Badge Phân Loại & Đếm Slide */}
               <div className="flex items-center gap-2.5 flex-wrap">
                 <span
@@ -360,23 +356,23 @@ export default function FeaturedSlideSection({ posts, products }: FeaturedSlideS
 
               {/* Title & Subtitle */}
               <div>
-                <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-snug">
+                <h3 className="text-lg sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-snug">
                   {current.title}
                 </h3>
                 {current.subtitle && (
-                  <p className="text-sm sm:text-base font-semibold text-indigo-600 dark:text-cyan-400 mt-1">
+                  <p className="text-xs sm:text-base font-semibold text-indigo-600 dark:text-cyan-400 mt-0.5 sm:mt-1">
                     {current.subtitle}
                   </p>
                 )}
               </div>
 
-              {/* Description */}
-              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-3">
+              {/* Description - Ẩn trên mobile để giao diện thoáng, tôn hình ảnh */}
+              <p className="hidden sm:block text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2">
                 {current.description}
               </p>
 
-              {/* Highlights 3 gạch đầu dòng */}
-              <div className="space-y-2 py-1">
+              {/* Highlights - Chỉ hiển thị trên tablet/desktop, ẩn trên mobile */}
+              <div className="hidden sm:space-y-2 py-1">
                 {current.highlights.map((h, i) => (
                   <div key={i} className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-cyan-400 shrink-0" />
@@ -387,38 +383,38 @@ export default function FeaturedSlideSection({ posts, products }: FeaturedSlideS
 
               {/* Khung Giá Ưu Đãi (Nếu là sản phẩm / khóa học) */}
               {current.price && (
-                <div className="flex items-baseline gap-3 pt-1">
-                  <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono">
-                    {new Intl.NumberFormat('vi-VN').format(current.price.current)} đ
+                <div className="flex items-baseline gap-2.5 pt-0.5 sm:pt-1 flex-wrap">
+                  <span className="text-xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono whitespace-nowrap">
+                    {new Intl.NumberFormat('vi-VN').format(current.price.current)}&nbsp;đ
                   </span>
                   {current.price.original && (
-                    <span className="text-xs sm:text-sm text-slate-400 line-through font-mono">
-                      {new Intl.NumberFormat('vi-VN').format(current.price.original)} đ
+                    <span className="text-xs text-slate-400 line-through font-mono whitespace-nowrap">
+                      {new Intl.NumberFormat('vi-VN').format(current.price.original)}&nbsp;đ
                     </span>
                   )}
                   {current.price.discount && (
-                    <span className="font-mono text-[11px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30">
+                    <span className="font-mono text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30">
                       {current.price.discount}
                     </span>
                   )}
                 </div>
               )}
 
-              {/* CTA Buttons */}
-              <div className="pt-2 flex flex-wrap items-center gap-3">
+              {/* CTA Buttons - Tối ưu 1 nút chính trên mobile */}
+              <div className="pt-1 sm:pt-2 flex flex-wrap items-center gap-2.5 sm:gap-3">
                 <Link
                   href={current.ctaLink}
-                  className="inline-flex items-center gap-2 px-5 sm:px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-700 via-indigo-600 to-blue-600 hover:opacity-90 text-white font-black text-xs sm:text-sm shadow-xl shadow-indigo-950/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-indigo-700 via-indigo-600 to-blue-600 hover:opacity-90 text-white font-black text-xs sm:text-sm shadow-xl shadow-indigo-950/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  <Zap className="w-4 h-4 text-white" />
+                  <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                   <span>{current.ctaText}</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </Link>
 
                 {current.secondaryCtaLink && current.secondaryCtaText && (
                   <Link
                     href={current.secondaryCtaLink}
-                    className="inline-flex items-center gap-2 px-4 sm:px-5 py-3 rounded-xl bg-white/80 dark:bg-white/[0.05] hover:bg-slate-100 dark:hover:bg-white/10 text-slate-900 dark:text-slate-200 text-xs sm:text-sm font-bold border border-slate-300 dark:border-white/15 transition-colors shadow-xs"
+                    className="hidden sm:inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-white/80 dark:bg-white/[0.05] hover:bg-slate-100 dark:hover:bg-white/10 text-slate-900 dark:text-slate-200 text-xs sm:text-sm font-bold border border-slate-300 dark:border-white/15 transition-colors shadow-xs"
                   >
                     <span>{current.secondaryCtaText}</span>
                   </Link>
@@ -427,7 +423,8 @@ export default function FeaturedSlideSection({ posts, products }: FeaturedSlideS
             </div>
 
             {/* Cột phải: Hình ảnh Visual Mockup chất lượng cao */}
-            <div className="lg:col-span-5">
+            {/* Cột phải: Hình ảnh Visual Mockup (Trên mobile mở đầu ở vị trí trên cùng) */}
+            <div className="lg:col-span-5 order-1 lg:order-2">
               <Link
                 href={current.ctaLink}
                 className="group relative block rounded-2xl overflow-hidden border-2 border-slate-300 dark:border-indigo-500/30 bg-slate-950 aspect-[16/10] sm:aspect-video shadow-lg"
@@ -451,28 +448,23 @@ export default function FeaturedSlideSection({ posts, products }: FeaturedSlideS
                     <ArrowRight className="w-3.5 h-3.5" />
                   </div>
                 </div>
-
-                {/* Badge Góc Trên Hình Ảnh */}
-                <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900/90 backdrop-blur-md border border-white/20 text-[11px] font-mono text-cyan-300 shadow-sm z-10">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>{current.type === 'POST' ? 'BÀI VIẾT HOT' : 'STATUS: SẴN SÀNG'}</span>
-                </div>
               </Link>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Mobile Swipe Guidance & Indicators */}
-      <div className="flex sm:hidden items-center justify-between pt-3 text-[11px] text-slate-500 dark:text-slate-400 font-mono">
-        <span>👈 Vuốt qua lại để xem tiếp 👉</span>
-        <div className="flex items-center gap-1">
+      {/* Mobile Swipe Indicators - Tinh gọn, căn giữa thanh lịch */}
+      <div className="flex sm:hidden items-center justify-center pt-3">
+        <div className="flex items-center gap-1.5">
           {slides.map((_, i) => (
-            <span
+            <button
               key={i}
-              className={`h-1.5 rounded-full transition-all ${
-                currentIdx === i ? 'w-4 bg-indigo-500' : 'w-1.5 bg-slate-400 dark:bg-white/20'
+              onClick={() => setCurrentIdx(i)}
+              className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                currentIdx === i ? 'w-5 bg-indigo-500' : 'w-1.5 bg-slate-400 dark:bg-white/20'
               }`}
+              aria-label={`Chuyển tới slide ${i + 1}`}
             />
           ))}
         </div>

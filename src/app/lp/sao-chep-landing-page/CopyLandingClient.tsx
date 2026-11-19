@@ -254,16 +254,16 @@ export default function CopyLandingClient({ lp }: Props) {
               </h1>
             ) : (
               <h1 className="max-w-4xl text-balance text-2xl sm:text-5xl lg:text-6xl font-black uppercase leading-[1.2] tracking-tight">
-                SAO CHÉP BẤT KÌ LANDING PAGE CHUYỂN ĐỔI CAO BẠN MUỐN
+                HỌC CẤU TRÚC & TỰ DỰNG LANDING PAGE BÁN HÀNG
                 <span className="mt-2 block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-yellow-300 drop-shadow-[0_4px_30px_rgba(6,182,212,0.35)]">
-                  CHỈ VỚI 1 CLICK
+                  CHUẨN CRO BẰNG AI
                 </span>
               </h1>
             )}
 
             {/* Subheadline */}
             <p className="mt-6 max-w-2xl text-pretty text-base sm:text-lg font-medium leading-relaxed text-slate-200">
-              {lp?.subheadline || 'Chỉ cần gửi link sale page bạn muốn sao chép, Skill AI độc quyền này sẽ phân tích và tái tạo ra trang giống 99,99% trang gốc và cho phép chỉnh sửa nội dung tùy ý thần tốc!'}
+              {lp?.subheadline || 'Skill AI phân tích bố cục trang bán hàng mẫu, bóc tách cấu trúc chuyển đổi cao và hỗ trợ bạn tự dựng lại trang bán hàng chuyên nghiệp cho riêng mình mà không cần biết lập trình!'}
             </p>
 
             {/* 3 Metric Pillars */}
@@ -274,12 +274,12 @@ export default function CopyLandingClient({ lp }: Props) {
                 <p className="mt-1 text-xs sm:text-sm text-slate-300 font-medium">Từng bước cụ thể</p>
               </div>
               <div className="px-4 py-5 sm:px-6 sm:py-6">
-                <p className="text-xs sm:text-sm font-bold uppercase text-slate-300">Chi phí Flash Sale</p>
+                <p className="text-xs sm:text-sm font-bold uppercase text-slate-300">Chi phí đầu tư</p>
                 <p className="mt-1 text-2xl sm:text-4xl font-black text-yellow-400">
-                  {priceShort} <span className="text-xs line-through text-slate-500 font-normal">{originalPriceShort}</span>
+                  {priceShort}
                 </p>
                 <p className="mt-1 text-xs sm:text-sm text-slate-300 font-medium">
-                  {price <= 100000 ? 'Bằng 1 ly trà sữa' : 'Ưu đãi có hạn'}
+                  {price <= 100000 ? 'Bằng 1 ly trà sữa' : 'Giá niêm yết'}
                 </p>
               </div>
               <div className="px-4 py-5 sm:px-6 sm:py-6">

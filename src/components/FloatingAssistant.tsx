@@ -106,6 +106,7 @@ export default function FloatingAssistant() {
     return null;
   }
 
+  const hasStickyBottom = pathname?.startsWith('/lp');
   const isAnyActive = menuOpen || chatOpen;
 
   return (
@@ -120,7 +121,12 @@ export default function FloatingAssistant() {
       )}
 
       {/* Floating Speed Dial Container */}
-      <div ref={menuRef} className="fixed right-4 sm:right-6 bottom-5 sm:bottom-6 z-50 flex flex-col items-end">
+      <div
+        ref={menuRef}
+        className={`fixed right-4 sm:right-6 z-50 flex flex-col items-end transition-all duration-300 ${
+          hasStickyBottom ? 'bottom-20 sm:bottom-6' : 'bottom-5 sm:bottom-6'
+        }`}
+      >
         {/* Expanded Stacked Menu (Chỉ hiện khi bấm mở nút FAB và chat chưa mở) */}
         {menuOpen && !chatOpen && (
           <div className="flex flex-col items-end gap-2.5 mb-3 animate-in fade-in slide-in-from-bottom-3 duration-200">
@@ -204,7 +210,11 @@ export default function FloatingAssistant() {
 
       {/* Chat Assistant Panel khi mở */}
       {chatOpen && (
-        <div className="fixed right-4 sm:right-6 bottom-20 sm:bottom-22 z-50 w-[360px] max-w-[calc(100vw-32px)] max-h-[530px] rounded-2xl bg-white dark:bg-[#111116] border-2 border-slate-300 dark:border-white/20 shadow-2xl overflow-hidden flex flex-col text-slate-900 dark:text-slate-100 animate-in slide-in-from-bottom-5 duration-200">
+        <div
+          className={`fixed right-4 sm:right-6 z-50 w-[360px] max-w-[calc(100vw-32px)] max-h-[530px] rounded-2xl bg-white dark:bg-[#111116] border-2 border-slate-300 dark:border-white/20 shadow-2xl overflow-hidden flex flex-col text-slate-900 dark:text-slate-100 animate-in slide-in-from-bottom-5 duration-200 ${
+            hasStickyBottom ? 'bottom-34 sm:bottom-22' : 'bottom-20 sm:bottom-22'
+          }`}
+        >
           {/* Header */}
           <div className="bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 text-white px-4 py-3.5 flex items-center justify-between border-b border-indigo-900">
             <div className="flex items-center gap-2.5">

@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Product } from '@/types';
 import { getProductCover } from '@/lib/productImages';
 import { getProductTargetUrl, isLandingPageProduct } from '@/lib/productLinks';
-import { Download, ShoppingCart, ArrowRight, Sparkles } from 'lucide-react';
+import { Download, ShoppingCart, ArrowRight } from 'lucide-react';
 
 interface ProductCardProps {
   product: Product;
@@ -44,27 +44,6 @@ export default function ProductCard({ product, onFreeClick }: ProductCardProps) 
 
         {/* Ambient bottom shadow gradient dịu nhẹ */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 dark:from-[#09090b]/80 via-transparent to-transparent pointer-events-none" />
-
-        {/* 1 BADGE THÔNG MINH DUY NHẤT: Ưu tiên Gói Combo -> Landing Page -> Miễn phí -> Giảm giá */}
-        {product.category === 'combo' ? (
-          <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-amber-400 text-slate-950 backdrop-blur-md border border-amber-300 flex items-center gap-1 shadow-md">
-            <Sparkles className="w-3 h-3 text-slate-950" />
-            <span>GÓI COMBO</span>
-          </div>
-        ) : hasLandingPage ? (
-          <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-indigo-600/95 text-white backdrop-blur-md border border-indigo-400/30 flex items-center gap-1 shadow-md">
-            <Sparkles className="w-3 h-3 text-cyan-300" />
-            <span>Landing Page</span>
-          </div>
-        ) : isFree ? (
-          <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-emerald-700 text-white backdrop-blur-md border border-emerald-500/40 shadow-md">
-            <span>Miễn phí 0đ</span>
-          </div>
-        ) : discountPercent > 0 ? (
-          <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-slate-900/85 text-white backdrop-blur-md border border-white/20 shadow-md">
-            <span>-{discountPercent}%</span>
-          </div>
-        ) : null}
       </Link>
 
       {/* 2. TIÊU ĐỀ & MÔ TẢ NGẮN THOÁNG ĐÃNG */}
@@ -85,21 +64,21 @@ export default function ProductCard({ product, onFreeClick }: ProductCardProps) 
           {/* Cụm Giá */}
           <div className="flex flex-col min-w-0">
             {isFree ? (
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight">
+              <div className="flex items-baseline gap-1.5 whitespace-nowrap">
+                <span className="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight whitespace-nowrap">
                   0&nbsp;đ
                 </span>
-                <span className="text-xs text-slate-400 line-through font-mono">
+                <span className="text-xs text-slate-400 line-through font-mono whitespace-nowrap">
                   99.000&nbsp;đ
                 </span>
               </div>
             ) : (
               <div className="flex items-baseline gap-1.5 flex-wrap">
-                <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-mono tracking-tight">
+                <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-mono tracking-tight whitespace-nowrap">
                   {new Intl.NumberFormat('vi-VN').format(product.price)}&nbsp;đ
                 </span>
                 {product.original_price > product.price && (
-                  <span className="text-xs text-slate-400 dark:text-slate-500 line-through font-mono">
+                  <span className="text-xs text-slate-400 dark:text-slate-500 line-through font-mono whitespace-nowrap">
                     {new Intl.NumberFormat('vi-VN').format(product.original_price)}&nbsp;đ
                   </span>
                 )}

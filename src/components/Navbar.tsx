@@ -47,11 +47,10 @@ export default function Navbar() {
   };
 
   const navLinks = [
-    { label: 'Trang chủ', href: '/' },
-    { label: 'Kho Workflow & Skill', href: '/san-pham' },
-    { label: 'Tài liệu Miễn Phí', href: '/#tai-lieu-free' },
-    { label: 'Tin tức & Hướng dẫn', href: '/bai-viet' },
-    { label: 'Affiliate / CTV', href: '/affiliate' },
+    { label: 'Học miễn phí', href: '/#hoc-mien-phi' },
+    { label: 'Sản phẩm', href: '/san-pham' },
+    { label: 'Blog', href: '/bai-viet' },
+    { label: 'Về tôi', href: '/#ve-toi' },
   ];
 
   return (
@@ -78,84 +77,55 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Desktop Nav - Luôn nằm trên 1 dòng duy nhất, không bao giờ rớt dòng trên Chrome */}
-          <nav className="hidden xl:flex items-center gap-1.5 shrink-0">
+          {/* Desktop Nav - Chuẩn Blueprint Khối 0 (Học miễn phí · Sản phẩm · Blog · Về tôi · Nhận quà 0đ) */}
+          <nav className="hidden md:flex items-center gap-1.5 shrink-0">
             <Link
-              href="/"
-              className={`whitespace-nowrap shrink-0 px-2.5 py-1.5 rounded-lg text-sm font-bold transition-all ${
-                pathname === '/'
-                  ? 'text-indigo-900 dark:text-indigo-400 bg-indigo-100/90 dark:bg-indigo-500/10 border border-indigo-300 dark:border-indigo-500/30'
-                  : 'text-slate-800 dark:text-slate-200 hover:opacity-75 hover:bg-slate-100 dark:hover:bg-white/[0.04]'
-              }`}
+              href="/#hoc-mien-phi"
+              className="whitespace-nowrap shrink-0 px-3 py-1.5 rounded-lg text-sm font-bold text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-all"
             >
-              Trang chủ
+              Học miễn phí
             </Link>
 
             <Link
               href="/san-pham"
-              className={`whitespace-nowrap shrink-0 px-2.5 py-1.5 rounded-lg text-sm font-bold transition-all ${
+              className={`whitespace-nowrap shrink-0 px-3 py-1.5 rounded-lg text-sm font-bold transition-all ${
                 pathname.startsWith('/san-pham')
                   ? 'text-indigo-900 dark:text-indigo-400 bg-indigo-100/90 dark:bg-indigo-500/10 border border-indigo-300 dark:border-indigo-500/30'
-                  : 'text-slate-800 dark:text-slate-200 hover:opacity-75 hover:bg-slate-100 dark:hover:bg-white/[0.04]'
+                  : 'text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-white/[0.04]'
               }`}
             >
-              Workflow &amp; Skill
-            </Link>
-
-            <Link
-              href="/#tai-lieu-free"
-              className="whitespace-nowrap shrink-0 px-2.5 py-1.5 rounded-lg text-sm font-bold text-slate-800 dark:text-slate-200 hover:opacity-75 hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-all"
-            >
-              Tài liệu 0đ
+              Sản phẩm
             </Link>
 
             <Link
               href="/bai-viet"
-              className={`whitespace-nowrap shrink-0 px-2.5 py-1.5 rounded-lg text-sm font-bold transition-all ${
+              className={`whitespace-nowrap shrink-0 px-3 py-1.5 rounded-lg text-sm font-bold transition-all ${
                 pathname.startsWith('/bai-viet')
                   ? 'text-indigo-900 dark:text-indigo-400 bg-indigo-100/90 dark:bg-indigo-500/10 border border-indigo-300 dark:border-indigo-500/30'
-                  : 'text-slate-800 dark:text-slate-200 hover:opacity-75 hover:bg-slate-100 dark:hover:bg-white/[0.04]'
+                  : 'text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-white/[0.04]'
               }`}
             >
-              Tin tức
+              Blog
             </Link>
 
             <Link
-              href="/affiliate"
-              className={`whitespace-nowrap shrink-0 px-2.5 py-1.5 rounded-lg text-sm font-bold transition-all ${
-                pathname.startsWith('/affiliate')
-                  ? 'text-indigo-900 dark:text-indigo-400 bg-indigo-100/90 dark:bg-indigo-500/10 border border-indigo-300 dark:border-indigo-500/30'
-                  : 'text-slate-800 dark:text-slate-200 hover:opacity-75 hover:bg-slate-100 dark:hover:bg-white/[0.04]'
-              }`}
+              href="/#ve-toi"
+              className="whitespace-nowrap shrink-0 px-3 py-1.5 rounded-lg text-sm font-bold text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-all"
             >
-              Affiliate / CTV
+              Về tôi
             </Link>
 
-            {/* Kho Của Tôi button - Đậm đà mặc định, hover mờ lại */}
-            <button
-              onClick={() => setVaultOpen(true)}
-              className="whitespace-nowrap shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold text-indigo-950 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-500/20 hover:opacity-75 border-2 border-indigo-400 dark:border-indigo-500/40 transition-all shadow-xs cursor-pointer"
-              title="Tra cứu & tải lại tài nguyên đã mua"
+            {/* Nút duy nhất có màu nổi bật theo chuẩn Blueprint */}
+            <Link
+              href="/#nhan-qua-0d"
+              className="whitespace-nowrap shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-black text-white bg-gradient-to-r from-indigo-700 via-indigo-600 to-blue-600 hover:opacity-90 shadow-md shadow-indigo-950/25 transition-all hover:scale-[1.01] active:scale-[0.98] ml-1"
             >
-              <PackageCheck className="w-4 h-4 shrink-0 text-indigo-800 dark:text-indigo-400" />
-              <span>Kho Của Tôi</span>
-            </button>
-
-            {/* Nhóm Zalo VIP - Đậm đà mặc định, hover mờ lại */}
-            <a
-              href={zaloGroupUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="whitespace-nowrap shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold text-emerald-950 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-500/20 hover:opacity-75 border-2 border-emerald-400 dark:border-emerald-500/40 transition-all shadow-xs ml-0.5"
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse shrink-0" />
-              <MessageCircle className="w-4 h-4 shrink-0 text-emerald-800 dark:text-emerald-400" />
-              <span>Zalo VIP</span>
-            </a>
+              <span>🎁 Nhận quà 0đ</span>
+            </Link>
           </nav>
 
           {/* User Auth, Theme Toggle, Actions - Giữ nguyên hàng */}
-          <div className="hidden xl:flex items-center gap-2.5 shrink-0 whitespace-nowrap">
+          <div className="hidden md:flex items-center gap-2.5 shrink-0 whitespace-nowrap">
             {/* Theme Toggle Button */}
             <ThemeToggle />
 
@@ -234,8 +204,8 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Actions: Theme toggle & Hamburger (Hiện khi dưới 1280px) */}
-          <div className="xl:hidden flex items-center gap-2 shrink-0">
+          {/* Mobile Actions: Theme toggle & Hamburger (Hiện khi dưới 768px) */}
+          <div className="md:hidden flex items-center gap-2 shrink-0">
             <ThemeToggle />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -247,9 +217,17 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Drawer (Hiện dưới 1280px) */}
+        {/* Mobile Drawer (Hiện dưới 768px) */}
         {mobileMenuOpen && (
-          <div className="xl:hidden border-b border-slate-300 dark:border-white/[0.08] bg-white/98 dark:bg-[#09090b]/98 backdrop-blur-2xl px-4 py-4 space-y-3 shadow-lg">
+          <div className="md:hidden border-b border-slate-300 dark:border-white/[0.08] bg-white/98 dark:bg-[#09090b]/98 backdrop-blur-2xl px-4 py-4 space-y-3 shadow-lg">
+            <Link
+              href="/#nhan-qua-0d"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block w-full text-center py-2.5 px-4 rounded-xl text-sm font-black text-white bg-gradient-to-r from-indigo-700 via-indigo-600 to-blue-600 shadow-md"
+            >
+              🎁 Nhận Bộ Quà Tặng 0đ
+            </Link>
+
             {navLinks.map((link) => (
               <Link
                 key={link.href}

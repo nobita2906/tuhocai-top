@@ -80,24 +80,26 @@ export default async function BaiVietPage({
         </p>
       </div>
 
-      {/* Category Pills - Dạng Pill Tối Giản */}
-      <div className="flex flex-wrap items-center justify-center gap-1.5 p-1 rounded-full bg-white/[0.04] border border-white/[0.08] max-w-fit mx-auto">
-        {categories.map((c) => {
-          const isActive = (cat || 'ALL').toUpperCase() === c.key;
-          return (
-            <Link
-              key={c.key}
-              href={c.key === 'ALL' ? '/bai-viet' : '/bai-viet?cat=' + c.key}
-              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
-                isActive
-                  ? 'bg-white text-slate-900 shadow-sm'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              {c.label}
-            </Link>
-          );
-        })}
+      {/* Category Pills - Dạng Pill Cuộn Ngang Mượt Mà, Không Bị Méo Bầu Dục Trên Mobile */}
+      <div className="w-full flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar py-1 px-1">
+        <div className="inline-flex items-center gap-1.5 p-1 rounded-full bg-white/[0.04] border border-white/[0.08] shrink-0 mx-auto">
+          {categories.map((c) => {
+            const isActive = (cat || 'ALL').toUpperCase() === c.key;
+            return (
+              <Link
+                key={c.key}
+                href={c.key === 'ALL' ? '/bai-viet' : '/bai-viet?cat=' + c.key}
+                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
+                  isActive
+                    ? 'bg-white text-slate-900 shadow-sm'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                {c.label}
+              </Link>
+            );
+          })}
+        </div>
       </div>
 
       {/* Posts Grid: 3 Cột Thoáng Đãng Chuẩn Magazine */}

@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="accent-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="skin-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fed7aa"/>
+      <stop offset="100%" stop-color="#fcd34d"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="400" rx="40" fill="url(#bg-grad)"/>
+
+  <!-- Tech Grid Lines -->
+  <g opacity="0.1" stroke="#38bdf8" stroke-width="1">
+    <line x1="0" y1="100" x2="400" y2="100"/>
+    <line x1="0" y1="200" x2="400" y2="200"/>
+    <line x1="0" y1="300" x2="400" y2="300"/>
+    <line x1="100" y1="0" x2="100" y2="400"/>
+    <line x1="200" y1="0" x2="200" y2="400"/>
+    <line x1="300" y1="0" x2="300" y2="400"/>
+  </g>
+
+  <!-- Glow effect -->
+  <circle cx="200" cy="180" r="130" fill="#4f46e5" opacity="0.25" filter="blur(30px)"/>
+
+  <!-- Body / Shoulders (Modern Hoodie/Suit) -->
+  <path d="M110 380 C110 300, 140 280, 200 280 C260 280, 290 300, 290 380 Z" fill="#1e293b"/>
+  <path d="M140 380 C140 310, 165 295, 200 295 C235 295, 260 310, 260 380 Z" fill="#334155"/>
+  <path d="M170 380 L190 320 L200 335 L210 320 L230 380 Z" fill="url(#accent-grad)"/>
+
+  <!-- Neck -->
+  <rect x="182" y="230" width="36" height="55" rx="10" fill="#fed7aa"/>
+
+  <!-- Head / Face -->
+  <ellipse cx="200" cy="190" rx="58" ry="68" fill="#fed7aa"/>
+
+  <!-- Hair (Modern Short Side Cut) -->
+  <path d="M140 180 C138 135, 160 115, 200 115 C242 115, 262 135, 260 180 C250 160, 240 148, 200 148 C160 148, 150 160, 140 180 Z" fill="#1e1b4b"/>
+  <path d="M145 150 C160 120, 230 115, 255 140 C240 130, 210 125, 185 130 C165 135, 152 142, 145 150 Z" fill="#0f172a"/>
+
+  <!-- Glasses (Modern Smart Tech Glasses) -->
+  <rect x="156" y="172" width="36" height="26" rx="6" fill="none" stroke="#06b6d4" stroke-width="4"/>
+  <rect x="208" y="172" width="36" height="26" rx="6" fill="none" stroke="#06b6d4" stroke-width="4"/>
+  <line x1="192" y1="183" x2="208" y2="183" stroke="#06b6d4" stroke-width="4"/>
+  <line x1="145" y1="180" x2="156" y2="180" stroke="#06b6d4" stroke-width="3"/>
+  <line x1="244" y1="180" x2="255" y2="180" stroke="#06b6d4" stroke-width="3"/>
+
+  <!-- Eyes behind glasses -->
+  <circle cx="174" cy="184" r="4" fill="#0f172a"/>
+  <circle cx="226" cy="184" r="4" fill="#0f172a"/>
+  <circle cx="176" cy="182" r="1.5" fill="#ffffff"/>
+  <circle cx="228" cy="182" r="1.5" fill="#ffffff"/>
+
+  <!-- Friendly Smile -->
+  <path d="M188 220 Q200 230 212 220" fill="none" stroke="#ea580c" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- AI Badge / Brand Chip -->
+  <g transform="translate(140, 340)">
+    <rect width="120" height="30" rx="15" fill="#0f172a" stroke="url(#accent-grad)" stroke-width="2"/>
+    <text x="60" y="20" fill="#38bdf8" font-family="system-ui, sans-serif" font-weight="900" font-size="12" text-anchor="middle" letter-spacing="1">NGUYỄN ĐĂNG AI</text>
+  </g>
+</svg>
+

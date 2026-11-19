@@ -38,7 +38,7 @@ export default function VideoAiTu1AnhClient({ lp }: Props) {
 
   // Dynamic pricing from DB
   const price = lp?.price != null ? Number(lp.price) : 297000;
-  const originalPrice = lp?.original_price != null ? Number(lp.original_price) : 1200000;
+  const originalPrice = lp?.original_price != null ? Number(lp.original_price) : price;
   const priceFormatted = new Intl.NumberFormat('vi-VN').format(price) + 'đ';
   const priceFormattedWithSpace = new Intl.NumberFormat('vi-VN').format(price) + ' đ';
   const originalPriceFormatted = new Intl.NumberFormat('vi-VN').format(originalPrice) + 'đ';
@@ -199,8 +199,8 @@ export default function VideoAiTu1AnhClient({ lp }: Props) {
 
       {/* FLASH SALE TOP BANNER */}
       <div className="sticky top-0 z-40 bg-gradient-to-r from-amber-500 via-[#eab84e] to-amber-600 text-black px-3 py-2 text-center text-xs sm:text-sm font-black tracking-wide shadow-md flex items-center justify-center gap-2 flex-wrap">
-        <Flame className="w-4 h-4 fill-black animate-pulse flex-shrink-0" />
-        <span>ƯU ĐÃI FLASH SALE: GIÁ CHỈ {priceFormatted} (GIÁ GỐC {originalPriceFormatted}) · KẾT THÚC TRONG:</span>
+        <Flame className="w-4 h-4 fill-black flex-shrink-0" />
+        <span>HỌC QUY TRÌNH THỰC HÀNH · ĐĂNG KÝ HÔM NAY CHỈ {priceFormatted} · KẾT THÚC TRONG:</span>
         <span className="font-mono bg-black text-[#f8d575] px-2 py-0.5 rounded text-xs font-black">
           {formatTimer(timeLeft)}
         </span>
@@ -359,7 +359,6 @@ export default function VideoAiTu1AnhClient({ lp }: Props) {
                   Bắt đầu làm video AI <em className="text-[#eab84e] not-italic">từ một ảnh</em>
                 </h2>
                 <div className="flex items-baseline gap-3">
-                  <span className="text-sm line-through text-slate-500 font-bold">{originalPriceFormatted}</span>
                   <span className="text-4xl font-black text-[#eab84e]">{priceFormatted}</span>
                 </div>
 
@@ -456,7 +455,6 @@ export default function VideoAiTu1AnhClient({ lp }: Props) {
         <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-xs line-through text-slate-500 font-bold">{originalPriceShort}</span>
               <span className="text-xl font-black text-[#eab84e]">{priceFormatted}</span>
             </div>
             <p className="text-xs text-emerald-400 font-bold flex items-center gap-1">
@@ -495,7 +493,7 @@ export default function VideoAiTu1AnhClient({ lp }: Props) {
             </h2>
 
             <div className="my-2.5 text-3xl font-black text-[#eab84e]">
-              {priceFormatted} <span className="text-xs line-through text-slate-400 font-normal">{originalPriceFormatted}</span>
+              {priceFormatted}
             </div>
 
             <div className="inline-flex p-3 bg-white rounded-xl shadow-md my-1">
