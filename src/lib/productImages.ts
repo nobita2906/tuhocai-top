@@ -4,16 +4,18 @@ export function getProductCover(product: {
   category?: string;
   thumbnail?: string | null;
 }): string {
-  if (product.pid === 'COMBO-VIDEO-299') return '/images/flux-prompt-bundle.jpg';
+  if (product.pid === 'COMBO-VIDEO-299') return '/sites/tuhocai-top/landing/video-vip/ket-qua-video.jpg';
   if (product.pid === 'COMBO-AUTO-349') return '/images/n8n-workflow-demo.jpg';
+  if (product.pid === 'PACK-OFFICE-069') return '/images/products/skill-claude.svg';
 
   if (product.thumbnail && product.thumbnail.trim() !== '') {
     return product.thumbnail;
   }
 
   const pidMap: Record<string, string> = {
-    'COMBO-VIDEO-299': '/images/flux-prompt-bundle.jpg',
+    'COMBO-VIDEO-299': '/sites/tuhocai-top/landing/video-vip/ket-qua-video.jpg',
     'COMBO-AUTO-349': '/images/n8n-workflow-demo.jpg',
+    'PACK-OFFICE-069': '/images/products/skill-claude.svg',
     'WF-THAI-099': '/images/n8n-workflow-demo.jpg',
     'WF-N8N-001': '/images/products/wf-facebook.svg',
     'SKILL-GPT-001': '/images/products/skill-chatgpt.svg',

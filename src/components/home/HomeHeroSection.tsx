@@ -1,16 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { Sparkles, Gift, ArrowRight, CheckCircle2, Play, Cpu, Layers, Zap, X } from 'lucide-react';
-import Image from 'next/image';
+import { Sparkles, Gift, ArrowRight, CheckCircle2, Cpu, Layers, Zap } from 'lucide-react';
 
 interface HomeHeroSectionProps {
   onClaimFreeClick: () => void;
 }
 
 export default function HomeHeroSection({ onClaimFreeClick }: HomeHeroSectionProps) {
-  const [videoModalOpen, setVideoModalOpen] = useState(false);
-
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
@@ -40,7 +36,7 @@ export default function HomeHeroSection({ onClaimFreeClick }: HomeHeroSectionPro
               Mình tự áp dụng AI vào công việc và làm nội dung hàng ngày, rồi chia sẻ lại quy trình + template để bạn tải về dùng được ngay.
             </p>
 
-            {/* CTA row theo chuẩn Blueprint */}
+            {/* CTA row theo chuẩn Blueprint: Gỡ bỏ chữ video chào placeholder, chỉ giữ 2 nút hành động thật */}
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
               <button
                 type="button"
@@ -53,13 +49,11 @@ export default function HomeHeroSection({ onClaimFreeClick }: HomeHeroSectionPro
 
               <button
                 type="button"
-                onClick={() => setVideoModalOpen(true)}
+                onClick={() => scrollToSection('phan-nhanh')}
                 className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-indigo-600 dark:text-cyan-400 hover:underline py-2 cursor-pointer"
               >
-                <div className="w-6 h-6 rounded-full bg-indigo-500/10 dark:bg-cyan-500/20 flex items-center justify-center border border-indigo-500/30">
-                  <Play className="w-3 h-3 fill-current ml-0.5" />
-                </div>
-                <span>Video chào 45s (Nguyễn Đăng AI)</span>
+                <span>Xem 3 lộ trình phù hợp với bạn</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 
@@ -150,55 +144,15 @@ export default function HomeHeroSection({ onClaimFreeClick }: HomeHeroSectionPro
                   <span className="text-[11px] font-mono text-cyan-400 font-bold">Template n8n</span>
                 </div>
               </div>
+
+              {/* Dòng chú thích n8n dành cho người mới (Giải quyết mục 16) */}
+              <p className="mt-3 text-[11px] text-slate-400 text-center leading-normal">
+                * Bạn chưa cần biết n8n hay lập trình để bắt đầu — tất cả đã được đóng gói sẵn template import 1 click.
+              </p>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Video Modal Chào 45s */}
-      {videoModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
-          <div className="relative w-full max-w-2xl rounded-2xl bg-slate-900 border border-white/20 p-4 shadow-2xl overflow-hidden space-y-3">
-            <div className="flex items-center justify-between text-white pb-2 border-b border-white/10">
-              <div className="flex items-center gap-2">
-                <Play className="w-4 h-4 text-cyan-400" />
-                <span className="text-xs sm:text-sm font-bold font-mono">Nguyễn Đăng AI — Chào bạn &amp; Giới thiệu Tự Học AI</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setVideoModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-black">
-              <iframe
-                src="https://www.youtube-nocookie.com/embed/KOAKDMxpPxI?autoplay=1"
-                title="Nguyễn Đăng AI - Video giới thiệu"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full border-0"
-              />
-            </div>
-
-            <div className="flex items-center justify-between pt-1 text-xs text-slate-400">
-              <span>Học bằng cách làm — Thực hành cùng Nguyễn Đăng AI</span>
-              <button
-                type="button"
-                onClick={() => {
-                  setVideoModalOpen(false);
-                  onClaimFreeClick();
-                }}
-                className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-colors"
-              >
-                Nhận Bộ Quà 0đ Ngay
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 }

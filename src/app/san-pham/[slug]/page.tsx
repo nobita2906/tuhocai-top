@@ -61,6 +61,11 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  // Chuyển hướng 301 các slug cũ sang slug mới chuẩn
+  if (slug === 'combo-video-ai-trieu-view' || slug === 'COMBO-VIDEO-299') {
+    redirect('/san-pham/combo-video-ai-ban-hang');
+  }
+
   const products = await query<Product>('SELECT * FROM products WHERE slug = ? OR pid = ? LIMIT 1', [slug, slug]);
   if (products.length === 0) return { title: 'Sản phẩm không tồn tại' };
 
@@ -93,6 +98,11 @@ export default async function ProductDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  // Chuyển hướng 301 các slug cũ sang slug mới chuẩn
+  if (slug === 'combo-video-ai-trieu-view' || slug === 'COMBO-VIDEO-299') {
+    redirect('/san-pham/combo-video-ai-ban-hang');
+  }
+
   const products = await query<Product>('SELECT * FROM products WHERE slug = ? OR pid = ? LIMIT 1', [slug, slug]);
 
   if (products.length === 0) {
@@ -264,16 +274,16 @@ export default async function ProductDetailPage({
               </div>
             </div>
 
-            {/* Hỗ Trợ Zalo Thống Nhất (Giải quyết C12) */}
+            {/* Hỗ Trợ Zalo Tư Vấn 1-1 Riêng (Giải quyết C11) */}
             <div className="pt-2 text-center border-t border-slate-100 dark:border-white/5">
               <a
-                href="https://zalo.me/g/qnitrawpaxpvl6aj7ixb"
+                href="https://zalo.me/0938494303"
                 target="_blank"
                 rel="noreferrer"
                 className="text-xs text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 transition-colors inline-flex items-center gap-1.5"
               >
                 <MessageCircle className="w-3.5 h-3.5 text-emerald-500" />
-                <span>Cần tư vấn chọn giải pháp? Nhắn Zalo Hỗ Trợ</span>
+                <span>Cần tư vấn chọn giải pháp? Nhắn Zalo Hỗ Trợ 1-1</span>
               </a>
             </div>
           </div>

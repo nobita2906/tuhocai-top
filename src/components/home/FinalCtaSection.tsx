@@ -63,7 +63,7 @@ export default function FinalCtaSection() {
             </h2>
 
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Nhận ngay bộ quà tặng 0đ (100+ prompt và quy trình mẫu). Nguyễn Đăng AI sẽ gửi link tải trực tiếp và hướng dẫn bạn bước tiếp theo qua email.
+              Nhận ngay cẩm nang khởi động Tự Học AI kèm các mẫu prompt và template 0đ được chọn lọc kỹ lưỡng. Nguyễn Đăng AI sẽ gửi link Google Drive trực tiếp tới bạn qua email.
             </p>
 
             {!submitted ? (

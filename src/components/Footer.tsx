@@ -89,8 +89,8 @@ export default async function Footer() {
           <h4 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-3 font-mono">Hỗ trợ &amp; Liên hệ</h4>
           <ul className="space-y-2.5 text-xs">
             <li className="flex items-center gap-2">
-              <Phone className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-              <span>Hotline / Zalo: <strong className="text-slate-900 dark:text-white font-mono">{hotline}</strong></span>
+              <MessageCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <span>Hỗ trợ 1-1: <a href="https://zalo.me/0938494303" target="_blank" rel="noopener noreferrer" className="text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-cyan-400 font-bold underline">Nhắn Zalo Trực Tiếp</a></span>
             </li>
             <li className="flex items-center gap-2">
               <Mail className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />

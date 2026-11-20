@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
-import { Download, CheckCircle2, MessageCircle, ArrowRight, Loader2, ShieldCheck, Sparkles, Gift } from 'lucide-react';
+import Link from 'next/link';
+import { Download, CheckCircle2, MessageCircle, ArrowRight, Loader2, ShieldCheck, Gift, Zap, Sparkles } from 'lucide-react';
 
 interface InlineLeadFormProps {
   initialResource?: {
@@ -24,11 +24,13 @@ export default function InlineLeadForm({ initialResource }: InlineLeadFormProps)
   const [zaloGroup, setZaloGroup] = useState('https://zalo.me/g/qnitrawpaxpvl6aj7ixb');
 
   // Dynamic gift title & description based on user branch selection
-  const resourceTitle = initialResource?.name || 'Trọn Bộ Tài Liệu Tự Học AI & Prompt Thực Chiến (0đ)';
+  const resourceTitle = initialResource?.name || 'Trọn Bộ Cẩm Nang Khởi Động Tự Học AI & Prompt Thực Chiến (0đ)';
   const resourceId = initialResource?.id || 'FREE-ALL-2026';
   const resourceDesc =
     initialResource?.giftDesc ||
     'Bộ tài nguyên và quy trình mẫu được đúc kết từ quá trình thực chiến tự học và ứng dụng AI hàng ngày của Nguyễn Đăng AI. Tải về dùng ngay, hoàn toàn miễn phí.';
+
+  const isCreatorBranch = initialResource?.branchId === 'creator';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -187,23 +189,23 @@ export default function InlineLeadForm({ initialResource }: InlineLeadFormProps)
               </div>
             </div>
           ) : (
-            /* Màn hình Cảm ơn sau khi gửi Form thành công */
-            <div className="relative z-10 text-center max-w-xl mx-auto space-y-5 py-4">
+            /* Màn hình Cảm ơn sau khi gửi Form thành công + Gợi ý giải pháp theo nhánh (Giải quyết triệt để B8) */
+            <div className="relative z-10 text-center max-w-2xl mx-auto space-y-6 py-4">
               <div className="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center mx-auto text-emerald-400 animate-bounce">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
 
               <div className="space-y-2">
                 <h3 className="text-2xl sm:text-3xl font-black text-white">
-                  Đã Kích Hoạt Quà Tặng 0đ!
+                  Đã Kích Hoạt Quà Tặng 0đ Thành Công!
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-300">
-                  Cảm ơn <strong>{name || 'bạn'}</strong>. Link tải bộ tài liệu <strong>{resourceTitle}</strong> đã được gửi tới email <span className="text-cyan-400 underline font-mono">{email}</span>.
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                  Cảm ơn <strong>{name || 'bạn'}</strong>. Link tải bộ tài liệu <strong>{resourceTitle}</strong> đã sẵn sàng bên dưới và cũng được gửi về email <span className="text-cyan-400 underline font-mono">{email}</span>.
                 </p>
               </div>
 
-              {/* Action Buttons */}
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+              {/* 2 Nút Hành Động Trực Tiếp */}
+              <div className="pt-1 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <a
                   href={downloadUrl}
                   target="_blank"
@@ -211,7 +213,7 @@ export default function InlineLeadForm({ initialResource }: InlineLeadFormProps)
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white text-slate-900 font-bold text-sm hover:bg-slate-100 shadow-xl transition-all"
                 >
                   <Download className="w-4 h-4 text-emerald-600" />
-                  <span>Mở Thư Mục Google Drive</span>
+                  <span>Mở Link Google Drive Tải Về</span>
                 </a>
 
                 <a
@@ -221,8 +223,42 @@ export default function InlineLeadForm({ initialResource }: InlineLeadFormProps)
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-xl transition-all"
                 >
                   <MessageCircle className="w-4 h-4" />
-                  <span>Vào Nhóm Zalo Nhận Hỗ Trợ</span>
+                  <span>Vào Nhóm Zalo Nhận Hỗ Trợ 1-1</span>
                 </a>
+              </div>
+
+              {/* Khối Gợi Ý Giải Pháp Phù Hợp (Tripwire Phễu Nuôi Dưỡng) */}
+              <div className="mt-8 pt-6 border-t border-white/10 text-left">
+                <div className="p-5 sm:p-6 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-indigo-400/50 transition-all flex flex-col sm:flex-row items-center justify-between gap-5">
+                  <div className="space-y-2">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-cyan-300 text-[11px] font-mono font-bold">
+                      <Sparkles className="w-3 h-3" />
+                      {isCreatorBranch ? 'GỢI Ý CHO CREATOR' : 'BƯỚC TIẾP THEO CHO BẠN'}
+                    </div>
+
+                    <h4 className="text-base sm:text-lg font-bold text-white">
+                      {isCreatorBranch
+                        ? 'Combo Video AI Sáng Tạo Nội Dung Bán Hàng'
+                        : 'Bộ Prompt & Skill AI Văn Phòng 4.0 Toàn Diện (Bản Full 50+ Prompt)'}
+                    </h4>
+
+                    <p className="text-xs text-slate-300 leading-relaxed max-w-lg">
+                      {isCreatorBranch
+                        ? 'Trọn bộ 3 sản phẩm: Khóa học Video AI từ 1 ảnh tĩnh, kịch bản Mini Drama và 100+ prompt FLUX thương mại chỉ với 299.000đ.'
+                        : 'Nếu bạn muốn có đầy đủ 50+ prompt chuyên sâu xử lý báo cáo, email đối tác và bảng biểu chỉ trong 5 phút. Đầu tư chỉ 69.000đ, bảo hành hoàn tiền 7 ngày.'}
+                    </p>
+                  </div>
+
+                  <div className="shrink-0 w-full sm:w-auto">
+                    <Link
+                      href={isCreatorBranch ? '/lp/video-ai-tu-1-anh' : '/san-pham/bo-prompt-ai-van-phong'}
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-700 via-indigo-600 to-blue-600 hover:opacity-95 text-white font-bold text-xs sm:text-sm shadow-lg shadow-indigo-950/30 transition-all whitespace-nowrap"
+                    >
+                      <span>{isCreatorBranch ? 'Xem Chi Tiết Combo 299K' : 'Xem Chi Tiết Bản Full 69K'}</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
           )}

@@ -123,9 +123,9 @@ export default function FeaturedSlideSection({ posts, products }: FeaturedSlideS
     slides.push({
       id: `slide-post-${post.id}`,
       type: 'POST',
-      badge: isFeatured ? 'BÀI VIẾT NỔI BẬT' : 'BÀI ĐĂNG MỚI',
+      badge: isFeatured ? 'HƯỚNG DẪN MỚI' : 'CHIA SẺ KỸ THUẬT',
       badgeColor: isFeatured
-        ? 'border-rose-500/40 text-rose-300 bg-rose-500/10'
+        ? 'border-indigo-500/40 text-indigo-300 bg-indigo-500/10'
         : 'border-cyan-500/40 text-cyan-300 bg-cyan-500/10',
       title: post.title,
       description: post.summary || '',
@@ -134,7 +134,7 @@ export default function FeaturedSlideSection({ posts, products }: FeaturedSlideS
         'Hướng dẫn thực chiến từng bước không giấu nghề',
         'Chia sẻ kèm Prompt mẫu & sơ đồ kiến trúc ứng dụng',
       ],
-      ctaText: 'Đọc Bài Viết Ngay',
+      ctaText: 'Đọc Bài Viết',
       ctaLink: `/bai-viet/${post.slug}`,
       secondaryCtaText: 'Xem Tất Cả Bài Viết',
       secondaryCtaLink: '/bai-viet',

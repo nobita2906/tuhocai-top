@@ -29,22 +29,6 @@ const YOUTUBE_VIDEOS: YoutubeVideo[] = [
     tagColor: 'bg-amber-500/10 text-amber-500 dark:text-amber-300 border-amber-500/20',
     templateName: 'Template kịch bản phân cảnh 3s đầu (0đ)',
   },
-  {
-    id: 'yt-2',
-    youtubeId: 'KOAKDMxpPxI',
-    title: 'Xây dựng Workflow n8n tự động đăng bài đa kênh không cần code',
-    tag: '💼 Tự động hóa & Văn phòng',
-    tagColor: 'bg-blue-500/10 text-blue-600 dark:text-cyan-400 border-blue-500/20',
-    templateName: 'File JSON workflow n8n mẫu (0đ)',
-  },
-  {
-    id: 'yt-3',
-    youtubeId: 'KOAKDMxpPxI',
-    title: 'Cách ứng dụng ChatGPT & Claude giải quyết việc văn phòng trong 5 phút',
-    tag: '🌱 Dành cho người mới',
-    tagColor: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
-    templateName: 'Bộ 15 Prompt văn phòng cốt lõi (0đ)',
-  },
 ];
 
 function getBranchBadge(post: Post) {
@@ -124,7 +108,7 @@ export default function FreeLearningSection({ posts }: FreeLearningSectionProps)
               }`}
             >
               <PlayCircle className="w-3.5 h-3.5" />
-              <span>Video YouTube (3)</span>
+              <span>Video YouTube ({YOUTUBE_VIDEOS.length})</span>
             </button>
             <button
               type="button"
@@ -141,51 +125,79 @@ export default function FreeLearningSection({ posts }: FreeLearningSectionProps)
           </div>
         </div>
 
-        {/* Tab 1: Video YouTube nhúng trực tiếp (Giải quyết triệt để vấn đề B9) */}
+        {/* Tab 1: Video YouTube nhúng thực tế (Chỉ hiển thị video đã quay thật, không để video trùng lặp) */}
         {activeTab === 'video' && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+          <div className="space-y-4">
             {YOUTUBE_VIDEOS.map((v) => (
               <div
                 key={v.id}
-                className="bento-card group flex flex-col justify-between rounded-2xl bg-white dark:bg-[#111116] border-2 border-slate-200 dark:border-white/10 hover:border-red-500/40 hover:shadow-xl transition-all overflow-hidden"
+                className="bento-card group rounded-3xl bg-white dark:bg-[#111116] border-2 border-slate-200 dark:border-white/10 hover:border-red-500/40 hover:shadow-2xl transition-all overflow-hidden p-4 sm:p-6"
               >
-                <div>
-                  {/* Embedded 16:9 YouTube Player */}
-                  <div className="relative aspect-video w-full bg-slate-950 overflow-hidden">
-                    <iframe
-                      src={`https://www.youtube-nocookie.com/embed/${v.youtubeId}`}
-                      title={v.title}
-                      loading="lazy"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      className="w-full h-full border-0"
-                    />
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                  {/* Cột trái: Embedded 16:9 YouTube Player */}
+                  <div className="lg:col-span-7">
+                    <div className="relative aspect-video w-full rounded-2xl bg-slate-950 overflow-hidden shadow-lg border border-slate-300 dark:border-white/10">
+                      <iframe
+                        src={`https://www.youtube-nocookie.com/embed/${v.youtubeId}`}
+                        title={v.title}
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="w-full h-full border-0"
+                      />
+                    </div>
                   </div>
 
-                  {/* Body Content */}
-                  <div className="p-4 space-y-2.5">
-                    <span className={`inline-block text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${v.tagColor}`}>
-                      {v.tag}
-                    </span>
-                    <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-snug">
-                      {v.title}
-                    </h3>
-                  </div>
-                </div>
+                  {/* Cột phải: Thông tin nội dung & Quà tặng đính kèm */}
+                  <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <span className={`inline-block text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full border ${v.tagColor}`}>
+                          {v.tag}
+                        </span>
+                        <span className="text-xs text-red-600 dark:text-red-400 font-mono font-bold flex items-center gap-1">
+                          <PlayCircle className="w-3.5 h-3.5" />
+                          Video Hướng Dẫn Thật
+                        </span>
+                      </div>
 
-                {/* Footer: Template đính kèm 0đ */}
-                <div className="p-4 pt-0 space-y-2 mt-auto">
-                  <button
-                    type="button"
-                    onClick={scrollToLead}
-                    className="w-full p-2.5 rounded-xl bg-emerald-500/5 hover:bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between text-xs text-emerald-700 dark:text-emerald-400 transition-colors cursor-pointer text-left"
-                  >
-                    <span className="font-semibold flex items-center gap-1.5 truncate">
-                      <Download className="w-3.5 h-3.5 shrink-0" />
-                      <span className="truncate">{v.templateName}</span>
-                    </span>
-                    <span className="text-[10px] font-mono shrink-0 font-bold ml-1">Lấy ngay</span>
-                  </button>
+                      <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-snug">
+                        {v.title}
+                      </h3>
+
+                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Toàn bộ quy trình từng bước từ tạo hình ảnh nhất quán bằng FLUX, lên kịch bản chuyển động và đồng bộ giọng đọc bán hàng thực tế mà Nguyễn Đăng AI đang áp dụng.
+                      </p>
+                    </div>
+
+                    {/* Hộp nhận template đính kèm 0đ */}
+                    <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-500/25 space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-mono font-bold text-emerald-800 dark:text-emerald-400 uppercase">
+                          🎁 Tài liệu đính kèm video:
+                        </span>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-600 text-white font-mono">
+                          0đ
+                        </span>
+                      </div>
+                      <p className="text-xs font-bold text-slate-900 dark:text-white">
+                        {v.templateName}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={scrollToLead}
+                        className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Nhập Email Nhận Template 0đ Này</span>
+                      </button>
+                    </div>
+
+                    {/* Dòng chú thích trung thực về video tiếp theo */}
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 italic">
+                      * Các video tiếp theo về Workflow n8n tự động hóa và Kỹ năng AI văn phòng đang được quay dựng và sẽ cập nhật trực tiếp tại đây.
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}

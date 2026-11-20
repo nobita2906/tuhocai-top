@@ -5,16 +5,17 @@ import CheckoutClient from './CheckoutClient';
 export default async function CheckoutPage({
   searchParams,
 }: {
-  searchParams: Promise<{ pid?: string }>;
+  searchParams: Promise<{ pid?: string; product?: string }>;
 }) {
-  const { pid } = await searchParams;
+  const { pid, product: productParam } = await searchParams;
+  const target = pid || productParam;
 
   // Fetch product from DB
   let product: Product | null = null;
-  if (pid) {
+  if (target) {
     const prods = await query<Product>(
       'SELECT * FROM products WHERE pid = ? OR id = ? OR slug = ? LIMIT 1',
-      [pid, pid, pid]
+      [target, target, target]
     );
     if (prods.length > 0) {
       product = prods[0];
