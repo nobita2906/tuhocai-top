@@ -193,8 +193,8 @@ export default function LeadMagnetModal({
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 via-emerald-700 to-teal-700 hover:opacity-90 text-white font-extrabold text-sm shadow-xl shadow-emerald-950/25 transition-all border border-emerald-400/30 active:scale-[0.98]"
               >
-                <Download className="w-5 h-5 animate-pulse" />
-                📥 Tải File / Mở Link Google Drive Ngay
+                <Download className="w-5 h-5" />
+                <span>Tải File / Mở Link Google Drive Ngay</span>
               </a>
 
               <a
@@ -202,7 +202,7 @@ export default function LeadMagnetModal({
                 className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 hover:opacity-85 text-white font-bold text-sm shadow-xl shadow-indigo-950/25 transition-all active:scale-[0.98]"
               >
                 <PackageCheck className="w-4 h-4" />
-                🚀 Vào Xem Trong Kho Tài Liệu Của Tôi
+                <span>Vào Xem Trong Kho Tài Liệu Của Tôi</span>
               </a>
 
               <a

@@ -24,6 +24,7 @@ import {
   Download,
   FileText,
   MessageSquare,
+  Zap,
 } from 'lucide-react';
 import AffiliateGuideSection from '@/components/AffiliateGuideSection';
 
@@ -455,9 +456,16 @@ export default function AffiliateClient() {
                       <button
                         onClick={() => setShowPayoutModal(true)}
                         disabled={statsData.partner.balance < 200000}
-                        className="mt-3 w-full py-1.5 px-3 rounded-lg text-xs font-bold transition-all bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 text-white"
+                        className="mt-3 w-full py-2 px-3 rounded-xl text-xs font-bold transition-all bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 text-white flex items-center justify-center gap-1.5"
                       >
-                        {statsData.partner.balance >= 200000 ? '⚡ Rút tiền ngay' : 'Tối thiểu 200k để rút'}
+                        {statsData.partner.balance >= 200000 ? (
+                          <>
+                            <Zap className="w-3.5 h-3.5" />
+                            <span>Rút tiền ngay</span>
+                          </>
+                        ) : (
+                          'Tối thiểu 200k để rút'
+                        )}
                       </button>
                     </div>
                   </div>
@@ -804,7 +812,14 @@ export default function AffiliateClient() {
                 disabled={isSubmitting}
                 className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-indigo-800 hover:from-indigo-700 hover:to-indigo-900 text-white font-bold text-base shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/50 transition-all flex items-center justify-center gap-2"
               >
-                {isSubmitting ? 'Đang kích hoạt đối tác...' : '⚡ Kích Hoạt Tài Khoản & Nhận Mã Ref (Hoa Hồng 60%)'}
+                {isSubmitting ? (
+                  'Đang kích hoạt đối tác...'
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4 text-amber-300" />
+                    <span>Kích Hoạt Tài Khoản &amp; Nhận Mã Ref (Hoa Hồng 60%)</span>
+                  </>
+                )}
               </button>
 
               {!currentUser && (

@@ -24,6 +24,7 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
     id: string;
     name: string;
     giftDesc?: string;
+    branchId?: string;
   } | null>(null);
 
   const [leadModalOpen, setLeadModalOpen] = useState(false);
@@ -54,6 +55,7 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
       id: `FREE-${branch.id.toUpperCase()}`,
       name: branch.giftTitle,
       giftDesc: branch.giftDesc,
+      branchId: branch.id,
     });
     handleClaimFreeScroll();
   };

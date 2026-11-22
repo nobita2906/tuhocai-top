@@ -1,10 +1,10 @@
 'use client';
 
-import { Sparkles, ArrowRight, Laptop, Briefcase, Video } from 'lucide-react';
+import { Sparkles, ArrowRight, Sprout, Briefcase, Clapperboard, Gift } from 'lucide-react';
 
 export interface BranchOption {
   id: 'beginner' | 'office' | 'creator';
-  icon: string;
+  iconType: 'beginner' | 'office' | 'creator';
   badge: string;
   badgeColor: string;
   title: string;
@@ -17,7 +17,7 @@ export interface BranchOption {
 export const BRANCHES: BranchOption[] = [
   {
     id: 'beginner',
-    icon: '🌱',
+    iconType: 'beginner',
     badge: 'DÀNH CHO NGƯỜI MỚI',
     badgeColor: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/25',
     title: 'Mình mới bắt đầu với AI',
@@ -28,7 +28,7 @@ export const BRANCHES: BranchOption[] = [
   },
   {
     id: 'office',
-    icon: '💼',
+    iconType: 'office',
     badge: 'DÂN VĂN PHÒNG & KINH DOANH',
     badgeColor: 'bg-blue-500/10 text-blue-600 dark:text-cyan-400 border-blue-500/25',
     title: 'Mình làm văn phòng / cá nhân',
@@ -39,7 +39,7 @@ export const BRANCHES: BranchOption[] = [
   },
   {
     id: 'creator',
-    icon: '🎬',
+    iconType: 'creator',
     badge: 'CREATOR & XÂY KÊNH',
     badgeColor: 'bg-amber-500/10 text-amber-500 dark:text-amber-300 border-amber-500/25',
     title: 'Mình làm nội dung / xây kênh',
@@ -49,6 +49,28 @@ export const BRANCHES: BranchOption[] = [
     ctaText: 'Nhận Túi Quà Creator',
   },
 ];
+
+function BranchIcon({ type }: { type: 'beginner' | 'office' | 'creator' }) {
+  if (type === 'beginner') {
+    return (
+      <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-105 group-hover:bg-emerald-500/15 transition-all shadow-inner">
+        <Sprout className="w-6 h-6" />
+      </div>
+    );
+  }
+  if (type === 'office') {
+    return (
+      <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/25 flex items-center justify-center text-blue-600 dark:text-cyan-400 group-hover:scale-105 group-hover:bg-blue-500/15 transition-all shadow-inner">
+        <Briefcase className="w-6 h-6" />
+      </div>
+    );
+  }
+  return (
+    <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-500 dark:text-amber-300 group-hover:scale-105 group-hover:bg-amber-500/15 transition-all shadow-inner">
+      <Clapperboard className="w-6 h-6" />
+    </div>
+  );
+}
 
 interface BranchSelectorProps {
   onSelectBranch: (branch: BranchOption) => void;
@@ -88,9 +110,7 @@ export default function BranchSelector({ onSelectBranch, activeBranchId }: Branc
               >
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-3xl p-2 rounded-2xl bg-slate-100 dark:bg-white/[0.05]">
-                      {b.icon}
-                    </span>
+                    <BranchIcon type={b.iconType} />
                     <span className={`text-[10px] font-mono font-bold px-2.5 py-1 rounded-full border ${b.badgeColor}`}>
                       {b.badge}
                     </span>
@@ -107,8 +127,9 @@ export default function BranchSelector({ onSelectBranch, activeBranchId }: Branc
 
                   {/* Quà tặng tương ứng */}
                   <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06] space-y-1">
-                    <p className="text-[11px] font-mono font-bold text-indigo-600 dark:text-cyan-400 uppercase">
-                      🎁 Quà tặng kèm theo:
+                    <p className="text-[11px] font-mono font-bold text-indigo-600 dark:text-cyan-400 uppercase flex items-center gap-1.5">
+                      <Gift className="w-3.5 h-3.5 text-indigo-600 dark:text-cyan-400 shrink-0" />
+                      <span>Quà tặng kèm theo:</span>
                     </p>
                     <p className="text-xs font-bold text-slate-900 dark:text-white">
                       {b.giftTitle}

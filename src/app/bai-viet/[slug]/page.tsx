@@ -275,10 +275,14 @@ export default async function SingleArticlePage({
           )}
 
           {/* Hero Thumbnail Banner Chiều Cao Vừa Phải */}
-          {post.thumbnail && (
+          {(post.thumbnail || post.slug) && (
             <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-lg max-h-[420px] aspect-[16/9] relative bg-slate-100 dark:bg-slate-950">
               <img
-                src={post.thumbnail}
+                src={
+                  post.thumbnail && !post.thumbnail.includes('photo-1677442136019-21780efad99a')
+                    ? post.thumbnail
+                    : '/images/products/skill-chatgpt.svg'
+                }
                 alt={post.title}
                 className="w-full h-full object-cover"
               />

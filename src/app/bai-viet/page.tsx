@@ -14,7 +14,7 @@ export const metadata = {
 export const revalidate = 60;
 
 function getPostCover(post: Post): string {
-  if (post.thumbnail) return post.thumbnail;
+  if (post.thumbnail && !post.thumbnail.includes('photo-1677442136019-21780efad99a')) return post.thumbnail;
   const slug = post.slug?.toLowerCase() || '';
   if (slug.includes('claude')) return '/images/products/skill-claude.svg';
   if (slug.includes('n8n') || slug.includes('dang-bai')) return '/images/products/n8n-workflow-demo.jpg';

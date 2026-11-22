@@ -138,8 +138,9 @@ export default function FloatingAssistant() {
               }}
               className="group flex items-center gap-2.5 cursor-pointer select-none"
             >
-              <span className="bg-slate-900/95 dark:bg-[#151520]/95 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg border border-slate-700/60 dark:border-white/10 group-hover:scale-105 transition-all">
-                🤖 Hỏi đáp Trợ lý AI
+              <span className="bg-slate-900/95 dark:bg-[#151520]/95 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg border border-slate-700/60 dark:border-white/10 group-hover:scale-105 transition-all flex items-center gap-1.5">
+                <Bot className="w-3.5 h-3.5 text-cyan-400" />
+                <span>Hỏi đáp Trợ lý AI</span>
               </span>
               <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-indigo-700 to-purple-600 hover:from-indigo-600 hover:to-purple-500 text-white flex items-center justify-center shadow-lg shadow-indigo-600/30 border border-white/20 group-hover:scale-110 active:scale-95 transition-all">
                 <Bot className="w-5 h-5" />
@@ -152,8 +153,9 @@ export default function FloatingAssistant() {
               onClick={() => setMenuOpen(false)}
               className="group flex items-center gap-2.5 select-none"
             >
-              <span className="bg-slate-900/95 dark:bg-[#151520]/95 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg border border-slate-700/60 dark:border-white/10 group-hover:scale-105 transition-all">
-                📞 Hotline: {supportContact.hotline}
+              <span className="bg-slate-900/95 dark:bg-[#151520]/95 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg border border-slate-700/60 dark:border-white/10 group-hover:scale-105 transition-all flex items-center gap-1.5">
+                <Phone className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Hotline: {supportContact.hotline}</span>
               </span>
               <div className="w-11 h-11 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-600/30 border border-white/20 group-hover:scale-110 active:scale-95 transition-all">
                 <Phone className="w-5 h-5" />
@@ -168,8 +170,9 @@ export default function FloatingAssistant() {
               onClick={() => setMenuOpen(false)}
               className="group flex items-center gap-2.5 select-none"
             >
-              <span className="bg-slate-900/95 dark:bg-[#151520]/95 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg border border-slate-700/60 dark:border-white/10 group-hover:scale-105 transition-all">
-                💬 Chat Zalo: {supportContact.hotline}
+              <span className="bg-slate-900/95 dark:bg-[#151520]/95 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg border border-slate-700/60 dark:border-white/10 group-hover:scale-105 transition-all flex items-center gap-1.5">
+                <MessageCircle className="w-3.5 h-3.5 text-blue-400" />
+                <span>Chat Zalo: {supportContact.hotline}</span>
               </span>
               <div className="w-11 h-11 rounded-full bg-[#0068ff] hover:bg-[#0052cc] text-white flex items-center justify-center shadow-lg shadow-blue-500/30 border border-white/20 group-hover:scale-110 active:scale-95 transition-all">
                 <MessageCircle className="w-5 h-5 fill-white" />
@@ -219,7 +222,7 @@ export default function FloatingAssistant() {
           <div className="bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 text-white px-4 py-3.5 flex items-center justify-between border-b border-indigo-900">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-base border border-white/20">
-                🤖
+                <Bot className="w-4 h-4 text-white" />
               </div>
               <div>
                 <h4 className="text-sm font-extrabold tracking-tight">Trợ Lý Tự Học AI</h4>

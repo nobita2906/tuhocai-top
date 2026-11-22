@@ -700,8 +700,9 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
                     <div className="font-mono font-black text-base sm:text-lg text-amber-700 dark:text-amber-300 tracking-wider">
                       {bankInfo?.content || orderCode}
                     </div>
-                    <p className="text-[11px] text-amber-800/90 dark:text-amber-300/80 leading-tight">
-                      ⚠️ Giữ nguyên cú pháp này khi chuyển khoản để hệ thống kích hoạt tự động sau 30 giây.
+                    <p className="text-[11px] text-amber-800/90 dark:text-amber-300/80 leading-tight flex items-start gap-1">
+                      <AlertCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                      <span>Giữ nguyên cú pháp này khi chuyển khoản để hệ thống kích hoạt tự động sau 30 giây.</span>
                     </p>
                   </div>
                 </div>
@@ -733,7 +734,7 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
                       ) : (
                         <>
                           <Send className="w-4 h-4" />
-                          ⚡ Gửi Mã Đơn Yêu Cầu Duyệt Nhanh Qua Telegram
+                          <span>Gửi Mã Đơn Yêu Cầu Duyệt Nhanh Qua Telegram</span>
                         </>
                       )}
                     </button>
@@ -856,9 +857,9 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
                 >
                   <FileText className="w-5 h-5" />
                   {downloadUrl && downloadUrl.startsWith('/bai-viet/') ? (
-                    <span>📄 Mở Ngay Bài Hướng Dẫn Thực Hành</span>
+                    <span>Mở Ngay Bài Hướng Dẫn Thực Hành</span>
                   ) : (
-                    <span>🚀 Vào Khu Vực Học Tập / Khóa Học Của Tôi</span>
+                    <span>Vào Khu Vực Học Tập / Khóa Học Của Tôi</span>
                   )}
                 </button>
 
@@ -913,9 +914,10 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
                 <button
                   type="button"
                   onClick={() => setShowChangePasswordForm(true)}
-                  className="w-full py-3.5 px-4 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white font-extrabold text-xs shadow-md shadow-indigo-900/25 transition-all active:scale-[0.98]"
+                  className="w-full py-3.5 px-4 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white font-extrabold text-xs shadow-md shadow-indigo-900/25 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                 >
-                  🔐 Đổi Mật Khẩu Mới Ngay
+                  <KeyRound className="w-4 h-4" />
+                  <span>Đổi Mật Khẩu Mới Ngay</span>
                 </button>
                 <button
                   type="button"
@@ -923,9 +925,10 @@ export default function CheckoutClient({ initialProduct }: CheckoutClientProps) 
                     setShowPasswordModal(false);
                     window.location.href = downloadUrl || '/dashboard';
                   }}
-                  className="w-full py-3 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition-all"
+                  className="w-full py-3 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition-all flex items-center justify-center gap-2"
                 >
-                  🚀 Để Sau, Vào Học Ngay
+                  <ArrowRight className="w-4 h-4" />
+                  <span>Để Sau, Vào Học Ngay</span>
                 </button>
               </div>
             ) : (
