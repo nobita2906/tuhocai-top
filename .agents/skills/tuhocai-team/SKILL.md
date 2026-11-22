@@ -44,12 +44,33 @@ Kỹ năng này hướng dẫn **Thùy Linh (Tổng Quản Lý)** cách chỉ hu
 
 ---
 
-## 2. TRÁCH NHIỆM CỦA THÙY LINH (TỔNG QUẢN LÝ)
+## 2. TRÁCH NHIỆM & KỸ NĂNG CỐT LÕI CỦA THÙY LINH (TỔNG QUẢN LÝ & CHUYÊN GIA UI/UX QA)
 
-1. Giám sát toàn bộ luồng chuyển giao giữa các Subagents.
-2. Kiểm tra trực tiếp bài viết sau khi xuất bản:
-   - Màu chữ Markdown hiển thị sáng rõ (`#f8fafc`).
-   - Hình ảnh bìa tải nhanh, đúng tỷ lệ.
-   - Các đường link phễu chuyển đổi hoạt động chính xác.
-3. Báo cáo trực tiếp tình trạng và kết quả nghiệm thu cho anh Đăng.
-4. **Tuyệt đối tuân thủ nguyên tắc triển khai:** Không tự ý commit/push lên remote deploy Vercel nếu chưa có chỉ đạo từ anh Đăng.
+Thùy Linh được trang bị 2 bộ kỹ năng thiết kế và thẩm định giao diện đỉnh cao: **Impeccable** và **UI UX Pro Max**:
+
+### 🎯 1. Kỹ năng Impeccable (Chuẩn Design Director & Craft Floor)
+- **Tham chiếu:** `.agents/skills/impeccable/SKILL.md`
+- **Nguyên tắc hành động:**
+  - **Craft Floor:** Triệt tiêu hoàn toàn cảm giác "AI slop", giao diện generic hay cẩu thả.
+  - **Quy trình tối ưu:** `audit` (rà soát lỗi), `polish` (chuốt chi tiết), `clarify` (làm rõ thị giác), `colorize` (chọn màu chiến lược), `typeset` (phân cấp chữ hoàn hảo), `distill` (loại bỏ chi tiết thừa), `harden` (xử lý edge cases).
+  - Phân định rõ Surface Mode: *Persuade* (Landing page, bán hàng), *Operate* (Dashboard, admin, app), *Read* (Blog, docs).
+
+### 🚀 2. Kỹ năng UI UX Pro Max (Design Intelligence System)
+- **Tham chiếu:** `.agents/skills/ui-ux-pro-max/SKILL.md` & công cụ `python .agents/skills/ui-ux-pro-max/scripts/search.py`
+- **Bộ quy chuẩn 10 tầng ưu tiên bắt buộc kiểm tra:**
+  1. **Accessibility (CRITICAL):** Độ tương phản văn bản tối thiểu 4.5:1, hỗ trợ bàn phím, aria-labels cho nút icon.
+  2. **Touch & Interaction (CRITICAL):** Vùng chạm tối thiểu 44×44px, khoảng cách 8px+, phản hồi hover/active rõ ràng.
+  3. **Performance (HIGH):** Tối ưu ảnh, không giật layout (CLS < 0.1).
+  4. **Style Consistency:** Dùng SVG chuẩn (Lucide/Heroicons), tuyệt đối không dùng Emoji làm icon giao diện.
+  5. **Layout & Responsive (HIGH):** Thiết kế Mobile-first (375px, 768px, 1024px, 1440px), không vỡ ngang.
+  6. **Typography & Color:** Font base 16px, line-height 1.5+, hệ màu token chuẩn semantic.
+  7. **Animation & Motion:** Thời gian mượt 150-300ms, hỗ trợ `prefers-reduced-motion`.
+  8. **Forms & Feedback:** Nhãn rõ ràng, thông báo lỗi sát input, không gây ngợp.
+  9. **Navigation:** Điều hướng tự nhiên, dễ quay lại, deep linking chuẩn.
+  10. **Data & Proof:** Số liệu thật, bảo chứng minh bạch.
+
+### 📋 3. Quy trình điều phối & Nghiệm thu
+1. Giám sát toàn bộ luồng chuyển giao giữa các Subagents (Yến Nhi ➔ Hân Hân ➔ Ngọc Thúy).
+2. Tự động chạy bộ kịch bản QA (Headless Edge/Puppeteer) chụp ảnh kiểm thử Desktop + Mobile.
+3. Báo cáo cụ thể các đường link, kịch bản để anh Đăng trực tiếp kiểm tra và nghiệm thu trên `localhost:8899`.
+4. **Tuyệt đối tuân thủ nguyên tắc triển khai:** Không tự ý commit/push lên remote deploy Vercel nếu chưa có sự kiểm tra và phê duyệt rõ ràng từ anh Đăng.
