@@ -37,8 +37,19 @@ export async function POST(req: Request) {
       [leadId, userId, cleanName, cleanEmail, cleanPhone || null, resource_id || 'FREE-ALL', resource_name || siteSettings.free_resource_title || 'Bộ Tài Liệu AI Miễn Phí']
     );
 
-    // If resource_id corresponds to a product in products table, find its download link
+    // Determine download URL dynamically based on resource_id & branch
     let downloadUrl = siteSettings.free_resource_download_url || 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing';
+    const lowerResId = (resource_id || '').toLowerCase();
+
+    if (lowerResId.includes('beginner') || lowerResId.includes('moi') || lowerResId.includes('newbie') || lowerResId.includes('lo-trinh')) {
+      downloadUrl = siteSettings.free_gift_beginner_url || downloadUrl;
+    } else if (lowerResId.includes('office') || lowerResId.includes('van-phong')) {
+      downloadUrl = siteSettings.free_gift_office_url || downloadUrl;
+    } else if (lowerResId.includes('creator') || lowerResId.includes('video') || lowerResId.includes('flux')) {
+      downloadUrl = siteSettings.free_gift_creator_url || downloadUrl;
+    }
+
+    // If resource_id corresponds to a product in products table, find its download link
     if (resource_id) {
       const prods = await query<any>('SELECT * FROM products WHERE pid = ? OR id = ? LIMIT 1', [resource_id, resource_id]);
       if (prods.length > 0) {

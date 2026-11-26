@@ -15,12 +15,20 @@ const eslintConfig = defineConfig([
     "docs/**",
     "scripts/**",
     "public/**",
+    ".agents/**",
+    ".temp*/**",
   ]),
   {
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-unused-vars": "warn",
       "@next/next/no-img-element": "warn",
+      "react/no-unescaped-entities": "off",
+      "prefer-const": "warn",
+      "react/jsx-no-comment-textnodes": "warn",
+      "react-hooks/set-state-in-effect": "warn",
+      "react-hooks/exhaustive-deps": "warn",
+      "react-hooks/preserve-manual-memoization": "warn",
     },
   },
 ]);

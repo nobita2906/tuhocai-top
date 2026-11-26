@@ -34,7 +34,7 @@ export function convertNotionHtmlToMarkdown(htmlString: string): string {
 
       const el = node as HTMLElement;
       const tag = el.tagName.toLowerCase();
-      let childrenText = Array.from(el.childNodes).map(walk).join('');
+      const childrenText = Array.from(el.childNodes).map(walk).join('');
 
       switch (tag) {
         case 'h1':
@@ -123,7 +123,7 @@ export function convertNotionHtmlToMarkdown(htmlString: string): string {
  * Phân tích chuỗi Markdown xuất từ Notion hoặc sao chép từ Notion
  */
 export function parseNotionContent(rawText: string, fileName?: string): ParsedNotionDoc {
-  let text = (rawText || '').trim();
+  const text = (rawText || '').trim();
   let title = '';
   let icon = '📘';
   let driveUrl = '';

@@ -75,9 +75,46 @@ function BranchIcon({ type }: { type: 'beginner' | 'office' | 'creator' }) {
 interface BranchSelectorProps {
   onSelectBranch: (branch: BranchOption) => void;
   activeBranchId?: string;
+  settings?: {
+    free_gift_beginner_title?: string;
+    free_gift_beginner_desc?: string;
+    free_gift_beginner_cta?: string;
+    free_gift_office_title?: string;
+    free_gift_office_desc?: string;
+    free_gift_office_cta?: string;
+    free_gift_creator_title?: string;
+    free_gift_creator_desc?: string;
+    free_gift_creator_cta?: string;
+  };
 }
 
-export default function BranchSelector({ onSelectBranch, activeBranchId }: BranchSelectorProps) {
+export default function BranchSelector({ onSelectBranch, activeBranchId, settings }: BranchSelectorProps) {
+  // Đồng bộ nội dung quà tặng theo cài đặt từ trang Quản trị Admin nếu có
+  const branches = BRANCHES.map((b) => {
+    if (b.id === 'beginner') {
+      return {
+        ...b,
+        giftTitle: settings?.free_gift_beginner_title || b.giftTitle,
+        giftDesc: settings?.free_gift_beginner_desc || b.giftDesc,
+        ctaText: settings?.free_gift_beginner_cta || b.ctaText,
+      };
+    }
+    if (b.id === 'office') {
+      return {
+        ...b,
+        giftTitle: settings?.free_gift_office_title || b.giftTitle,
+        giftDesc: settings?.free_gift_office_desc || b.giftDesc,
+        ctaText: settings?.free_gift_office_cta || b.ctaText,
+      };
+    }
+    return {
+      ...b,
+      giftTitle: settings?.free_gift_creator_title || b.giftTitle,
+      giftDesc: settings?.free_gift_creator_desc || b.giftDesc,
+      ctaText: settings?.free_gift_creator_cta || b.ctaText,
+    };
+  });
+
   return (
     <section id="phan-nhanh" className="py-6 sm:py-10 scroll-mt-20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
@@ -97,7 +134,7 @@ export default function BranchSelector({ onSelectBranch, activeBranchId }: Branc
 
         {/* 3 Large Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 items-stretch">
-          {BRANCHES.map((b) => {
+          {branches.map((b) => {
             const isSelected = activeBranchId === b.id;
             return (
               <div

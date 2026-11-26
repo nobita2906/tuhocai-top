@@ -30,6 +30,11 @@ import {
   ShoppingCart,
   Gift,
   Download,
+  Sprout,
+  Briefcase,
+  Clapperboard,
+  Layers,
+  ListChecks,
 } from 'lucide-react';
 
 const POPULAR_BANKS = [
@@ -66,9 +71,37 @@ export default function AdminSettingsPage() {
   const [zaloGroupUrl, setZaloGroupUrl] = useState('https://zalo.me/g/tuhocai');
   const [zaloSupportPhone, setZaloSupportPhone] = useState('0938.494.303');
   const [supportEmail, setSupportEmail] = useState('dang@tuhocai.top');
-  const [freeResourceTitle, setFreeResourceTitle] = useState('Trọn Bộ 100+ Prompt FLUX & Kịch Bản Video AI Triệu View');
-  const [freeResourceDesc, setFreeResourceDesc] = useState('Nhập email để nhận ngay file template và tài liệu hướng dẫn vào tài khoản của bạn.');
+
+  // Quà tặng & Lead Magnet Chung
+  const [freeGiftBadge, setFreeGiftBadge] = useState('QUÀ TẶNG 0Đ DÀNH CHO BẠN');
+  const [freeResourceTitle, setFreeResourceTitle] = useState('Lộ trình 7 ngày làm quen AI cho người mới (0đ)');
+  const [freeResourceDesc, setFreeResourceDesc] = useState('Cẩm nang từng bước giúp bạn hiểu bản chất AI, cách đặt câu hỏi chuẩn để có kết quả ngay mà không cần biết kỹ thuật.');
   const [freeResourceDownloadUrl, setFreeResourceDownloadUrl] = useState('https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing');
+  const [freeGiftBenefit1, setFreeGiftBenefit1] = useState('Bộ tài liệu & Prompt mẫu đã được kiểm thử thực tế.');
+  const [freeGiftBenefit2, setFreeGiftBenefit2] = useState('Hướng dẫn chi tiết từng bước, người mới hoàn toàn có thể làm theo.');
+  const [freeGiftBenefit3, setFreeGiftBenefit3] = useState('Tham gia nhóm Zalo hỏi đáp trực tiếp cùng Nguyễn Đăng AI.');
+
+  // Quà tặng Nhánh Người Mới (Beginner)
+  const [freeGiftBeginnerTitle, setFreeGiftBeginnerTitle] = useState('Lộ trình 7 ngày làm quen AI cho người mới (0đ)');
+  const [freeGiftBeginnerDesc, setFreeGiftBeginnerDesc] = useState('Cẩm nang từng bước giúp bạn hiểu bản chất AI, cách đặt câu hỏi chuẩn để có kết quả ngay mà không cần biết kỹ thuật.');
+  const [freeGiftBeginnerUrl, setFreeGiftBeginnerUrl] = useState('https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing');
+  const [freeGiftBeginnerCta, setFreeGiftBeginnerCta] = useState('Nhận Lộ Trình Cho Người Mới');
+
+  // Quà tặng Nhánh Văn Phòng (Office)
+  const [freeGiftOfficeTitle, setFreeGiftOfficeTitle] = useState('15 Prompt Văn Phòng Khởi Động (Bản Rút Gọn 0đ)');
+  const [freeGiftOfficeDesc, setFreeGiftOfficeDesc] = useState('Gồm 15 prompt cơ bản giúp bạn thử nghiệm soạn thảo email, xử lý bảng biểu và tóm tắt cuộc họp. (Bản Full 50+ prompt nâng cao có phí 69k bên dưới).');
+  const [freeGiftOfficeUrl, setFreeGiftOfficeUrl] = useState('https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing');
+  const [freeGiftOfficeCta, setFreeGiftOfficeCta] = useState('Nhận Bản Rút Gọn 0đ');
+
+  // Quà tặng Nhánh Creator (Creator)
+  const [freeGiftCreatorTitle, setFreeGiftCreatorTitle] = useState('Túi quà 30 Prompt FLUX & Kịch bản mẫu (Bản Khởi Động 0đ)');
+  const [freeGiftCreatorDesc, setFreeGiftCreatorDesc] = useState('Kho 30 prompt tạo ảnh chân dung thương mại và mẫu kịch bản phân cảnh 3s đầu cho video TikTok & Reels.');
+  const [freeGiftCreatorUrl, setFreeGiftCreatorUrl] = useState('https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing');
+  const [freeGiftCreatorCta, setFreeGiftCreatorCta] = useState('Nhận Túi Quà Creator');
+
+  // Active Tab quản lý quà tặng trong Admin
+  const [giftTab, setGiftTab] = useState<'common' | 'beginner' | 'office' | 'creator'>('common');
+
   const [telegramBotToken, setTelegramBotToken] = useState('');
   const [telegramChatId, setTelegramChatId] = useState('');
   const [bannerEnabled, setBannerEnabled] = useState(false);
@@ -102,9 +135,34 @@ export default function AdminSettingsPage() {
         setZaloGroupUrl(s.zalo_group_url || 'https://zalo.me/g/tuhocai');
         setZaloSupportPhone(s.zalo_support_phone || s.hotline || '0938.494.303');
         setSupportEmail(s.support_email || 'dang@tuhocai.top');
-        setFreeResourceTitle(s.free_resource_title || 'Trọn Bộ 100+ Prompt FLUX & Kịch Bản Video AI Triệu View');
-        setFreeResourceDesc(s.free_resource_desc || 'Nhập email để nhận ngay file template và tài liệu hướng dẫn vào tài khoản của bạn.');
+
+        // Quà tặng chung & 3 cam kết
+        setFreeGiftBadge(s.free_gift_badge || 'QUÀ TẶNG 0Đ DÀNH CHO BẠN');
+        setFreeResourceTitle(s.free_resource_title || 'Lộ trình 7 ngày làm quen AI cho người mới (0đ)');
+        setFreeResourceDesc(s.free_resource_desc || 'Cẩm nang từng bước giúp bạn hiểu bản chất AI, cách đặt câu hỏi chuẩn để có kết quả ngay mà không cần biết kỹ thuật.');
         setFreeResourceDownloadUrl(s.free_resource_download_url || 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing');
+        setFreeGiftBenefit1(s.free_gift_benefit_1 || 'Bộ tài liệu & Prompt mẫu đã được kiểm thử thực tế.');
+        setFreeGiftBenefit2(s.free_gift_benefit_2 || 'Hướng dẫn chi tiết từng bước, người mới hoàn toàn có thể làm theo.');
+        setFreeGiftBenefit3(s.free_gift_benefit_3 || 'Tham gia nhóm Zalo hỏi đáp trực tiếp cùng Nguyễn Đăng AI.');
+
+        // Quà tặng Nhánh Người Mới
+        setFreeGiftBeginnerTitle(s.free_gift_beginner_title || 'Lộ trình 7 ngày làm quen AI cho người mới (0đ)');
+        setFreeGiftBeginnerDesc(s.free_gift_beginner_desc || 'Cẩm nang từng bước giúp bạn hiểu bản chất AI, cách đặt câu hỏi chuẩn để có kết quả ngay mà không cần biết kỹ thuật.');
+        setFreeGiftBeginnerUrl(s.free_gift_beginner_url || s.free_resource_download_url || 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing');
+        setFreeGiftBeginnerCta(s.free_gift_beginner_cta || 'Nhận Lộ Trình Cho Người Mới');
+
+        // Quà tặng Nhánh Văn Phòng
+        setFreeGiftOfficeTitle(s.free_gift_office_title || '15 Prompt Văn Phòng Khởi Động (Bản Rút Gọn 0đ)');
+        setFreeGiftOfficeDesc(s.free_gift_office_desc || 'Gồm 15 prompt cơ bản giúp bạn thử nghiệm soạn thảo email, xử lý bảng biểu và tóm tắt cuộc họp. (Bản Full 50+ prompt nâng cao có phí 69k bên dưới).');
+        setFreeGiftOfficeUrl(s.free_gift_office_url || s.free_resource_download_url || 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing');
+        setFreeGiftOfficeCta(s.free_gift_office_cta || 'Nhận Bản Rút Gọn 0đ');
+
+        // Quà tặng Nhánh Creator
+        setFreeGiftCreatorTitle(s.free_gift_creator_title || 'Túi quà 30 Prompt FLUX & Kịch bản mẫu (Bản Khởi Động 0đ)');
+        setFreeGiftCreatorDesc(s.free_gift_creator_desc || 'Kho 30 prompt tạo ảnh chân dung thương mại và mẫu kịch bản phân cảnh 3s đầu cho video TikTok & Reels.');
+        setFreeGiftCreatorUrl(s.free_gift_creator_url || s.free_resource_download_url || 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing');
+        setFreeGiftCreatorCta(s.free_gift_creator_cta || 'Nhận Túi Quà Creator');
+
         setTelegramBotToken(s.telegram_bot_token || '');
         setTelegramChatId(s.telegram_chat_id || '');
         setBannerEnabled(Boolean(s.banner_enabled));
@@ -165,9 +223,31 @@ export default function AdminSettingsPage() {
           zalo_group_url: zaloGroupUrl.trim(),
           zalo_support_phone: zaloSupportPhone.trim(),
           support_email: supportEmail.trim(),
+
+          // Quà tặng & Lead Magnet
+          free_gift_badge: freeGiftBadge.trim(),
           free_resource_title: freeResourceTitle.trim(),
           free_resource_desc: freeResourceDesc.trim(),
           free_resource_download_url: freeResourceDownloadUrl.trim(),
+          free_gift_benefit_1: freeGiftBenefit1.trim(),
+          free_gift_benefit_2: freeGiftBenefit2.trim(),
+          free_gift_benefit_3: freeGiftBenefit3.trim(),
+
+          free_gift_beginner_title: freeGiftBeginnerTitle.trim(),
+          free_gift_beginner_desc: freeGiftBeginnerDesc.trim(),
+          free_gift_beginner_url: freeGiftBeginnerUrl.trim(),
+          free_gift_beginner_cta: freeGiftBeginnerCta.trim(),
+
+          free_gift_office_title: freeGiftOfficeTitle.trim(),
+          free_gift_office_desc: freeGiftOfficeDesc.trim(),
+          free_gift_office_url: freeGiftOfficeUrl.trim(),
+          free_gift_office_cta: freeGiftOfficeCta.trim(),
+
+          free_gift_creator_title: freeGiftCreatorTitle.trim(),
+          free_gift_creator_desc: freeGiftCreatorDesc.trim(),
+          free_gift_creator_url: freeGiftCreatorUrl.trim(),
+          free_gift_creator_cta: freeGiftCreatorCta.trim(),
+
           telegram_bot_token: telegramBotToken.trim(),
           telegram_chat_id: telegramChatId.trim(),
           banner_enabled: bannerEnabled,
@@ -755,75 +835,467 @@ export default function AdminSettingsPage() {
               </div>
               <div>
                 <h3 className="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
-                  Phễu Quà Tặng 0đ & Bộ Tài Liệu Miễn Phí (Lead Magnet)
+                  Cấu Hình Quà Tặng 0đ & Phễu Thu Lead (Lead Magnet)
                   <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-extrabold">
-                    TỰ ĐỘNG PHÁT LINK
+                    TÙY CHỈNH THEO NHÁNH
                   </span>
                 </h3>
                 <p className="text-xs text-slate-600 dark:text-slate-400">
-                  Cấu hình gói quà tặng 0đ hiển thị trên Trang chủ, Pop-up nhận quà và link tự động gửi cho khách hàng
+                  Tùy chỉnh nội dung khối quà tặng trên Trang chủ, Pop-up và link tải tài liệu Google Drive / Notion riêng cho từng nhánh học viên
                 </p>
               </div>
             </div>
 
-            {freeResourceDownloadUrl && (
-              <a
-                href={freeResourceDownloadUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="px-3.5 py-1.5 rounded-xl bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5 transition self-start sm:self-auto"
-              >
-                <Download className="w-3.5 h-3.5" />
-                Kiểm tra link tải hiện tại <ExternalLink className="w-3 h-3" />
-              </a>
-            )}
+            <span className="text-xs text-emerald-600 dark:text-emerald-400 font-mono font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 self-start sm:self-auto">
+              Auto-Delivery 0đ
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                Tiêu đề Gói Quà Tặng 0đ (Hiển thị trên Trang chủ & Pop-up)
-              </label>
-              <input
-                type="text"
-                required
-                value={freeResourceTitle}
-                onChange={(e) => setFreeResourceTitle(e.target.value)}
-                placeholder="Ví dụ: Trọn Bộ 100+ Prompt FLUX & Kịch Bản Video AI Triệu View"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 text-sm font-semibold"
-              />
-              <p className="text-[11px] text-slate-500 mt-1">Xuất hiện tại nút nhận quà trang chủ và tiêu đề popup</p>
-            </div>
+          {/* Sub-tab selection */}
+          <div className="flex flex-wrap gap-2 p-1.5 rounded-xl bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
+            <button
+              type="button"
+              onClick={() => setGiftTab('common')}
+              className={`px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                giftTab === 'common'
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800'
+              }`}
+            >
+              <Gift className="w-3.5 h-3.5" />
+              1. Cấu hình Chung & 3 Cam kết
+            </button>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
-                <span>Đường dẫn Link Tải 0đ (Google Drive / Notion / Bài viết)</span>
-                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-bold">Mở khóa tức thì</span>
-              </label>
-              <input
-                type="url"
-                required
-                value={freeResourceDownloadUrl}
-                onChange={(e) => setFreeResourceDownloadUrl(e.target.value)}
-                placeholder="https://drive.google.com/drive/folders/... hoặc https://notion.so/..."
-                className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 font-mono text-xs"
-              />
-              <p className="text-[11px] text-slate-500 mt-1">Khách điền email xong sẽ được chuyển ngay tới link này</p>
-            </div>
+            <button
+              type="button"
+              onClick={() => setGiftTab('beginner')}
+              className={`px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                giftTab === 'beginner'
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800'
+              }`}
+            >
+              <Sprout className="w-3.5 h-3.5" />
+              2. Quà: Người Mới Bắt Đầu
+            </button>
 
-            <div className="md:col-span-2">
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                Mô tả ngắn giá trị gói tài liệu (Hiển thị dưới tiêu đề)
-              </label>
-              <textarea
-                rows={2}
-                value={freeResourceDesc}
-                onChange={(e) => setFreeResourceDesc(e.target.value)}
-                placeholder="Nhập mô tả tóm tắt những gì người học sẽ nhận được khi tải bộ quà 0đ..."
-                className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 text-xs"
-              />
-            </div>
+            <button
+              type="button"
+              onClick={() => setGiftTab('office')}
+              className={`px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                giftTab === 'office'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800'
+              }`}
+            >
+              <Briefcase className="w-3.5 h-3.5" />
+              3. Quà: Dân Văn Phòng
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setGiftTab('creator')}
+              className={`px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                giftTab === 'creator'
+                  ? 'bg-amber-600 text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800'
+              }`}
+            >
+              <Clapperboard className="w-3.5 h-3.5" />
+              4. Quà: Creator & Video AI
+            </button>
           </div>
+
+          {/* TAB 1: CẤU HÌNH CHUNG & 3 CAM KẾT */}
+          {giftTab === 'common' && (
+            <div className="space-y-5 animate-in fade-in duration-200">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    Huy hiệu quà tặng (Badge trên đầu)
+                  </label>
+                  <input
+                    type="text"
+                    value={freeGiftBadge}
+                    onChange={(e) => setFreeGiftBadge(e.target.value)}
+                    placeholder="QUÀ TẶNG 0Đ DÀNH CHO BẠN"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 text-xs font-bold"
+                  />
+                  <p className="text-[11px] text-slate-500 mt-1">Xuất hiện trong viên nhãn bo góc màu xanh trên cùng của khối quà</p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+                    <span>Đường dẫn Link Tải Mặc định / Dự phòng</span>
+                    {freeResourceDownloadUrl && (
+                      <a
+                        href={freeResourceDownloadUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-1 font-bold"
+                      >
+                        Kiểm tra link <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </label>
+                  <input
+                    type="url"
+                    value={freeResourceDownloadUrl}
+                    onChange={(e) => setFreeResourceDownloadUrl(e.target.value)}
+                    placeholder="https://drive.google.com/drive/folders/... hoặc https://notion.so/..."
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 font-mono text-xs"
+                  />
+                  <p className="text-[11px] text-slate-500 mt-1">Dùng khi khách đăng ký ở popup chung hoặc chưa chọn nhánh cụ thể</p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    Tiêu đề quà tặng Mặc định (Trang chủ & Pop-up)
+                  </label>
+                  <input
+                    type="text"
+                    value={freeResourceTitle}
+                    onChange={(e) => setFreeResourceTitle(e.target.value)}
+                    placeholder="Lộ trình 7 ngày làm quen AI cho người mới (0đ)"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 text-sm font-bold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    Mô tả quà tặng Mặc định
+                  </label>
+                  <input
+                    type="text"
+                    value={freeResourceDesc}
+                    onChange={(e) => setFreeResourceDesc(e.target.value)}
+                    placeholder="Cẩm nang từng bước giúp bạn hiểu bản chất AI..."
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 text-xs"
+                  />
+                </div>
+              </div>
+
+              {/* 3 Cam kết / Bullet points */}
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-3">
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-800 dark:text-slate-200">
+                  <ListChecks className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  3 Gạch Đầu Dòng Cam Kết / Quyền Lợi Đi Kèm (Hiển thị bên dưới mô tả quà)
+                </div>
+
+                <div className="space-y-2.5">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
+                      Cam kết 1:
+                    </label>
+                    <input
+                      type="text"
+                      value={freeGiftBenefit1}
+                      onChange={(e) => setFreeGiftBenefit1(e.target.value)}
+                      placeholder="Bộ tài liệu & Prompt mẫu đã được kiểm thử thực tế."
+                      className="w-full px-3.5 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
+                      Cam kết 2:
+                    </label>
+                    <input
+                      type="text"
+                      value={freeGiftBenefit2}
+                      onChange={(e) => setFreeGiftBenefit2(e.target.value)}
+                      placeholder="Hướng dẫn chi tiết từng bước, người mới hoàn toàn có thể làm theo."
+                      className="w-full px-3.5 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
+                      Cam kết 3:
+                    </label>
+                    <input
+                      type="text"
+                      value={freeGiftBenefit3}
+                      onChange={(e) => setFreeGiftBenefit3(e.target.value)}
+                      placeholder="Tham gia nhóm Zalo hỏi đáp trực tiếp cùng Nguyễn Đăng AI."
+                      className="w-full px-3.5 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Live Preview Box */}
+              <div className="p-4 rounded-xl bg-slate-900 text-slate-100 border border-slate-800 space-y-3">
+                <div className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                  <Eye className="w-3.5 h-3.5" />
+                  Mô phỏng hiển thị thực tế trên Trang chủ (#nhan-qua-0d):
+                </div>
+
+                <div className="p-4 rounded-xl bg-[#0b0c14] border border-white/10 space-y-2.5">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">
+                    <Gift className="w-3 h-3" />
+                    {freeGiftBadge || 'QUÀ TẶNG 0Đ DÀNH CHO BẠN'}
+                  </span>
+                  <h4 className="text-base sm:text-lg font-black text-white leading-snug">
+                    {freeResourceTitle || 'Lộ trình 7 ngày làm quen AI cho người mới (0đ)'}
+                  </h4>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    {freeResourceDesc || 'Cẩm nang từng bước giúp bạn hiểu bản chất AI, cách đặt câu hỏi chuẩn để có kết quả ngay mà không cần biết kỹ thuật.'}
+                  </p>
+                  <ul className="space-y-1.5 pt-1 text-xs text-slate-300">
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                      <span>{freeGiftBenefit1 || 'Bộ tài liệu & Prompt mẫu đã được kiểm thử thực tế.'}</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                      <span>{freeGiftBenefit2 || 'Hướng dẫn chi tiết từng bước, người mới hoàn toàn có thể làm theo.'}</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                      <span>{freeGiftBenefit3 || 'Tham gia nhóm Zalo hỏi đáp trực tiếp cùng Nguyễn Đăng AI.'}</span>
+                    </li>
+                  </ul>
+                  <div className="pt-2 text-[10px] text-slate-400 flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                    <span>Cam kết không spam • Hủy đăng ký bất cứ lúc nào</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 2: QUÀ NHÁNH NGƯỜI MỚI BẮT ĐẦU */}
+          {giftTab === 'beginner' && (
+            <div className="space-y-4 animate-in fade-in duration-200">
+              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
+                <Sprout className="w-4 h-4 shrink-0" />
+                <span>
+                  Áp dụng khi học viên nhấp chọn thẻ <strong>&quot;Mình mới bắt đầu với AI&quot;</strong> tại mục Phân nhánh lộ trình trên Trang chủ.
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    Tiêu đề gói quà dành cho Người Mới
+                  </label>
+                  <input
+                    type="text"
+                    value={freeGiftBeginnerTitle}
+                    onChange={(e) => setFreeGiftBeginnerTitle(e.target.value)}
+                    placeholder="Lộ trình 7 ngày làm quen AI cho người mới (0đ)"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 text-sm font-bold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    Chữ hiển thị trên Nút hành động (CTA Button)
+                  </label>
+                  <input
+                    type="text"
+                    value={freeGiftBeginnerCta}
+                    onChange={(e) => setFreeGiftBeginnerCta(e.target.value)}
+                    placeholder="Nhận Lộ Trình Cho Người Mới"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 text-xs font-bold"
+                  />
+                  <p className="text-[11px] text-slate-500 mt-1">Xuất hiện trên nút trong thẻ lộ trình người mới</p>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+                    <span>Đường dẫn Link Tải Tài Liệu Riêng (Google Drive / Notion)</span>
+                    {freeGiftBeginnerUrl && (
+                      <a
+                        href={freeGiftBeginnerUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-1 font-bold"
+                      >
+                        Kiểm tra link tải Người Mới <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </label>
+                  <input
+                    type="url"
+                    value={freeGiftBeginnerUrl}
+                    onChange={(e) => setFreeGiftBeginnerUrl(e.target.value)}
+                    placeholder="https://drive.google.com/drive/folders/..."
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 font-mono text-xs"
+                  />
+                  <p className="text-[11px] text-slate-500 mt-1">Khi khách thuộc nhánh Người mới điền email, link này sẽ được mở khóa ngay lập tức</p>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    Mô tả chi tiết nội dung quà tặng Người Mới
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={freeGiftBeginnerDesc}
+                    onChange={(e) => setFreeGiftBeginnerDesc(e.target.value)}
+                    placeholder="Cẩm nang từng bước giúp bạn hiểu bản chất AI, cách đặt câu hỏi chuẩn để có kết quả ngay mà không cần biết kỹ thuật."
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 text-xs"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: QUÀ NHÁNH DÂN VĂN PHÒNG */}
+          {giftTab === 'office' && (
+            <div className="space-y-4 animate-in fade-in duration-200">
+              <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-800 dark:text-cyan-300 flex items-center gap-2">
+                <Briefcase className="w-4 h-4 shrink-0" />
+                <span>
+                  Áp dụng khi học viên nhấp chọn thẻ <strong>&quot;Mình làm văn phòng / cá nhân&quot;</strong> tại mục Phân nhánh lộ trình trên Trang chủ.
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    Tiêu đề gói quà Dân Văn Phòng
+                  </label>
+                  <input
+                    type="text"
+                    value={freeGiftOfficeTitle}
+                    onChange={(e) => setFreeGiftOfficeTitle(e.target.value)}
+                    placeholder="15 Prompt Văn Phòng Khởi Động (Bản Rút Gọn 0đ)"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 text-sm font-bold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    Chữ hiển thị trên Nút hành động (CTA Button)
+                  </label>
+                  <input
+                    type="text"
+                    value={freeGiftOfficeCta}
+                    onChange={(e) => setFreeGiftOfficeCta(e.target.value)}
+                    placeholder="Nhận Bản Rút Gọn 0đ"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 text-xs font-bold"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+                    <span>Đường dẫn Link Tải Riêng Dân Văn Phòng (Google Drive / Notion)</span>
+                    {freeGiftOfficeUrl && (
+                      <a
+                        href={freeGiftOfficeUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[11px] text-blue-600 dark:text-cyan-400 hover:underline inline-flex items-center gap-1 font-bold"
+                      >
+                        Kiểm tra link tải Văn Phòng <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </label>
+                  <input
+                    type="url"
+                    value={freeGiftOfficeUrl}
+                    onChange={(e) => setFreeGiftOfficeUrl(e.target.value)}
+                    placeholder="https://drive.google.com/drive/folders/..."
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 font-mono text-xs"
+                  />
+                  <p className="text-[11px] text-slate-500 mt-1">Khi khách thuộc nhánh Văn phòng điền email, link này sẽ được mở khóa ngay lập tức</p>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    Mô tả chi tiết nội dung quà tặng Dân Văn Phòng
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={freeGiftOfficeDesc}
+                    onChange={(e) => setFreeGiftOfficeDesc(e.target.value)}
+                    placeholder="Gồm 15 prompt cơ bản giúp bạn thử nghiệm soạn thảo email, xử lý bảng biểu và tóm tắt cuộc họp..."
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 text-xs"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: QUÀ NHÁNH CREATOR & VIDEO AI */}
+          {giftTab === 'creator' && (
+            <div className="space-y-4 animate-in fade-in duration-200">
+              <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-800 dark:text-amber-300 flex items-center gap-2">
+                <Clapperboard className="w-4 h-4 shrink-0" />
+                <span>
+                  Áp dụng khi học viên nhấp chọn thẻ <strong>&quot;Mình làm nội dung / xây kênh&quot;</strong> tại mục Phân nhánh lộ trình trên Trang chủ.
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    Tiêu đề gói quà Creator & Video AI
+                  </label>
+                  <input
+                    type="text"
+                    value={freeGiftCreatorTitle}
+                    onChange={(e) => setFreeGiftCreatorTitle(e.target.value)}
+                    placeholder="Túi quà 30 Prompt FLUX & Kịch bản mẫu (Bản Khởi Động 0đ)"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 text-sm font-bold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    Chữ hiển thị trên Nút hành động (CTA Button)
+                  </label>
+                  <input
+                    type="text"
+                    value={freeGiftCreatorCta}
+                    onChange={(e) => setFreeGiftCreatorCta(e.target.value)}
+                    placeholder="Nhận Túi Quà Creator"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 text-xs font-bold"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+                    <span>Đường dẫn Link Tải Riêng Creator (Google Drive / Notion)</span>
+                    {freeGiftCreatorUrl && (
+                      <a
+                        href={freeGiftCreatorUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[11px] text-amber-600 dark:text-amber-400 hover:underline inline-flex items-center gap-1 font-bold"
+                      >
+                        Kiểm tra link tải Creator <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </label>
+                  <input
+                    type="url"
+                    value={freeGiftCreatorUrl}
+                    onChange={(e) => setFreeGiftCreatorUrl(e.target.value)}
+                    placeholder="https://drive.google.com/drive/folders/..."
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 font-mono text-xs"
+                  />
+                  <p className="text-[11px] text-slate-500 mt-1">Khi khách thuộc nhánh Creator điền email, link này sẽ được mở khóa ngay lập tức</p>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    Mô tả chi tiết nội dung quà tặng Creator
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={freeGiftCreatorDesc}
+                    onChange={(e) => setFreeGiftCreatorDesc(e.target.value)}
+                    placeholder="Kho 30 prompt tạo ảnh chân dung thương mại và mẫu kịch bản phân cảnh 3s đầu cho video TikTok & Reels."
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border-2 border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 text-xs"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Section 5: Contact & Zalo Community Configuration */}

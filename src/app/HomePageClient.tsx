@@ -28,12 +28,7 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
   } | null>(null);
 
   const [leadModalOpen, setLeadModalOpen] = useState(false);
-  const [publicSettings, setPublicSettings] = useState<{
-    zalo_group_url?: string;
-    hotline?: string;
-    free_resource_title?: string;
-    free_resource_download_url?: string;
-  }>({});
+  const [publicSettings, setPublicSettings] = useState<any>({});
 
   useEffect(() => {
     fetch('/api/settings/public')
@@ -66,10 +61,17 @@ export default function HomePageClient({ initialProducts, initialPosts }: HomePa
       <HomeHeroSection onClaimFreeClick={handleClaimFreeScroll} />
 
       {/* KHỐI 2: PHÂN NHÁNH NHU CẦU (Người mới / Văn phòng / Creator) */}
-      <BranchSelector onSelectBranch={handleSelectBranch} activeBranchId={selectedBranchId} />
+      <BranchSelector
+        onSelectBranch={handleSelectBranch}
+        activeBranchId={selectedBranchId}
+        settings={publicSettings}
+      />
 
       {/* KHỐI 3: FORM NHẬN QUÀ 0Đ (Thu Email trực tiếp trên trang) */}
-      <InlineLeadForm initialResource={selectedResource || undefined} />
+      <InlineLeadForm
+        initialResource={selectedResource || undefined}
+        settings={publicSettings}
+      />
 
       {/* KHỐI 4: VỀ NGUYỄN ĐĂNG AI (Xây niềm tin thương hiệu cá nhân & 3 con số thật) */}
       <AboutMeSection zaloUrl={publicSettings.zalo_group_url} />

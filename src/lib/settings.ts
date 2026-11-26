@@ -8,9 +8,34 @@ export interface SiteSettings {
   zalo_group_url: string;
   zalo_support_phone?: string;
   support_email: string;
+
+  // Cấu hình Quà tặng & Lead Magnet Chung
+  free_gift_badge?: string;
   free_resource_title?: string;
   free_resource_desc?: string;
   free_resource_download_url?: string;
+  free_gift_benefit_1?: string;
+  free_gift_benefit_2?: string;
+  free_gift_benefit_3?: string;
+
+  // Quà tặng Nhánh Người Mới (Beginner)
+  free_gift_beginner_title?: string;
+  free_gift_beginner_desc?: string;
+  free_gift_beginner_url?: string;
+  free_gift_beginner_cta?: string;
+
+  // Quà tặng Nhánh Văn Phòng (Office)
+  free_gift_office_title?: string;
+  free_gift_office_desc?: string;
+  free_gift_office_url?: string;
+  free_gift_office_cta?: string;
+
+  // Quà tặng Nhánh Creator (Creator)
+  free_gift_creator_title?: string;
+  free_gift_creator_desc?: string;
+  free_gift_creator_url?: string;
+  free_gift_creator_cta?: string;
+
   telegram_bot_token: string;
   telegram_chat_id: string;
   banner_enabled: boolean;
@@ -33,9 +58,34 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   zalo_group_url: 'https://zalo.me/g/qnitrawpaxpvl6aj7ixb',
   zalo_support_phone: '0938.494.303',
   support_email: 'dang@tuhocai.top',
-  free_resource_title: 'Trọn Bộ 100+ Prompt FLUX & Kịch Bản Video AI Ngắn Thực Chiến',
-  free_resource_desc: 'Nhập email để nhận ngay file template và tài liệu hướng dẫn vào tài khoản của bạn.',
+
+  // Quà tặng mặc định & 3 quyền lợi
+  free_gift_badge: 'QUÀ TẶNG 0Đ DÀNH CHO BẠN',
+  free_resource_title: 'Lộ trình 7 ngày làm quen AI cho người mới (0đ)',
+  free_resource_desc: 'Cẩm nang từng bước giúp bạn hiểu bản chất AI, cách đặt câu hỏi chuẩn để có kết quả ngay mà không cần biết kỹ thuật.',
   free_resource_download_url: 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing',
+  free_gift_benefit_1: 'Bộ tài liệu & Prompt mẫu đã được kiểm thử thực tế.',
+  free_gift_benefit_2: 'Hướng dẫn chi tiết từng bước, người mới hoàn toàn có thể làm theo.',
+  free_gift_benefit_3: 'Tham gia nhóm Zalo hỏi đáp trực tiếp cùng Nguyễn Đăng AI.',
+
+  // Quà tặng Nhánh Người Mới
+  free_gift_beginner_title: 'Lộ trình 7 ngày làm quen AI cho người mới (0đ)',
+  free_gift_beginner_desc: 'Cẩm nang từng bước giúp bạn hiểu bản chất AI, cách đặt câu hỏi chuẩn để có kết quả ngay mà không cần biết kỹ thuật.',
+  free_gift_beginner_url: 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing',
+  free_gift_beginner_cta: 'Nhận Lộ Trình Cho Người Mới',
+
+  // Quà tặng Nhánh Văn Phòng
+  free_gift_office_title: '15 Prompt Văn Phòng Khởi Động (Bản Rút Gọn 0đ)',
+  free_gift_office_desc: 'Gồm 15 prompt cơ bản giúp bạn thử nghiệm soạn thảo email, xử lý bảng biểu và tóm tắt cuộc họp. (Bản Full 50+ prompt nâng cao có phí 69k bên dưới).',
+  free_gift_office_url: 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing',
+  free_gift_office_cta: 'Nhận Bản Rút Gọn 0đ',
+
+  // Quà tặng Nhánh Creator
+  free_gift_creator_title: 'Túi quà 30 Prompt FLUX & Kịch bản mẫu (Bản Khởi Động 0đ)',
+  free_gift_creator_desc: 'Kho 30 prompt tạo ảnh chân dung thương mại và mẫu kịch bản phân cảnh 3s đầu cho video TikTok & Reels.',
+  free_gift_creator_url: 'https://drive.google.com/drive/folders/1TuhocAI_FreeResources_2026?usp=sharing',
+  free_gift_creator_cta: 'Nhận Túi Quà Creator',
+
   telegram_bot_token: process.env.TELEGRAM_BOT_TOKEN || '8781006384:AAHDfcnSsIiwDpycoY9G-fd7ug5-Ne2Oq0Y',
   telegram_chat_id: process.env.TELEGRAM_CHAT_ID || '6580812076',
   banner_enabled: false,
@@ -89,9 +139,34 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       zalo_group_url: map.zalo_group_url || DEFAULT_SETTINGS.zalo_group_url,
       zalo_support_phone: map.zalo_support_phone || DEFAULT_SETTINGS.zalo_support_phone,
       support_email: map.support_email || DEFAULT_SETTINGS.support_email,
+
+      // Quà tặng chung & 3 quyền lợi
+      free_gift_badge: map.free_gift_badge || DEFAULT_SETTINGS.free_gift_badge,
       free_resource_title: map.free_resource_title || DEFAULT_SETTINGS.free_resource_title,
       free_resource_desc: map.free_resource_desc || DEFAULT_SETTINGS.free_resource_desc,
       free_resource_download_url: map.free_resource_download_url || DEFAULT_SETTINGS.free_resource_download_url,
+      free_gift_benefit_1: map.free_gift_benefit_1 || DEFAULT_SETTINGS.free_gift_benefit_1,
+      free_gift_benefit_2: map.free_gift_benefit_2 || DEFAULT_SETTINGS.free_gift_benefit_2,
+      free_gift_benefit_3: map.free_gift_benefit_3 || DEFAULT_SETTINGS.free_gift_benefit_3,
+
+      // Quà tặng Nhánh Người Mới
+      free_gift_beginner_title: map.free_gift_beginner_title || DEFAULT_SETTINGS.free_gift_beginner_title,
+      free_gift_beginner_desc: map.free_gift_beginner_desc || DEFAULT_SETTINGS.free_gift_beginner_desc,
+      free_gift_beginner_url: map.free_gift_beginner_url || DEFAULT_SETTINGS.free_gift_beginner_url,
+      free_gift_beginner_cta: map.free_gift_beginner_cta || DEFAULT_SETTINGS.free_gift_beginner_cta,
+
+      // Quà tặng Nhánh Văn Phòng
+      free_gift_office_title: map.free_gift_office_title || DEFAULT_SETTINGS.free_gift_office_title,
+      free_gift_office_desc: map.free_gift_office_desc || DEFAULT_SETTINGS.free_gift_office_desc,
+      free_gift_office_url: map.free_gift_office_url || DEFAULT_SETTINGS.free_gift_office_url,
+      free_gift_office_cta: map.free_gift_office_cta || DEFAULT_SETTINGS.free_gift_office_cta,
+
+      // Quà tặng Nhánh Creator
+      free_gift_creator_title: map.free_gift_creator_title || DEFAULT_SETTINGS.free_gift_creator_title,
+      free_gift_creator_desc: map.free_gift_creator_desc || DEFAULT_SETTINGS.free_gift_creator_desc,
+      free_gift_creator_url: map.free_gift_creator_url || DEFAULT_SETTINGS.free_gift_creator_url,
+      free_gift_creator_cta: map.free_gift_creator_cta || DEFAULT_SETTINGS.free_gift_creator_cta,
+
       telegram_bot_token: map.telegram_bot_token || DEFAULT_SETTINGS.telegram_bot_token,
       telegram_chat_id: map.telegram_chat_id || DEFAULT_SETTINGS.telegram_chat_id,
       banner_enabled: map.banner_enabled !== undefined ? map.banner_enabled === 'true' || map.banner_enabled === '1' : DEFAULT_SETTINGS.banner_enabled,

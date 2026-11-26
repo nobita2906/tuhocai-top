@@ -11,9 +11,19 @@ interface InlineLeadFormProps {
     giftDesc?: string;
     branchId?: string;
   };
+  settings?: {
+    free_gift_badge?: string;
+    free_resource_title?: string;
+    free_resource_desc?: string;
+    free_resource_download_url?: string;
+    free_gift_benefit_1?: string;
+    free_gift_benefit_2?: string;
+    free_gift_benefit_3?: string;
+    zalo_group_url?: string;
+  };
 }
 
-export default function InlineLeadForm({ initialResource }: InlineLeadFormProps) {
+export default function InlineLeadForm({ initialResource, settings }: InlineLeadFormProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -21,16 +31,24 @@ export default function InlineLeadForm({ initialResource }: InlineLeadFormProps)
   const [error, setError] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState('');
-  const [zaloGroup, setZaloGroup] = useState('https://zalo.me/g/qnitrawpaxpvl6aj7ixb');
+  const [zaloGroup, setZaloGroup] = useState(settings?.zalo_group_url || 'https://zalo.me/g/qnitrawpaxpvl6aj7ixb');
 
-  // Dynamic gift title & description based on user branch selection
-  const resourceTitle = initialResource?.name || 'Trọn Bộ Cẩm Nang Khởi Động Tự Học AI & Prompt Thực Chiến (0đ)';
+  // Dynamic gift title & description based on user branch selection or admin settings
+  const resourceTitle =
+    initialResource?.name ||
+    settings?.free_resource_title ||
+    'Trọn Bộ Cẩm Nang Khởi Động Tự Học AI & Prompt Thực Chiến (0đ)';
   const resourceId = initialResource?.id || 'FREE-ALL-2026';
   const resourceDesc =
     initialResource?.giftDesc ||
+    settings?.free_resource_desc ||
     'Bộ tài nguyên và quy trình mẫu được đúc kết từ quá trình thực chiến tự học và ứng dụng AI hàng ngày của Nguyễn Đăng AI. Tải về dùng ngay, hoàn toàn miễn phí.';
 
   const isCreatorBranch = initialResource?.branchId === 'creator';
+  const giftBadge = settings?.free_gift_badge || 'QUÀ TẶNG 0Đ DÀNH CHO BẠN';
+  const benefit1 = settings?.free_gift_benefit_1 || 'Bộ tài liệu & Prompt mẫu đã được kiểm thử thực tế.';
+  const benefit2 = settings?.free_gift_benefit_2 || 'Hướng dẫn chi tiết từng bước, người mới hoàn toàn có thể làm theo.';
+  const benefit3 = settings?.free_gift_benefit_3 || 'Tham gia nhóm Zalo hỏi đáp trực tiếp cùng Nguyễn Đăng AI.';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,7 +103,7 @@ export default function InlineLeadForm({ initialResource }: InlineLeadFormProps)
               <div className="lg:col-span-7 space-y-5">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-mono font-bold">
                   <Gift className="w-3.5 h-3.5 text-emerald-300" />
-                  QUÀ TẶNG 0Đ DÀNH CHO BẠN
+                  {giftBadge}
                 </div>
 
                 <div className="space-y-2">
@@ -101,15 +119,15 @@ export default function InlineLeadForm({ initialResource }: InlineLeadFormProps)
                 <div className="space-y-2.5 pt-1">
                   <div className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-200">
                     <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                    <span>Bộ tài liệu &amp; Prompt mẫu đã được kiểm thử thực tế.</span>
+                    <span>{benefit1}</span>
                   </div>
                   <div className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-200">
                     <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                    <span>Hướng dẫn chi tiết từng bước, người mới hoàn toàn có thể làm theo.</span>
+                    <span>{benefit2}</span>
                   </div>
                   <div className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-200">
                     <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                    <span>Tham gia nhóm Zalo hỏi đáp trực tiếp cùng Nguyễn Đăng AI.</span>
+                    <span>{benefit3}</span>
                   </div>
                 </div>
 

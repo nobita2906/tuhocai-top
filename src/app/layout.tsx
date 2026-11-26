@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import TopBanner from '@/components/TopBanner';
 import SocialProofToast from '@/components/SocialProofToast';
 import FloatingAssistant from '@/components/FloatingAssistant';
+import ScrollToTop from '@/components/ScrollToTop';
 import AffiliateTracker from '@/components/AffiliateTracker';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 
@@ -129,6 +130,7 @@ export default function RootLayout({
         <Footer />
         <SocialProofToast />
         <FloatingAssistant />
+        <ScrollToTop />
       </body>
     </html>
   );
